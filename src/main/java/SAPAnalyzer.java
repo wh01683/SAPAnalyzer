@@ -1,5 +1,6 @@
 import javax.swing.*;
 
+
 /**
  * Created by robert on 9/18/2015.
  */
@@ -29,4 +30,7 @@ public class SAPAnalyzer {
     private JComboBox cbSortCategory;
     private JComboBox cbSortWay;
     private JButton btnSort;
+
+
+
 }
