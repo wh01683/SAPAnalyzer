@@ -9,7 +9,6 @@ public class SAPAnalyzer {
     private JPanel pnlTable;
     private JPanel pnlTree;
     private JPanel pnlItemInfo;
-    private JTable tblShownInformation;
     private JTree treeSAPHierarchy;
     private JPanel pnlDropboxFilter;
     private JPanel pnlTableFilter;
@@ -19,5 +18,15 @@ public class SAPAnalyzer {
     private JCheckBox chkBOM;
     private JCheckBox chkMaterials;
     private JCheckBox chkProcesses;
-    private JCheckBox checkBox1;
+    private JCheckBox chkLogistics;
+    private JCheckBox chkProducts;
+    private JPanel pnlMainInformation;
+    private JPanel pnlCompare;
+    private JComboBox cbComparisonMethod;
+    private JButton btnFillInfo;
+    private JTable tblShownInformation;
+    private JPanel tblTableSort;
+    private JComboBox cbSortCategory;
+    private JComboBox cbSortWay;
+    private JButton btnSort;
 }
