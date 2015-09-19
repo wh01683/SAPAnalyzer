@@ -13,4 +13,11 @@ public class SAPAnalyzer {
     private JTree treeSAPHierarchy;
     private JPanel pnlDropboxFilter;
     private JPanel pnlTableFilter;
+    private JComboBox cbSelection;
+    private JCheckBox chkCompanies;
+    private JCheckBox chkPlants;
+    private JCheckBox chkBOM;
+    private JCheckBox chkMaterials;
+    private JCheckBox chkProcesses;
+    private JCheckBox checkBox1;
 }
