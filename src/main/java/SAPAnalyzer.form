@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="SAPAnalyzer">
   <grid id="27dc6" binding="pnlMain" layout-manager="FormLayout">
-    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:7dlu:noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:10px:noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
-    <rowspec value="top:91dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="center:204px:noGrow"/>
-    <rowspec value="top:6dlu:noGrow"/>
     <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:156px:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="center:632px:noGrow"/>
+    <rowspec value="top:73dlu:noGrow"/>
+    <rowspec value="top:3dlu:noGrow"/>
+    <rowspec value="center:79px:noGrow"/>
     <rowspec value="center:d:grow"/>
     <colspec value="fill:max(d;4px):noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
@@ -21,30 +22,17 @@
     <colspec value="fill:max(d;4px):noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="left:44dlu:noGrow"/>
-    <colspec value="fill:141px:noGrow"/>
-    <colspec value="left:4dlu:noGrow"/>
     <colspec value="fill:max(d;4px):noGrow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:157px:noGrow"/>
     <constraints>
-      <xy x="20" y="20" width="1613" height="834"/>
+      <xy x="20" y="20" width="1634" height="972"/>
     </constraints>
     <properties/>
     <border type="bevel-raised">
       <font name="Lao UI" size="28"/>
     </border>
     <children>
-      <grid id="49ddf" binding="pnlItemInfo" layout-manager="FormLayout">
-        <rowspec value="center:d:grow"/>
-        <colspec value="fill:d:grow"/>
-        <constraints>
-          <grid row="3" column="9" row-span="3" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms defaultalign-horz="false" defaultalign-vert="false"/>
-        </constraints>
-        <properties/>
-        <border type="bevel-lowered" title="Selection Information">
-          <font name="Lao UI" size="20"/>
-        </border>
-        <children/>
-      </grid>
       <grid id="cac83" binding="pnlDropboxFilter" layout-manager="FormLayout">
         <rowspec value="center:d:noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
@@ -55,7 +43,7 @@
         <rowspec value="center:max(d;4px):noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties/>
@@ -118,7 +106,7 @@
         <rowspec value="center:max(d;4px):noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties/>
@@ -177,7 +165,7 @@
         <rowspec value="center:756px:grow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="3" column="6" row-span="7" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="6" row-span="7" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-vert="false"/>
         </constraints>
         <properties/>
@@ -196,7 +184,7 @@
               <grid id="b77d5" binding="pnlTable" layout-manager="FormLayout">
                 <rowspec value="center:73px:noGrow"/>
                 <rowspec value="top:4dlu:noGrow"/>
-                <rowspec value="center:677px:noGrow"/>
+                <rowspec value="center:869px:noGrow"/>
                 <colspec value="fill:max(d;4px):noGrow"/>
                 <colspec value="left:235dlu:noGrow"/>
                 <colspec value="fill:829px:grow"/>
@@ -208,15 +196,6 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="f2360" class="javax.swing.JTable" binding="tblShownInformation">
-                    <constraints>
-                      <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="50"/>
-                      </grid>
-                      <forms defaultalign-horz="false" defaultalign-vert="false"/>
-                    </constraints>
-                    <properties/>
-                  </component>
                   <grid id="36013" binding="tblTableSort" layout-manager="FormLayout">
                     <rowspec value="center:39px:noGrow"/>
                     <colspec value="fill:215px:noGrow"/>
@@ -271,6 +250,15 @@
                       </component>
                     </children>
                   </grid>
+                  <component id="f2360" class="javax.swing.JTable" binding="tblShownInformation">
+                    <constraints>
+                      <grid row="2" column="1" row-span="1" col-span="3" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                      <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                    </constraints>
+                    <properties/>
+                  </component>
                 </children>
               </grid>
               <grid id="583f6" binding="pnlTree" layout-manager="FormLayout">
@@ -301,7 +289,7 @@
         <rowspec value="center:d:noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="8" column="3" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="9" column="3" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties/>
@@ -321,6 +309,38 @@
           </component>
         </children>
       </grid>
+      <tabbedpane id="4379f" binding="tbSidePanel">
+        <constraints>
+          <grid row="4" column="9" row-span="7" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="200" height="200"/>
+          </grid>
+          <forms defaultalign-horz="false" defaultalign-vert="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="16668" binding="pnlDetail" layout-manager="FormLayout">
+            <rowspec value="center:d:grow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <tabbedpane title="Selection Details"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children/>
+          </grid>
+          <grid id="1d7bf" binding="pnlEdit" layout-manager="FormLayout">
+            <rowspec value="center:d:grow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <tabbedpane title="Edit Database"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children/>
+          </grid>
+        </children>
+      </tabbedpane>
     </children>
   </grid>
 </form>

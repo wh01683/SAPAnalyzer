@@ -26,7 +26,7 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="6892a0bc-c43d-4e0c-849f-7a3156d670ba">
-      <console name="sap" type="STANDARD" />
+      <console name="sap" type="STANDARD"><![CDATA[desc employees;]]></console>
     </connection>
     <connection id="48a27dda-37d4-4027-80f6-82082b654061">
       <console name="Connection" type="STANDARD" />
@@ -48,7 +48,9 @@
     <filters />
   </component>
   <component name="DBNavigator.Project.ScriptExecutionManager" clear-outputs="true">
-    <recently-used-interfaces />
+    <recently-used-interfaces>
+      <mapping database-type="ORACLE" interface-id="DEFAULT" />
+    </recently-used-interfaces>
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>

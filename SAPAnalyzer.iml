@@ -14,7 +14,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/ojdbc7.jar!/" />
+          <root url="jar://$MODULE_DIR$/ojdbc7.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

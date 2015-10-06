@@ -1,35 +1,66 @@
-import oracle.jdbc.*;
-import oracle.sql.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Properties;
 
 /**
  * Created by robert on 9/19/2015.
  */
+
+import oracle.jdbc.*;
+
+import javax.sql.DataSource;
+import javax.xml.transform.Result;
+
+
 public class DatabaseIO {
 
-    private Connection conn = null;
 
-    public void establishConnection(){
+    private final String DATABASE_NAME = "sap";
+    private Connection connection = null;
 
-        try{
-            Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection("");
+    public void DatabaseIO(){
 
-            Statement sqlStatement = conn.createStatement();
-            String selectStuff = "";
+        MakeConnection();
+    }
 
-            ResultSet rows = sqlStatement.executeQuery(selectStuff);
+    public void MakeConnection() {
 
-            while(rows.next()){
-                System.out.println(rows.getString("first_name"));
-            }
 
-        }catch(SQLException ex){
-            System.out.println("SQL Exception : " + ex.getMessage());
-            System.out.println("Vendor Error: " + ex.getErrorCode());
-        }catch (ClassNotFoundException e){
+        try {
+            connection = DriverManager.getConnection(
+                    "jdbc:oracle:thin:@localhost:1521:sap", "system", "database015");
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
+
+
+    public ArrayList<ResultSet> executeQuery(ArrayList<String> queries){
+
+        MakeConnection();
+        Statement stmt = null;
+        ArrayList<ResultSet> results = new ArrayList<ResultSet>(queries.size());
+
+        try {
+            stmt = connection.createStatement();
+
+            for (String query : queries){
+
+                ResultSet rs = stmt.executeQuery(query);
+                results.add(rs);
+                stmt = connection.createStatement();
+            }
+
+            return results;
+
+        }catch (SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
 }
+
+
