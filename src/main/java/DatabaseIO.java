@@ -24,12 +24,9 @@ public class DatabaseIO {
     }
 
     public void MakeConnection() {
-
-
         try {
             connection = DriverManager.getConnection(
                     "jdbc:oracle:thin:@localhost:1521:sap", "system", "database015");
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -60,7 +57,38 @@ public class DatabaseIO {
         }
     }
 
+    public int[] insertIntoTable(String table, String...values) throws SQLException{
+        MakeConnection();
+        Statement stmt = null;
 
+        StringBuilder vals = new StringBuilder("INSERT INTO " + table + " VALUES ("+ values[0] + (values.length > 1? ", " : " "));
+        for(int s = 1; s < values.length; s++){
+            if(s == values.length - 1){
+                vals.append(values[s] + ")");
+            }else{
+                vals.append(values[s]+", ");
+            }
+        }
+
+        try {
+            this.connection.setAutoCommit(false);
+            stmt = this.connection.createStatement();
+            stmt.addBatch(vals.toString());
+
+            System.out.printf(vals.toString());
+            int[] updateCount = stmt.executeBatch();
+
+            this.connection.commit();
+            return updateCount;
+
+        }catch (SQLException e){
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (stmt != null) { stmt.close(); }
+            this.connection.setAutoCommit(true);
+        }
+    }
 }
 
 

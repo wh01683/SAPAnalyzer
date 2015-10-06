@@ -68,6 +68,7 @@ public class SAPAnalyzer extends JFrame {
         frame.pack();
     }
 
+
     public void updateTable(String tableName){
 
         Object[] columnNames = createColumnHeadings(tableName);
@@ -97,8 +98,6 @@ public class SAPAnalyzer extends JFrame {
                     } while (rs.next());
                 }
             }
-
-
             data = new Object[rows.size()+1][columnNames.length];
             data[0] = columnNames;
             for(int r = 1; r< rows.size()+1; r++){
@@ -106,37 +105,15 @@ public class SAPAnalyzer extends JFrame {
                     data[r][c] = rows.get(r-1).get(c);
                 }
             }
-
             DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
             tblShownInformation.setModel(tableModel);
-
-
         }catch (SQLException s){
             s.printStackTrace();
         }catch(ClassNotFoundException c){
             System.out.println("Error encountered when dynamically casting, class not found.");
             c.printStackTrace();
         }
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
      /**
      * Creates an array of column headers using a tableName
