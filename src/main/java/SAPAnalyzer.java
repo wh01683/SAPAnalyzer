@@ -45,14 +45,29 @@ public class SAPAnalyzer {
 
     public static void main(String[] args){
 
+        try {
 
+            for (String s : createColumnHeadings("products")) {
+                System.out.println(s);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     public void updateTable(){
 
     }
 
-    private String[] createColumnHeadings(String tableName) throws SQLException{
+    /**
+     * Creates an array of column headers using a tableName
+     * @param tableName name of tables to fetch from db
+     * @return String[] array of column names.
+     * @throws SQLException Cannot return array from exception, but does not affect array content.
+     * @should should return exact number and content of column names for a give table.
+     */
+
+    private static String[] createColumnHeadings(String tableName) throws SQLException{
 
             dbio = new DatabaseIO();
             ArrayList<String> quer = new ArrayList<String>();
@@ -63,14 +78,11 @@ public class SAPAnalyzer {
             int c = 0;
             ArrayList<String> temp = new ArrayList<String>();
             for (ResultSet r : resultSets) {
-
-                do {
-                    c++;
-                    temp.add(r.getMetaData().getColumnName(c));
-                } while (r.next());
-                c = 0;
+                for (int i = 1; i < r.getMetaData().getColumnCount()+1; i++) {
+                    temp.add(r.getMetaData().getColumnName(i));
+                    c=i;
+                }
             }
-
             String[] arr = new String[c];
             int count = 0;
             for (String s : temp) {

@@ -22,11 +22,16 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="6892a0bc-c43d-4e0c-849f-7a3156d670ba">
+        <schema name="PUBLIC" object-types="materialized view, synonym, table, view" />
+        <schema name="SYSTEM" object-types="materialized view, synonym, table, view" />
+      </connection>
+    </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="6892a0bc-c43d-4e0c-849f-7a3156d670ba">
-      <console name="sap" type="STANDARD"><![CDATA[desc employees;]]></console>
+      <console name="sap" type="STANDARD"><![CDATA[select * from bom;]]></console>
     </connection>
     <connection id="48a27dda-37d4-4027-80f6-82082b654061">
       <console name="Connection" type="STANDARD" />
