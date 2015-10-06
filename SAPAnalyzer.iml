@@ -29,5 +29,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jgoodies-common" level="project" />
   </component>
 </module>
