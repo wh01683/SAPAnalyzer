@@ -1,17 +1,10 @@
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Vector;
 
 
 /**
@@ -50,6 +43,30 @@ public class SAPAnalyzer extends JFrame implements TableModelListener{
     private JPanel pnlEdit;
     private JPanel pnlInsert;
     private JComboBox cbTableSelect;
+    private JTabbedPane tbEditTable;
+    private JPanel pnlInsertEmployee;
+    private JPanel pnlInsertBOM;
+    private JPanel pnlInsertProduct;
+    private JPanel pnlInsertComponent;
+    private JPanel pnlInsertProcess;
+    private JPanel pnlCreateBOM;
+    private JTextField fldBOMName;
+    private JPanel pnlBOMForm;
+    private JComboBox cbPlantID;
+    private JComboBox cbCompanyID;
+    private JButton btnAddComponent;
+    private JPanel pnlAddComponents;
+    private JPanel pnlSummaryView;
+    private JTextField fldProdName;
+    private JTextField fldProdCost;
+    private JTextField fldCompName;
+    private JTextField fldCompDesc;
+    private JPanel pnlAddProcess;
+    private JTextField textField1;
+    private JTextField textField2;
+    private JTextField textField3;
+    private JButton btnAddProcess;
+    private JTextArea txtarPreview;
 
     DatabaseTableModel databaseTableModel;
     private String[] columnHeadings;
