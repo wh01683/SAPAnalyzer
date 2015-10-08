@@ -18,8 +18,7 @@ public class DatabaseIO {
     private final String DATABASE_NAME = "sap";
     private Connection connection = null;
 
-    public void DatabaseIO(){
-
+    public DatabaseIO(){
         MakeConnection();
     }
 

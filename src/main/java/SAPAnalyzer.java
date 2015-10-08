@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
@@ -11,7 +13,10 @@ import java.util.Vector;
 /**
  * Created by robert on 9/18/2015.
  */
-public class SAPAnalyzer extends JFrame {
+public class SAPAnalyzer extends JFrame implements TableModelListener{
+
+
+
     private JPanel pnlMain;
     private JTabbedPane tbDatabaseInformation;
     private JPanel pnlTable;
@@ -39,10 +44,12 @@ public class SAPAnalyzer extends JFrame {
     private JTabbedPane tbSidePanel;
     private JPanel pnlDetail;
     private JPanel pnlEdit;
+    private JPanel pnlInsert;
 
     private String[] columnHeadings;
     private static JFrame frame;
 
+    DefaultTableModel databaseTableModel;
 
     private static DatabaseIO dbio = new DatabaseIO();
 
@@ -51,21 +58,22 @@ public class SAPAnalyzer extends JFrame {
         this.setVisible(true);
         pnlTable.setVisible(true);
         tblShownInformation.setVisible(true);
-
         this.btnFillInfo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                updateTable("employees");
+                tblShownInformation.setModel(new DatabaseTableModel("select * from employees"));
+
             }
         });
 
     }
 
     public static void main(String[] args){
-        frame = new JFrame("SAP Analyzer");
+        frame = new SAPAnalyzer();
         frame.setContentPane(new SAPAnalyzer().getContentPane());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.pack();
+
     }
 
 
@@ -152,6 +160,15 @@ public class SAPAnalyzer extends JFrame {
         }
     }
 
+
+    public void tableChanged(TableModelEvent e) {
+        System.out.println("TableModelEvent triggered!");
+        int row = e.getFirstRow();
+        int column = e.getColumn();
+        Object test = tblShownInformation.getModel().getValueAt(row, column);
+        System.out.println("row: " + row + " column: " + column);
+        System.out.println(test.toString());
     }
+}
 
 
