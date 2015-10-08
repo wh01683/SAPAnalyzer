@@ -19,6 +19,7 @@ public class DatabaseTableModel extends AbstractTableModel {
             repopulate(query);
             columnNames = createColumnHeadings(query);
         }
+
     }
     @Override
     public Class<?> getColumnClass(int columnIndex) {
@@ -141,5 +142,9 @@ public class DatabaseTableModel extends AbstractTableModel {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public String[] getColumnNames() {
+        return columnNames;
     }
 }

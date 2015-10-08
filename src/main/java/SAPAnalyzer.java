@@ -1,10 +1,14 @@
 import javax.swing.*;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -45,26 +49,46 @@ public class SAPAnalyzer extends JFrame implements TableModelListener{
     private JPanel pnlDetail;
     private JPanel pnlEdit;
     private JPanel pnlInsert;
+    private JComboBox cbTableSelect;
 
+    DatabaseTableModel databaseTableModel;
     private String[] columnHeadings;
     private static JFrame frame;
 
-    DefaultTableModel databaseTableModel;
-
-    private static DatabaseIO dbio = new DatabaseIO();
+    private static DatabaseIO dbio;
 
     private SAPAnalyzer(){
+        dbio = new DatabaseIO();
+        for(String s : dbio.getTableNames()){
+            cbTableSelect.addItem(s);
+        }
+
         this.setContentPane(pnlMain);
         this.setVisible(true);
         pnlTable.setVisible(true);
         tblShownInformation.setVisible(true);
+        fillTableModel();
         this.btnFillInfo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tblShownInformation.setModel(new DatabaseTableModel("select * from employees"));
-
+                fillTableModel();
             }
         });
 
+        cbTableSelect.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == ItemEvent.DESELECTED){
+                    cbSortCategory.removeAllItems();
+                    cbSortCategory.addItem("All");
+                    cbSelection.removeAllItems();
+                    cbSelection.addItem("All");
+                }
+                if(e.getStateChange() == ItemEvent.SELECTED){
+                    fillTableModel();
+                    updateCbBoxes();
+                }
+            }
+
+        });
     }
 
     public static void main(String[] args){
@@ -77,90 +101,6 @@ public class SAPAnalyzer extends JFrame implements TableModelListener{
     }
 
 
-    public void updateTable(String tableName){
-
-        Object[] columnNames = createColumnHeadings(tableName);
-        ArrayList<ArrayList<Object>> rows = new ArrayList<ArrayList<Object>>(50);
-        Object[][] data;
-
-
-        ArrayList<String> q = new ArrayList<String>();
-        q.add("select * from " + tableName);
-        ArrayList<ResultSet> rsset = dbio.executeQuery(q);
-
-        try {
-            for (ResultSet rs : rsset) {
-
-                int r = 0;
-                if (!rs.next()) {
-
-                } else {
-                    do {
-                        rows.add(new ArrayList<Object>(10));
-                        for(int c = 1; c<rs.getMetaData().getColumnCount()+1; c++) {
-                        Class<?> dynamicClass = Class.forName(Utility.ConvertType(rs.getMetaData().getColumnType(c)));
-                        Object obj = dynamicClass.cast(rs.getObject(c));
-                        rows.get(r).add(obj);
-                        }
-                        r++;
-                    } while (rs.next());
-                }
-            }
-            data = new Object[rows.size()+1][columnNames.length];
-            data[0] = columnNames;
-            for(int r = 1; r< rows.size()+1; r++){
-                for (int c = 0; c < columnNames.length; c++){
-                    data[r][c] = rows.get(r-1).get(c);
-                }
-            }
-            DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
-            tblShownInformation.setModel(tableModel);
-        }catch (SQLException s){
-            s.printStackTrace();
-        }catch(ClassNotFoundException c){
-            System.out.println("Error encountered when dynamically casting, class not found.");
-            c.printStackTrace();
-        }
-    }
-
-     /**
-     * Creates an array of column headers using a tableName
-     * @param tableName name of tables to fetch from db
-     * @return String[] array of column names.
-     * @throws SQLException Cannot return array from exception, but does not affect array content.
-     * @should names of table columns
-     */
-
-    private static String[] createColumnHeadings(String tableName) {
-
-        try {
-            ArrayList<String> quer = new ArrayList<String>();
-            quer.add("select * from " + tableName);
-
-            ArrayList<ResultSet> resultSets = dbio.executeQuery(quer);
-
-            int c = 0;
-            ArrayList<String> temp = new ArrayList<String>();
-            for (ResultSet r : resultSets) {
-                for (int i = 1; i < r.getMetaData().getColumnCount() + 1; i++) {
-                    temp.add(r.getMetaData().getColumnName(i));
-                    c = i;
-                }
-            }
-            String[] arr = new String[c];
-            int count = 0;
-            for (String s : temp) {
-                arr[count] = s;
-                count++;
-            }
-            return arr;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
     public void tableChanged(TableModelEvent e) {
         System.out.println("TableModelEvent triggered!");
         int row = e.getFirstRow();
@@ -168,6 +108,30 @@ public class SAPAnalyzer extends JFrame implements TableModelListener{
         Object test = tblShownInformation.getModel().getValueAt(row, column);
         System.out.println("row: " + row + " column: " + column);
         System.out.println(test.toString());
+    }
+
+    public void updateCbBoxes(){
+        cbSortCategory.removeAllItems();
+        cbSortCategory.addItem("All");
+        cbSelection.removeAllItems();
+        cbSelection.addItem("All");
+
+        for(String s : databaseTableModel.getColumnNames()){
+            cbSelection.addItem(s);
+            cbSortCategory.addItem(s);
+        }
+    }
+
+    public void setDatabaseTableModel(DatabaseTableModel databaseTableModel) {
+        this.databaseTableModel = databaseTableModel;
+        tblShownInformation.setModel(databaseTableModel);
+        updateCbBoxes();
+    }
+
+    private void fillTableModel(){
+        databaseTableModel = new DatabaseTableModel("select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
+                " from " + cbTableSelect.getSelectedItem());
+        setDatabaseTableModel(databaseTableModel);
     }
 }
 

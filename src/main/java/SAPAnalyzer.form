@@ -2,14 +2,14 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="SAPAnalyzer">
   <grid id="27dc6" binding="pnlMain" layout-manager="FormLayout">
     <rowspec value="top:7dlu:noGrow"/>
-    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="top:9dlu:noGrow"/>
     <rowspec value="center:10px:noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="top:3dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="center:632px:noGrow"/>
+    <rowspec value="center:546px:noGrow"/>
     <rowspec value="top:73dlu:noGrow"/>
     <rowspec value="top:3dlu:noGrow"/>
     <rowspec value="center:79px:noGrow"/>
@@ -18,8 +18,6 @@
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="fill:max(d;4px):noGrow"/>
     <colspec value="left:94dlu:noGrow"/>
-    <colspec value="fill:max(d;4px):noGrow"/>
-    <colspec value="left:7dlu:noGrow"/>
     <colspec value="fill:1082px:noGrow"/>
     <colspec value="fill:max(d;4px):noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
@@ -36,8 +34,6 @@
     </border>
     <children>
       <grid id="cac83" binding="pnlDropboxFilter" layout-manager="FormLayout">
-        <rowspec value="center:d:noGrow"/>
-        <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
@@ -53,23 +49,9 @@
           <font name="Lao UI" size="20"/>
         </border>
         <children>
-          <component id="7b877" class="javax.swing.JComboBox" binding="cbSelection">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <model>
-                <item value="Select"/>
-                <item value="Company"/>
-                <item value="Plant"/>
-                <item value="BOM"/>
-              </model>
-            </properties>
-          </component>
           <component id="e5cac" class="javax.swing.JCheckBox" binding="chkCompanies">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
@@ -78,7 +60,7 @@
           </component>
           <component id="f4670" class="javax.swing.JCheckBox" binding="chkPlants">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
@@ -87,7 +69,7 @@
           </component>
           <component id="afd72" class="javax.swing.JCheckBox" binding="chkBOM">
             <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
@@ -97,7 +79,11 @@
         </children>
       </grid>
       <grid id="b681f" binding="pnlTableFilter" layout-manager="FormLayout">
-        <rowspec value="center:d:noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
+        <rowspec value="center:30px:noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
@@ -106,7 +92,11 @@
         <rowspec value="center:max(d;4px):noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="fill:d:grow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:82px:noGrow"/>
+        <colspec value="fill:98px:grow"/>
         <constraints>
           <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
@@ -118,7 +108,7 @@
         <children>
           <component id="bac9d" class="javax.swing.JCheckBox" binding="chkMaterials">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
@@ -127,7 +117,7 @@
           </component>
           <component id="c973" class="javax.swing.JCheckBox" binding="chkProcesses">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
@@ -136,7 +126,7 @@
           </component>
           <component id="8b7b7" class="javax.swing.JCheckBox" binding="chkLogistics">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
@@ -145,7 +135,7 @@
           </component>
           <component id="f02b" class="javax.swing.JCheckBox" binding="chkProducts">
             <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
@@ -154,11 +144,111 @@
           </component>
           <component id="aaba8" class="javax.swing.JButton" binding="btnFillInfo">
             <constraints>
-              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
               <text value="Populate"/>
+            </properties>
+          </component>
+          <grid id="36013" binding="tblTableSort" layout-manager="FormLayout">
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:7dlu:noGrow"/>
+            <rowspec value="center:39px:noGrow"/>
+            <rowspec value="top:9dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:55px:noGrow"/>
+            <colspec value="fill:170px:noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="left:6dlu:noGrow"/>
+            <constraints>
+              <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+            </constraints>
+            <properties/>
+            <border type="none" title="Sort Table">
+              <font name="Lao UI" size="16"/>
+            </border>
+            <children>
+              <component id="5ee10" class="javax.swing.JComboBox" binding="cbSortCategory">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <model>
+                    <item value="Select"/>
+                  </model>
+                  <toolTipText value="Select a category to sort the table by."/>
+                </properties>
+              </component>
+              <component id="6d8d4" class="javax.swing.JButton" binding="btnSort">
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Apply"/>
+                </properties>
+              </component>
+              <component id="4617e" class="javax.swing.JComboBox" binding="cbSortWay">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <model>
+                    <item value="Select"/>
+                    <item value="Ascending"/>
+                    <item value="Descending"/>
+                  </model>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="15188" binding="pnlCompare" layout-manager="FormLayout">
+            <rowspec value="center:55px:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+            </constraints>
+            <properties/>
+            <border type="bevel-lowered" title="Comparison">
+              <font name="Lao UI" size="20"/>
+            </border>
+            <children>
+              <component id="20727" class="javax.swing.JComboBox" binding="cbComparisonMethod">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <font/>
+                  <model/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <component id="82a84" class="javax.swing.JComboBox" binding="cbTableSelect">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <model/>
+            </properties>
+          </component>
+          <component id="7b877" class="javax.swing.JComboBox" binding="cbSelection">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <model>
+                <item value="All"/>
+              </model>
             </properties>
           </component>
         </children>
@@ -167,7 +257,7 @@
         <rowspec value="center:756px:grow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="6" column="6" row-span="7" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="4" row-span="7" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-vert="false"/>
         </constraints>
         <properties/>
@@ -231,33 +321,9 @@
           </tabbedpane>
         </children>
       </grid>
-      <grid id="15188" binding="pnlCompare" layout-manager="FormLayout">
-        <rowspec value="center:d:noGrow"/>
-        <colspec value="fill:d:grow"/>
-        <constraints>
-          <grid row="11" column="3" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms defaultalign-horz="false" defaultalign-vert="false"/>
-        </constraints>
-        <properties/>
-        <border type="bevel-lowered" title="Comparison">
-          <font name="Lao UI" size="20"/>
-        </border>
-        <children>
-          <component id="20727" class="javax.swing.JComboBox" binding="cbComparisonMethod">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <font/>
-              <model/>
-            </properties>
-          </component>
-        </children>
-      </grid>
       <tabbedpane id="4379f" binding="tbSidePanel">
         <constraints>
-          <grid row="6" column="9" row-span="7" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="6" column="7" row-span="7" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="200" height="200"/>
           </grid>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
@@ -287,66 +353,23 @@
           </grid>
         </children>
       </tabbedpane>
-      <grid id="36013" binding="tblTableSort" layout-manager="FormLayout">
-        <rowspec value="center:39px:noGrow"/>
-        <rowspec value="top:4dlu:noGrow"/>
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <rowspec value="top:4dlu:noGrow"/>
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="fill:215px:noGrow"/>
-        <colspec value="left:4dlu:noGrow"/>
-        <colspec value="left:15dlu:noGrow"/>
-        <constraints>
-          <grid row="9" column="3" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms defaultalign-horz="false" defaultalign-vert="false"/>
-        </constraints>
-        <properties/>
-        <border type="none" title="Sort Table">
-          <font name="Lao UI" size="16"/>
-        </border>
-        <children>
-          <component id="5ee10" class="javax.swing.JComboBox" binding="cbSortCategory">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <model>
-                <item value="Select"/>
-              </model>
-              <toolTipText value="Select a category to sort the table by."/>
-            </properties>
-          </component>
-          <component id="6d8d4" class="javax.swing.JButton" binding="btnSort">
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <text value="Apply"/>
-            </properties>
-          </component>
-          <component id="4617e" class="javax.swing.JComboBox" binding="cbSortWay">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <model>
-                <item value="Select"/>
-                <item value="Ascending"/>
-                <item value="Descending"/>
-              </model>
-            </properties>
-          </component>
-        </children>
-      </grid>
       <grid id="65d29" binding="pnlInsert" layout-manager="FormLayout">
         <rowspec value="center:d:grow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="4" column="6" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-vert="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+      <grid id="631c6" layout-manager="FormLayout">
+        <rowspec value="center:d:grow"/>
+        <colspec value="fill:d:grow"/>
+        <constraints>
+          <grid row="0" column="4" row-span="4" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms/>
         </constraints>
         <properties/>
         <border type="none"/>
