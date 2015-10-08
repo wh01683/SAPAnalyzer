@@ -10,7 +10,7 @@ import java.awt.event.ItemListener;
 /**
  * Created by robert on 9/18/2015.
  */
-public class SAPAnalyzer extends JFrame implements TableModelListener{
+public class SAPAnalyzer extends JFrame{
 
 
 
@@ -71,6 +71,7 @@ public class SAPAnalyzer extends JFrame implements TableModelListener{
     DatabaseTableModel databaseTableModel;
     private String[] columnHeadings;
     private static JFrame frame;
+    private String currentDatabase;
 
     private static DatabaseIO dbio;
 
@@ -90,7 +91,17 @@ public class SAPAnalyzer extends JFrame implements TableModelListener{
                 fillTableModel();
             }
         });
-
+        tblShownInformation.getModel().addTableModelListener(new TableModelListener() {
+            public void tableChanged(TableModelEvent e) {
+                int row = e.getFirstRow();
+                int column = e.getColumn();
+                DatabaseTableModel model = (DatabaseTableModel)e.getSource();
+                Object data = model.getValueAt(row, column);
+                Object pkdata = model.getValueAt(row, 0);
+                System.out.println("row: " + row + " column: " + column);
+                System.out.println(data.toString());
+            }
+        });
         cbTableSelect.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if(e.getStateChange() == ItemEvent.DESELECTED){
@@ -104,7 +115,6 @@ public class SAPAnalyzer extends JFrame implements TableModelListener{
                     updateCbBoxes();
                 }
             }
-
         });
     }
 
@@ -115,16 +125,6 @@ public class SAPAnalyzer extends JFrame implements TableModelListener{
         frame.setVisible(true);
         frame.pack();
 
-    }
-
-
-    public void tableChanged(TableModelEvent e) {
-        System.out.println("TableModelEvent triggered!");
-        int row = e.getFirstRow();
-        int column = e.getColumn();
-        Object test = tblShownInformation.getModel().getValueAt(row, column);
-        System.out.println("row: " + row + " column: " + column);
-        System.out.println(test.toString());
     }
 
     public void updateCbBoxes(){
@@ -140,16 +140,19 @@ public class SAPAnalyzer extends JFrame implements TableModelListener{
     }
 
     public void setDatabaseTableModel(DatabaseTableModel databaseTableModel) {
+        dbio.setCurrentTable((String)cbTableSelect.getSelectedItem());
         this.databaseTableModel = databaseTableModel;
         tblShownInformation.setModel(databaseTableModel);
         updateCbBoxes();
     }
 
     private void fillTableModel(){
+        dbio.setCurrentTable((String)cbTableSelect.getSelectedItem());
         databaseTableModel = new DatabaseTableModel("select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
                 " from " + cbTableSelect.getSelectedItem());
         setDatabaseTableModel(databaseTableModel);
     }
+
 }
 
 

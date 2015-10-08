@@ -1,15 +1,9 @@
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Properties;
 
 /**
  * Created by robert on 9/19/2015.
  */
-
-import oracle.jdbc.*;
-
-import javax.sql.DataSource;
-import javax.xml.transform.Result;
 
 
 public class DatabaseIO {
@@ -20,6 +14,7 @@ public class DatabaseIO {
     private final String PASSWORD = "database015";
     private Connection connection = null;
     private ArrayList<String> tableNames;
+    private String currentTable;
 
     public DatabaseIO(){
         MakeConnection();
@@ -35,7 +30,6 @@ public class DatabaseIO {
         }
     }
 
-
     public ArrayList<ResultSet> executeQuery(ArrayList<String> queries){
 
         Statement stmt = null;
@@ -45,14 +39,11 @@ public class DatabaseIO {
             stmt = connection.createStatement();
 
             for (String query : queries){
-
                 ResultSet rs = stmt.executeQuery(query);
                 results.add(rs);
                 stmt = connection.createStatement();
             }
-
             return results;
-
         }catch (SQLException e){
             e.printStackTrace();
             return null;
@@ -62,7 +53,6 @@ public class DatabaseIO {
     public int[] insertIntoTable(String table, String...values) throws SQLException{
 
         Statement stmt = null;
-
         StringBuilder vals = new StringBuilder("INSERT INTO " + table + " VALUES ("+ values[0] + (values.length > 1? ", " : " "));
         for(int s = 1; s < values.length; s++){
             if(s == values.length - 1){
@@ -104,6 +94,52 @@ public class DatabaseIO {
 
     public ArrayList<String> getTableNames() {
         return tableNames;
+    }
+
+    public int[] updateTable(int col, Object pk, Object newData){
+        try {
+            ArrayList<String> temp = new ArrayList<String>(1);
+            temp.add("select * from " + currentTable);
+            ArrayList<ResultSet> temprs = executeQuery(temp);
+            String colName = "";
+            Class<?> colType = null;
+            String pkName = "";
+
+            for (ResultSet tableRs : temprs) {
+                colName = tableRs.getMetaData().getColumnName(col);
+                colType = Class.forName(Utility.ConvertType(tableRs.getMetaData().getColumnType(col)));
+                pkName = tableRs.getMetaData().getColumnName(0);
+            }
+
+
+            Statement stmt = null;
+            StringBuilder vals = new StringBuilder("UPDATE " + currentTable + " SET " + colName +" = " + colType.cast(newData) + " WHERE " + pkName + " = " + pk);
+
+            this.connection.setAutoCommit(false);
+            stmt = this.connection.createStatement();
+            stmt.addBatch(vals.toString());
+
+            System.out.printf(vals.toString());
+            int[] updateCount = stmt.executeBatch();
+
+            this.connection.commit();
+
+            return updateCount;
+        }catch (SQLException s){
+            s.printStackTrace();
+        }catch (ClassNotFoundException c){
+            c.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public String getCurrentTable() {
+        return currentTable;
+    }
+
+    public void setCurrentTable(String currentTable) {
+        this.currentTable = currentTable;
     }
 }
 

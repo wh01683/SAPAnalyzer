@@ -1,3 +1,5 @@
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -6,13 +8,12 @@ import java.util.ArrayList;
 /**
  * Created by robert on 10/8/2015.
  */
-public class DatabaseTableModel extends AbstractTableModel {
+public class DatabaseTableModel extends AbstractTableModel{
 
     private Object[][] tableData;
     private String[] columnNames;
     private ArrayList<DBRow> rowList = new ArrayList<DBRow>(10);
     private DatabaseIO dbio = new DatabaseIO();
-
 
     public DatabaseTableModel(String query){
         if(query != null){
