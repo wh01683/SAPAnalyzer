@@ -69,7 +69,6 @@ public class SAPAnalyzer extends JFrame{
     private JTextArea txtarPreview;
 
     DatabaseTableModel databaseTableModel;
-    private String[] columnHeadings;
     private static JFrame frame;
     private String currentDatabase;
 
@@ -91,34 +90,27 @@ public class SAPAnalyzer extends JFrame{
                 fillTableModel();
             }
         });
-        tblShownInformation.getModel().addTableModelListener(new TableModelListener() {
-            public void tableChanged(TableModelEvent e) {
-                int row = e.getFirstRow();
-                int column = e.getColumn();
-                DatabaseTableModel model = (DatabaseTableModel)e.getSource();
-                Object data = model.getValueAt(row, column);
-                Object pkdata = model.getValueAt(row, 0);
-                System.out.println("row: " + row + " column: " + column);
-                System.out.println(data.toString());
-            }
-        });
-        cbTableSelect.addItemListener(new ItemListener() {
+
+
+
+
+        /*cbTableSelect.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if(e.getStateChange() == ItemEvent.DESELECTED){
+                if (e.getStateChange() == ItemEvent.DESELECTED) {
                     cbSortCategory.removeAllItems();
                     cbSortCategory.addItem("All");
                     cbSelection.removeAllItems();
                     cbSelection.addItem("All");
                 }
-                if(e.getStateChange() == ItemEvent.SELECTED){
+                if (e.getStateChange() == ItemEvent.SELECTED) {
                     fillTableModel();
                     updateCbBoxes();
                 }
             }
-        });
+        });*/
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         frame = new SAPAnalyzer();
         frame.setContentPane(new SAPAnalyzer().getContentPane());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -150,7 +142,12 @@ public class SAPAnalyzer extends JFrame{
         dbio.setCurrentTable((String)cbTableSelect.getSelectedItem());
         databaseTableModel = new DatabaseTableModel("select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
                 " from " + cbTableSelect.getSelectedItem());
+        this.databaseTableModel.addTableModelListener(new TableListener());
         setDatabaseTableModel(databaseTableModel);
+    }
+
+    public static DatabaseIO getDbio(){
+        return dbio;
     }
 
 }

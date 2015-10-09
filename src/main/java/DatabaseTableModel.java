@@ -16,12 +16,20 @@ public class DatabaseTableModel extends AbstractTableModel{
     private DatabaseIO dbio = new DatabaseIO();
 
     public DatabaseTableModel(String query){
+
+
         if(query != null){
             repopulate(query);
             columnNames = createColumnHeadings(query);
         }
 
     }
+
+    @Override
+    public void fireTableRowsUpdated(int firstRow, int lastRow) {
+        super.fireTableRowsUpdated(firstRow, lastRow);
+    }
+
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         return super.getColumnClass(columnIndex);
@@ -51,12 +59,12 @@ public class DatabaseTableModel extends AbstractTableModel{
     }
 
     public Object getValueAt(int rowIndex, int colIndex) {
-        if (rowIndex < 0 || rowIndex >= getRowCount()) {
+        /*if (rowIndex < 0 || rowIndex >= getRowCount()) {
             // throw exception
         }
         if (colIndex < 0 || colIndex >= getColumnCount()) {
             // throw exception
-        }
+        }*/
         DBRow dbRow = rowList.get(rowIndex);
 
         return dbRow.getValueAtColumn(colIndex);
@@ -64,16 +72,17 @@ public class DatabaseTableModel extends AbstractTableModel{
 
     @Override
     public void setValueAt(Object newVal, int rowIndex, int colIndex) {
-        if (rowIndex < 0 || rowIndex >= getRowCount()) {
+        /*if (rowIndex < 0 || rowIndex >= getRowCount()) {
             // throw exception
         }
         if (colIndex < 0 || colIndex >= getColumnCount()) {
             // throw exception
-        }
+        }*/
 
         DBRow row = rowList.get(rowIndex);
         row.setValueAtColumn(colIndex, newVal);
-        fireTableRowsUpdated(rowIndex, rowIndex);
+        fireTableCellUpdated(rowIndex, colIndex);
+
     }
 
     public void repopulate(String query) {
@@ -148,4 +157,6 @@ public class DatabaseTableModel extends AbstractTableModel{
     public String[] getColumnNames() {
         return columnNames;
     }
-}
+
+    }
+

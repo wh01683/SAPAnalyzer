@@ -104,16 +104,18 @@ public class DatabaseIO {
             String colName = "";
             Class<?> colType = null;
             String pkName = "";
+            boolean isStringType = false;
 
             for (ResultSet tableRs : temprs) {
-                colName = tableRs.getMetaData().getColumnName(col);
-                colType = Class.forName(Utility.ConvertType(tableRs.getMetaData().getColumnType(col)));
-                pkName = tableRs.getMetaData().getColumnName(0);
+                colName = tableRs.getMetaData().getColumnName(col + 1);
+                colType = Class.forName(Utility.ConvertType(tableRs.getMetaData().getColumnType(col + 1)));
+                isStringType = (tableRs.getMetaData().getColumnType(col + 1) == 12);
+                pkName = tableRs.getMetaData().getColumnName(1);
             }
 
 
             Statement stmt = null;
-            StringBuilder vals = new StringBuilder("UPDATE " + currentTable + " SET " + colName +" = " + colType.cast(newData) + " WHERE " + pkName + " = " + pk);
+            StringBuilder vals = new StringBuilder("UPDATE " + currentTable + " SET " + colName +" = " + (isStringType? "'" : "") + colType.cast(newData) + (isStringType? "'" : "") + " WHERE " + pkName + " = " + pk);
 
             this.connection.setAutoCommit(false);
             stmt = this.connection.createStatement();

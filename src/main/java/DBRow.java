@@ -23,7 +23,6 @@ public class DBRow {
                 classList[c-1] = dynamicClass;
                 rowArray[c-1] = dynamicClass.cast(newContents.getObject(c));
             }
-
         }catch (SQLException e){
             e.printStackTrace();
         }catch (ClassNotFoundException c){
