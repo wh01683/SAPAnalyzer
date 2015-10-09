@@ -19,19 +19,9 @@ public class SAPAnalyzer extends JFrame{
     private JPanel pnlTable;
     private JPanel pnlTree;
     private JTree treeSAPHierarchy;
-    private JPanel pnlDropboxFilter;
     private JPanel pnlTableFilter;
     private JComboBox cbSelection;
-    private JCheckBox chkCompanies;
-    private JCheckBox chkPlants;
-    private JCheckBox chkBOM;
-    private JCheckBox chkMaterials;
-    private JCheckBox chkProcesses;
-    private JCheckBox chkLogistics;
-    private JCheckBox chkProducts;
     private JPanel pnlMainInformation;
-    private JPanel pnlCompare;
-    private JComboBox cbComparisonMethod;
     private JButton btnFillInfo;
     private JTable tblShownInformation;
     private JPanel tblTableSort;
@@ -91,14 +81,10 @@ public class SAPAnalyzer extends JFrame{
             }
         });
 
-
-
-
-        /*cbTableSelect.addItemListener(new ItemListener() {
+        cbTableSelect.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.DESELECTED) {
                     cbSortCategory.removeAllItems();
-                    cbSortCategory.addItem("All");
                     cbSelection.removeAllItems();
                     cbSelection.addItem("All");
                 }
@@ -107,7 +93,13 @@ public class SAPAnalyzer extends JFrame{
                     updateCbBoxes();
                 }
             }
-        });*/
+        });
+
+        btnSort.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                sortTableModel();
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -121,7 +113,6 @@ public class SAPAnalyzer extends JFrame{
 
     public void updateCbBoxes(){
         cbSortCategory.removeAllItems();
-        cbSortCategory.addItem("All");
         cbSelection.removeAllItems();
         cbSelection.addItem("All");
 
@@ -132,7 +123,7 @@ public class SAPAnalyzer extends JFrame{
     }
 
     public void setDatabaseTableModel(DatabaseTableModel databaseTableModel) {
-        dbio.setCurrentTable((String)cbTableSelect.getSelectedItem());
+        dbio.setCurrentTable((String) cbTableSelect.getSelectedItem());
         this.databaseTableModel = databaseTableModel;
         tblShownInformation.setModel(databaseTableModel);
         updateCbBoxes();
@@ -150,6 +141,14 @@ public class SAPAnalyzer extends JFrame{
         return dbio;
     }
 
+    private void sortTableModel(){
+        dbio.setCurrentTable((String)cbTableSelect.getSelectedItem());
+        databaseTableModel = new DatabaseTableModel("select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
+                " from " + cbTableSelect.getSelectedItem() + ((cbSortCategory.getSelectedIndex() == 0) ? "" : " order by ") + ((cbSortCategory.getSelectedIndex() == 0) ? "" : cbSortCategory.getSelectedItem() + " ") +
+                ((cbSortCategory.getSelectedIndex() == 0) ? "" : cbSortWay.getSelectedItem()));
+        this.databaseTableModel.addTableModelListener(new TableListener());
+        setDatabaseTableModel(databaseTableModel);
+    }
 }
 
 

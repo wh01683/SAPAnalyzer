@@ -113,7 +113,6 @@ public class DatabaseIO {
                 pkName = tableRs.getMetaData().getColumnName(1);
             }
 
-
             Statement stmt = null;
             StringBuilder vals = new StringBuilder("UPDATE " + currentTable + " SET " + colName +" = " + (isStringType? "'" : "") + colType.cast(newData) + (isStringType? "'" : "") + " WHERE " + pkName + " = " + pk);
 

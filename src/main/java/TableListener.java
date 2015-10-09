@@ -21,7 +21,4 @@ public class TableListener implements TableModelListener{
     }
 
 
-
-
-
 }
