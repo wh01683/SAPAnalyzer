@@ -149,6 +149,9 @@ public class SAPAnalyzer extends JFrame{
         this.databaseTableModel.addTableModelListener(new TableListener());
         setDatabaseTableModel(databaseTableModel);
     }
+
+
+
 }
 
 

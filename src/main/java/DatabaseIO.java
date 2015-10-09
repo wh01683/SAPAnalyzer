@@ -50,6 +50,16 @@ public class DatabaseIO {
         }
     }
 
+    public ArrayList<ResultSet> executeQuery(String... queries){
+        ArrayList<String> quers = new ArrayList<String>(queries.length);
+
+        for(String query : queries){
+            quers.add(query);
+        }
+
+        return executeQuery(quers);
+    }
+
     public int[] insertIntoTable(String table, String...values) throws SQLException{
 
         Statement stmt = null;
