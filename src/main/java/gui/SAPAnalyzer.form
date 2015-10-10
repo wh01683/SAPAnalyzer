@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="SAPAnalyzer">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="gui.SAPAnalyzer">
   <grid id="27dc6" binding="pnlMain" layout-manager="FormLayout">
     <rowspec value="center:8px:noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
-    <rowspec value="top:172dlu:noGrow"/>
+    <rowspec value="top:197dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="center:502px:noGrow"/>
     <rowspec value="top:3dlu:noGrow"/>
@@ -20,7 +20,7 @@
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="fill:157px:noGrow"/>
     <constraints>
-      <xy x="20" y="20" width="1608" height="950"/>
+      <xy x="20" y="20" width="1608" height="1005"/>
     </constraints>
     <properties/>
     <border type="bevel-raised">
@@ -446,12 +446,24 @@
         <border type="none"/>
         <children>
           <grid id="16668" binding="pnlDetail" layout-manager="FormLayout">
+            <rowspec value="center:d:grow"/>
+            <colspec value="fill:d:grow"/>
             <constraints>
               <tabbedpane title="Selection Details"/>
             </constraints>
             <properties/>
             <border type="none"/>
-            <children/>
+            <children>
+              <component id="42897" class="javax.swing.JTable" binding="tblDetailsTable">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="50"/>
+                  </grid>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+              </component>
+            </children>
           </grid>
           <grid id="1d7bf" binding="pnlEdit" layout-manager="FormLayout">
             <rowspec value="center:865px:noGrow"/>
@@ -547,6 +559,8 @@
         <rowspec value="center:43px:noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
         <colspec value="fill:98px:grow"/>
         <constraints>
           <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -578,7 +592,7 @@
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="left:6dlu:noGrow"/>
             <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false" defaultalign-vert="false"/>
             </constraints>
             <properties/>
@@ -639,6 +653,15 @@
               <model>
                 <item value="All"/>
               </model>
+            </properties>
+          </component>
+          <component id="bf4d0" class="javax.swing.JButton" binding="btnClear">
+            <constraints>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Clear Table"/>
             </properties>
           </component>
         </children>

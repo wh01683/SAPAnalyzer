@@ -1,6 +1,15 @@
+package gui;
+
+import com.sun.javafx.scene.control.skin.TableHeaderRow;
+import com.sun.javafx.scene.control.skin.TableViewSkin;
+import db.DBInfo;
+import db.DatabaseIO;
+
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.TableHeaderUI;
+import javax.swing.plaf.basic.BasicTableHeaderUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -57,14 +66,16 @@ public class SAPAnalyzer extends JFrame{
     private JTextField textField3;
     private JButton btnAddProcess;
     private JTextArea txtarPreview;
+    private JTable tblDetailsTable;
+    private JButton btnClear;
 
     DatabaseTableModel databaseTableModel;
     private static JFrame frame;
-    private String currentDatabase;
 
     private static DatabaseIO dbio;
 
     private SAPAnalyzer(){
+        DBInfo.start();
         dbio = new DatabaseIO();
         for(String s : dbio.getTableNames()){
             cbTableSelect.addItem(s);
@@ -74,12 +85,18 @@ public class SAPAnalyzer extends JFrame{
         this.setVisible(true);
         pnlTable.setVisible(true);
         tblShownInformation.setVisible(true);
-        fillTableModel();
+        tblShownInformation.setModel(new DatabaseTableModel(getTblShownQuery()));
+
         this.btnFillInfo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 fillTableModel();
             }
         });
+
+        pnlDetail.setVisible(true);
+        tblDetailsTable.setVisible(true);
+
+        fillTableModel();
 
         cbTableSelect.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -89,8 +106,11 @@ public class SAPAnalyzer extends JFrame{
                     cbSelection.addItem("All");
                 }
                 if (e.getStateChange() == ItemEvent.SELECTED) {
+                    tblShownInformation.clearSelection();
+                    tblShownInformation.setCellSelectionEnabled(false);
                     fillTableModel();
                     updateCbBoxes();
+                    tblShownInformation.setCellSelectionEnabled(true);
                 }
             }
         });
@@ -100,6 +120,23 @@ public class SAPAnalyzer extends JFrame{
                 sortTableModel();
             }
         });
+
+        tblShownInformation.setCellSelectionEnabled(true);
+        ListSelectionModel cellSelection = tblShownInformation.getSelectionModel();
+
+        cellSelection.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                int row = tblShownInformation.getSelectedRow();
+                int col = tblShownInformation.getSelectedColumn();
+                if(row > -1 && col > -1){
+                    fillDetailsTable(dbio.getCurrentTable(), row, col);
+                }
+            }
+        });
+
+        TableListener listener = new TableListener();
+        tblShownInformation.getModel().addTableModelListener(listener);
+
     }
 
     public static void main(String[] args) {
@@ -123,18 +160,30 @@ public class SAPAnalyzer extends JFrame{
     }
 
     public void setDatabaseTableModel(DatabaseTableModel databaseTableModel) {
-        dbio.setCurrentTable((String) cbTableSelect.getSelectedItem());
+        databaseTableModel.addTableModelListener(new TableListener());
         this.databaseTableModel = databaseTableModel;
+        dbio.setCurrentTable((String) cbTableSelect.getSelectedItem());
         tblShownInformation.setModel(databaseTableModel);
         updateCbBoxes();
     }
 
     private void fillTableModel(){
-        dbio.setCurrentTable((String)cbTableSelect.getSelectedItem());
-        databaseTableModel = new DatabaseTableModel("select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
-                " from " + cbTableSelect.getSelectedItem());
-        this.databaseTableModel.addTableModelListener(new TableListener());
-        setDatabaseTableModel(databaseTableModel);
+        setDatabaseTableModel(new DatabaseTableModel(getTblShownQuery()));
+    }
+
+    private String getSortQuery(){
+
+        String sortQuery = "select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
+                " from " + cbTableSelect.getSelectedItem() + ((cbSortCategory.getSelectedIndex() == 0) ? "" : " order by ") + ((cbSortCategory.getSelectedIndex() == 0) ? "" : cbSortCategory.getSelectedItem() + " ") +
+                ((cbSortCategory.getSelectedIndex() == 0) ? "" : cbSortWay.getSelectedItem());
+
+        return sortQuery;
+    }
+
+    private String getTblShownQuery(){
+        String shownQuery = "select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
+                " from " + cbTableSelect.getSelectedItem();
+        return shownQuery;
     }
 
     public static DatabaseIO getDbio(){
@@ -142,12 +191,13 @@ public class SAPAnalyzer extends JFrame{
     }
 
     private void sortTableModel(){
-        dbio.setCurrentTable((String)cbTableSelect.getSelectedItem());
-        databaseTableModel = new DatabaseTableModel("select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
-                " from " + cbTableSelect.getSelectedItem() + ((cbSortCategory.getSelectedIndex() == 0) ? "" : " order by ") + ((cbSortCategory.getSelectedIndex() == 0) ? "" : cbSortCategory.getSelectedItem() + " ") +
-                ((cbSortCategory.getSelectedIndex() == 0) ? "" : cbSortWay.getSelectedItem()));
-        this.databaseTableModel.addTableModelListener(new TableListener());
-        setDatabaseTableModel(databaseTableModel);
+        setDatabaseTableModel(new DatabaseTableModel(getSortQuery()));
+    }
+
+    public void fillDetailsTable(String tableName, int row, int col){
+        DatabaseTableModel temp = new DatabaseTableModel(tableName, tblShownInformation.getValueAt(row, col));
+        tblDetailsTable.setCellSelectionEnabled(false);
+        tblDetailsTable.setModel(temp);
     }
 
 

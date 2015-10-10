@@ -1,3 +1,5 @@
+package db;
+
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -15,8 +17,9 @@ public class DatabaseIO {
     private Connection connection = null;
     private ArrayList<String> tableNames;
     private String currentTable;
-
+    private QueryStorage queryStorage;
     public DatabaseIO(){
+        this.queryStorage = new QueryStorage();
         MakeConnection();
     }
 
@@ -33,7 +36,7 @@ public class DatabaseIO {
     public ArrayList<ResultSet> executeQuery(ArrayList<String> queries){
 
         Statement stmt = null;
-        ArrayList<ResultSet> results = new ArrayList<ResultSet>(queries.size());
+        ArrayList<ResultSet> results = new ArrayList<ResultSet>(10);
 
         try {
             stmt = connection.createStatement();
@@ -58,6 +61,28 @@ public class DatabaseIO {
         }
 
         return executeQuery(quers);
+    }
+
+    public ArrayList<String> getColNames(String tableName){
+        ArrayList<String> cols = new ArrayList<String>(10);
+        ArrayList<ResultSet> resultSets = executeQuery(queryStorage.getColNamesQuery(tableName));
+
+        try {
+            for (ResultSet rs : resultSets) {
+                if (!rs.next()) {
+                } else {
+                    do {
+                        for(int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++){
+                            cols.add(rs.getString(i));
+                        }
+                    } while (rs.next());
+                }
+            }
+            return cols;
+        }catch (SQLException s ){
+            s.printStackTrace();
+        }
+        return null;
     }
 
     public int[] insertIntoTable(String table, String...values) throws SQLException{
@@ -95,7 +120,6 @@ public class DatabaseIO {
     public void updateTableNames()throws SQLException{
 
         tableNames = new ArrayList<String>(10);
-
         ResultSet rs = connection.getMetaData().getTables(null, USER_NAME, "%", null);
         while (rs.next()) {
             tableNames.add(rs.getString(3));
@@ -124,7 +148,8 @@ public class DatabaseIO {
             }
 
             Statement stmt = null;
-            StringBuilder vals = new StringBuilder("UPDATE " + currentTable + " SET " + colName +" = " + (isStringType? "'" : "") + colType.cast(newData) + (isStringType? "'" : "") + " WHERE " + pkName + " = " + pk);
+            StringBuilder vals = new StringBuilder("UPDATE " + currentTable + " SET " + colName +" = " + (isStringType? "'" : "")
+                    + colType.cast(newData) + (isStringType? "'" : "") + " WHERE " + pkName + " = " + pk);
 
             this.connection.setAutoCommit(false);
             stmt = this.connection.createStatement();
@@ -144,6 +169,27 @@ public class DatabaseIO {
         return null;
     }
 
+    public ArrayList<String> getReferringTables(String tableName){
+        try {
+            ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getRefTableQuery(tableName));
+            ArrayList<String> refTableNames = new ArrayList<String>(10);
+            for (ResultSet rs : tempArr) {
+                if (!rs.next()) {
+                } else {
+                    do {
+                        for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+                            refTableNames.add(rs.getString(i + 1));
+                        }
+                    } while (rs.next());
+                }
+            }
+            return refTableNames;
+        }catch (SQLException s){
+            s.printStackTrace();
+        }
+        return null;
+    }
+
 
     public String getCurrentTable() {
         return currentTable;
@@ -152,6 +198,26 @@ public class DatabaseIO {
     public void setCurrentTable(String currentTable) {
         this.currentTable = currentTable;
     }
-}
+
+    public String getTablePrimaryKey(String tableName){
+            try {
+                String pkColName = "";
+                ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getPkColNamesQuery(tableName));
+                for (ResultSet rs : tempArr) {
+                    if (!rs.next()) {
+                    } else {
+                        do {
+                            pkColName = rs.getString(1);
+                        } while (rs.next());
+                    }
+                }
+                return pkColName;
+            }catch (SQLException s){
+                s.printStackTrace();
+            }
+            return null;
+        }
+    }
+
 
 

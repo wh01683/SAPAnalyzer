@@ -1,3 +1,5 @@
+package gui;
+
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -19,6 +21,9 @@ public class TableListener implements TableModelListener{
             SAPAnalyzer.getDbio().updateTable(column, pkdata, data);
         }
     }
+
+
+
 
 
 }

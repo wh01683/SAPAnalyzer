@@ -1,3 +1,7 @@
+package gui;
+
+import db.Utility;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -42,6 +46,7 @@ public class DBRow {
     public Object getValueAtColumn(int col){
         return rowArray[col];
     }
+
     public void setValueAtColumn(int col, Object newVal){
         rowArray[col] = newVal;
     }
