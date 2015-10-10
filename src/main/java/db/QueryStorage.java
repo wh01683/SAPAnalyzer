@@ -42,5 +42,14 @@ public class QueryStorage {
         return query;
     }
 
+    public String getFkNamesQuery(String tableName){
+        String query = "select constraint_name \n" +
+                "from all_constraints \n" +
+                "WHERE constraint_type='R'\n" +
+                "AND owner = 'HOWERTONSAP'\n" +
+                "and table_name = '"+tableName+"'";
+        return query;
+    }
+
 
 }

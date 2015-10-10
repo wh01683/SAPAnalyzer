@@ -3,6 +3,8 @@
   <grid id="27dc6" binding="pnlMain" layout-manager="FormLayout">
     <rowspec value="center:8px:noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="top:209dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="center:502px:noGrow"/>
@@ -20,7 +22,7 @@
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="fill:157px:noGrow"/>
     <constraints>
-      <xy x="20" y="20" width="1608" height="1047"/>
+      <xy x="20" y="20" width="1608" height="1075"/>
     </constraints>
     <properties/>
     <border type="bevel-raised">
@@ -31,7 +33,7 @@
         <rowspec value="center:756px:grow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="2" column="4" row-span="5" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="4" row-span="5" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-vert="false"/>
         </constraints>
         <properties/>
@@ -107,7 +109,7 @@
                     <rowspec value="top:4dlu:noGrow"/>
                     <rowspec value="center:max(d;4px):noGrow"/>
                     <rowspec value="top:25dlu:noGrow"/>
-                    <rowspec value="center:70px:noGrow"/>
+                    <rowspec value="center:108px:noGrow"/>
                     <rowspec value="top:28dlu:noGrow"/>
                     <rowspec value="center:695px:noGrow"/>
                     <colspec value="fill:max(d;4px):noGrow"/>
@@ -152,11 +154,15 @@
                       <grid id="c0958" binding="pnlAddComponents" layout-manager="FormLayout">
                         <rowspec value="center:max(d;4px):noGrow"/>
                         <rowspec value="top:4dlu:noGrow"/>
+                        <rowspec value="center:max(d;4px):noGrow"/>
+                        <rowspec value="top:4dlu:noGrow"/>
                         <rowspec value="center:35px:noGrow"/>
                         <rowspec value="top:4dlu:noGrow"/>
-                        <rowspec value="center:151px:noGrow"/>
+                        <rowspec value="center:196px:noGrow"/>
                         <colspec value="fill:101px:noGrow"/>
                         <colspec value="left:72dlu:noGrow"/>
+                        <colspec value="fill:max(d;4px):noGrow"/>
+                        <colspec value="left:4dlu:noGrow"/>
                         <colspec value="fill:78px:noGrow"/>
                         <colspec value="left:94dlu:noGrow"/>
                         <colspec value="fill:28px:noGrow"/>
@@ -171,7 +177,7 @@
                         <children>
                           <component id="1503d" class="javax.swing.JLabel">
                             <constraints>
-                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                               <forms/>
                             </constraints>
                             <properties>
@@ -180,7 +186,7 @@
                           </component>
                           <component id="3f318" class="javax.swing.JTextField" binding="fldCompName">
                             <constraints>
-                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                 <preferred-size width="150" height="-1"/>
                               </grid>
                               <forms defaultalign-horz="false"/>
@@ -189,7 +195,7 @@
                           </component>
                           <component id="ad97f" class="javax.swing.JLabel">
                             <constraints>
-                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                               <forms/>
                             </constraints>
                             <properties>
@@ -198,35 +204,28 @@
                           </component>
                           <component id="d33a" class="javax.swing.JTextField" binding="fldCompDesc">
                             <constraints>
-                              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                 <preferred-size width="150" height="-1"/>
                               </grid>
                               <forms defaultalign-horz="false"/>
                             </constraints>
                             <properties/>
                           </component>
-                          <component id="8073a" class="javax.swing.JButton" binding="btnAddComponent">
-                            <constraints>
-                              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <forms/>
-                            </constraints>
-                            <properties>
-                              <text value="Add"/>
-                            </properties>
-                          </component>
                           <grid id="53bd3" binding="pnlAddProcess" layout-manager="FormLayout">
+                            <rowspec value="center:max(d;4px):noGrow"/>
+                            <rowspec value="top:4dlu:noGrow"/>
                             <rowspec value="center:d:noGrow"/>
                             <rowspec value="top:4dlu:noGrow"/>
                             <rowspec value="center:max(d;4px):noGrow"/>
                             <rowspec value="top:4dlu:noGrow"/>
                             <rowspec value="center:max(d;4px):noGrow"/>
                             <colspec value="fill:97px:noGrow"/>
-                            <colspec value="left:70dlu:noGrow"/>
+                            <colspec value="left:71dlu:noGrow"/>
                             <colspec value="fill:max(d;4px):noGrow"/>
                             <colspec value="left:4dlu:noGrow"/>
-                            <colspec value="fill:max(d;4px):noGrow"/>
+                            <colspec value="fill:79px:noGrow"/>
                             <constraints>
-                              <grid row="4" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                              <grid row="6" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                               <forms defaultalign-horz="false" defaultalign-vert="false"/>
                             </constraints>
                             <properties/>
@@ -236,32 +235,14 @@
                             <children>
                               <component id="f52ae" class="javax.swing.JLabel">
                                 <constraints>
-                                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                                   <forms/>
                                 </constraints>
                                 <properties>
                                   <text value="Description"/>
                                 </properties>
                               </component>
-                              <component id="4a147" class="javax.swing.JTextField" binding="textField1" default-binding="true">
-                                <constraints>
-                                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                                    <preferred-size width="150" height="-1"/>
-                                  </grid>
-                                  <forms defaultalign-horz="false"/>
-                                </constraints>
-                                <properties/>
-                              </component>
-                              <component id="5d576" class="javax.swing.JLabel">
-                                <constraints>
-                                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                                  <forms/>
-                                </constraints>
-                                <properties>
-                                  <text value="Hourly Cost"/>
-                                </properties>
-                              </component>
-                              <component id="7d70" class="javax.swing.JTextField" binding="textField2" default-binding="true">
+                              <component id="4a147" class="javax.swing.JTextField" binding="fldProcDesc">
                                 <constraints>
                                   <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                     <preferred-size width="150" height="-1"/>
@@ -270,18 +251,54 @@
                                 </constraints>
                                 <properties/>
                               </component>
-                              <component id="e41bb" class="javax.swing.JLabel">
+                              <component id="5d576" class="javax.swing.JLabel">
                                 <constraints>
                                   <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <forms/>
+                                </constraints>
+                                <properties>
+                                  <text value="Hourly Cost"/>
+                                </properties>
+                              </component>
+                              <component id="7d70" class="javax.swing.JTextField" binding="fldProcCost">
+                                <constraints>
+                                  <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                  <forms defaultalign-horz="false"/>
+                                </constraints>
+                                <properties/>
+                              </component>
+                              <component id="e41bb" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                                   <forms/>
                                 </constraints>
                                 <properties>
                                   <text value="Time Est."/>
                                 </properties>
                               </component>
-                              <component id="8e6e3" class="javax.swing.JTextField" binding="textField3" default-binding="true">
+                              <component id="8e6e3" class="javax.swing.JTextField" binding="fldProcTime">
                                 <constraints>
-                                  <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                  <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                    <preferred-size width="150" height="-1"/>
+                                  </grid>
+                                  <forms defaultalign-horz="false"/>
+                                </constraints>
+                                <properties/>
+                              </component>
+                              <component id="aa5" class="javax.swing.JLabel">
+                                <constraints>
+                                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                  <forms/>
+                                </constraints>
+                                <properties>
+                                  <text value="ProcessID"/>
+                                </properties>
+                              </component>
+                              <component id="287af" class="javax.swing.JTextField" binding="fldProcId">
+                                <constraints>
+                                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                     <preferred-size width="150" height="-1"/>
                                   </grid>
                                   <forms defaultalign-horz="false"/>
@@ -299,9 +316,38 @@
                               </component>
                             </children>
                           </grid>
+                          <component id="efb78" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <forms/>
+                            </constraints>
+                            <properties>
+                              <text value="ComponentID"/>
+                            </properties>
+                          </component>
+                          <component id="c9859" class="javax.swing.JTextField" binding="fldCompID">
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                              <forms defaultalign-horz="false"/>
+                            </constraints>
+                            <properties/>
+                          </component>
+                          <component id="8073a" class="javax.swing.JButton" binding="btnAddComponent">
+                            <constraints>
+                              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                              <forms/>
+                            </constraints>
+                            <properties>
+                              <text value="Add"/>
+                            </properties>
+                          </component>
                         </children>
                       </grid>
                       <grid id="ae635" layout-manager="FormLayout">
+                        <rowspec value="center:max(d;4px):noGrow"/>
+                        <rowspec value="top:4dlu:noGrow"/>
                         <rowspec value="center:26px:noGrow"/>
                         <rowspec value="top:3dlu:noGrow"/>
                         <rowspec value="center:28px:noGrow"/>
@@ -320,32 +366,32 @@
                         <children>
                           <component id="8bd21" class="javax.swing.JTextField" binding="fldBOMName">
                             <constraints>
-                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                 <preferred-size width="150" height="-1"/>
                               </grid>
                               <forms defaultalign-horz="false"/>
                             </constraints>
                             <properties/>
                           </component>
-                          <component id="1b6ae" class="javax.swing.JComboBox" binding="cbPlantID">
+                          <component id="1b6ae" class="javax.swing.JComboBox" binding="cbBOMPlantID">
                             <constraints>
-                              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                               <forms defaultalign-horz="false" defaultalign-vert="false"/>
                             </constraints>
                             <properties>
                               <model/>
                             </properties>
                           </component>
-                          <component id="b03f5" class="javax.swing.JComboBox" binding="cbCompanyID">
+                          <component id="b03f5" class="javax.swing.JComboBox" binding="cbBOMCompanyID">
                             <constraints>
-                              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                              <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                               <forms defaultalign-horz="false" defaultalign-vert="false"/>
                             </constraints>
                             <properties/>
                           </component>
                           <component id="1c5a6" class="javax.swing.JLabel">
                             <constraints>
-                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                               <forms/>
                             </constraints>
                             <properties>
@@ -354,7 +400,7 @@
                           </component>
                           <component id="bbb29" class="javax.swing.JLabel">
                             <constraints>
-                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                               <forms/>
                             </constraints>
                             <properties>
@@ -363,22 +409,46 @@
                           </component>
                           <component id="5d4f3" class="javax.swing.JLabel">
                             <constraints>
-                              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                               <forms/>
                             </constraints>
                             <properties>
                               <text value="CompanyID"/>
                             </properties>
                           </component>
+                          <component id="8fe3" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <forms/>
+                            </constraints>
+                            <properties>
+                              <text value="BOMID"/>
+                            </properties>
+                          </component>
+                          <component id="7ae77" class="javax.swing.JTextField" binding="fldBomId">
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                              <forms defaultalign-horz="false"/>
+                            </constraints>
+                            <properties/>
+                          </component>
                         </children>
                       </grid>
                       <grid id="27595" layout-manager="FormLayout">
-                        <rowspec value="center:22px:noGrow"/>
+                        <rowspec value="center:max(d;4px):noGrow"/>
+                        <rowspec value="top:4dlu:noGrow"/>
+                        <rowspec value="center:33px:noGrow"/>
                         <rowspec value="top:4dlu:noGrow"/>
                         <rowspec value="center:max(d;4px):noGrow"/>
-                        <colspec value="fill:59px:noGrow"/>
+                        <rowspec value="top:4dlu:noGrow"/>
+                        <rowspec value="center:max(d;4px):noGrow"/>
+                        <colspec value="fill:76px:noGrow"/>
+                        <colspec value="left:54dlu:noGrow"/>
+                        <colspec value="fill:39px:grow"/>
                         <colspec value="left:4dlu:noGrow"/>
-                        <colspec value="fill:d:grow"/>
+                        <colspec value="fill:max(d;4px):noGrow"/>
                         <constraints>
                           <grid row="1" column="4" row-span="6" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                           <forms defaultalign-horz="false" defaultalign-vert="false"/>
@@ -390,7 +460,7 @@
                         <children>
                           <component id="deaf3" class="javax.swing.JLabel">
                             <constraints>
-                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                               <forms/>
                             </constraints>
                             <properties>
@@ -400,7 +470,7 @@
                           </component>
                           <component id="ad197" class="javax.swing.JTextField" binding="fldProdName">
                             <constraints>
-                              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                              <grid row="2" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                 <preferred-size width="150" height="-1"/>
                               </grid>
                               <forms defaultalign-horz="false"/>
@@ -409,16 +479,43 @@
                           </component>
                           <component id="8242a" class="javax.swing.JTextField" binding="fldProdCost">
                             <constraints>
-                              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                              <grid row="4" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                 <preferred-size width="150" height="-1"/>
                               </grid>
                               <forms defaultalign-horz="false"/>
                             </constraints>
                             <properties/>
                           </component>
+                          <component id="194c3" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <forms/>
+                            </constraints>
+                            <properties>
+                              <text value="Product ID"/>
+                            </properties>
+                          </component>
+                          <component id="124ba" class="javax.swing.JTextField" binding="fldProdID">
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                              <forms defaultalign-horz="false"/>
+                            </constraints>
+                            <properties/>
+                          </component>
+                          <component id="47a70" class="javax.swing.JButton" binding="btnAddBomProdToPrev">
+                            <constraints>
+                              <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                              <forms/>
+                            </constraints>
+                            <properties>
+                              <text value="Add"/>
+                            </properties>
+                          </component>
                           <component id="19f9b" class="javax.swing.JLabel">
                             <constraints>
-                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                               <forms/>
                             </constraints>
                             <properties>
@@ -437,7 +534,7 @@
       </grid>
       <tabbedpane id="4379f" binding="tbSidePanel">
         <constraints>
-          <grid row="2" column="7" row-span="5" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="4" column="7" row-span="5" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="200" height="200"/>
           </grid>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
@@ -563,7 +660,7 @@
         <rowspec value="center:max(d;4px):noGrow"/>
         <colspec value="fill:98px:grow"/>
         <constraints>
-          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties/>
@@ -666,6 +763,15 @@
           </component>
         </children>
       </grid>
+      <component id="e3955" class="javax.swing.JButton" binding="btnLoad">
+        <constraints>
+          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <text value="Load"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>

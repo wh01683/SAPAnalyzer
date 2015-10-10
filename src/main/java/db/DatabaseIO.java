@@ -221,7 +221,7 @@ public class DatabaseIO {
     public ArrayList<Integer> getPksFromTable(String tableName){
         try {
             ArrayList<Integer> pkList = new ArrayList<Integer>(10);
-            ArrayList<ResultSet> tempArr = executeQuery("select " + DBInfo.getTabToPKHash().get(tableName) + " from '" + tableName + "'");
+            ArrayList<ResultSet> tempArr = executeQuery("select " + DBInfo.getTabToPKHash().get(tableName) + " from " + tableName);
             for (ResultSet rs : tempArr) {
                 if (!rs.next()) {
                 } else {
@@ -238,7 +238,28 @@ public class DatabaseIO {
         }
         return null;
     }
+
+    public ArrayList<String> getRefConstraintsForTable(String tableName){
+        try {
+            ArrayList<String> fkList = new ArrayList<String>(10);
+            ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getFkNamesQuery(tableName));
+            for (ResultSet rs : tempArr) {
+                if (!rs.next()) {
+                } else {
+                    do {
+                        for(int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++){
+                            fkList.add(rs.getString(i));
+                        }
+                    } while (rs.next());
+                }
+            }
+            return fkList;
+        }catch (SQLException s) {
+            s.printStackTrace();
+        }
+        return null;
     }
+}
 
 
 

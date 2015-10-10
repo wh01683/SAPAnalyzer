@@ -25,13 +25,15 @@ public class DatabaseTableModel extends AbstractTableModel  {
     public DatabaseTableModel(String tableName, Object pk){
 
         ArrayList<String> tabNames = DBInfo.getTabToRefTabHash().get(tableName);
-        String[] quers = new String[tabNames.size()];
-        int count = 0;
-        for (String s : tabNames) {
-            quers[count] = "select * from " + s + " where " + DBInfo.getTabToPKHash().get(tableName) +
-                    " = " + pk.toString();
+        if(!(tabNames == null)) {
+            String[] quers = new String[tabNames.size()];
+            int count = 0;
+            for (String s : tabNames) {
+                quers[count] = "select * from " + s + " where " + DBInfo.getTabToPKHash().get(tableName) +
+                        " = " + pk.toString();
+            }
+            processQueries(quers);
         }
-        processQueries(quers);
     }
 
     public DatabaseTableModel(String... queries){

@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 
 /**
@@ -51,8 +52,8 @@ public class SAPAnalyzer extends JFrame{
     private JPanel pnlCreateBOM;
     private JTextField fldBOMName;
     private JPanel pnlBOMForm;
-    private JComboBox cbPlantID;
-    private JComboBox cbCompanyID;
+    private JComboBox cbBOMPlantID;
+    private JComboBox cbBOMCompanyID;
     private JButton btnAddComponent;
     private JPanel pnlAddComponents;
     private JPanel pnlSummaryView;
@@ -61,21 +62,27 @@ public class SAPAnalyzer extends JFrame{
     private JTextField fldCompName;
     private JTextField fldCompDesc;
     private JPanel pnlAddProcess;
-    private JTextField textField1;
-    private JTextField textField2;
-    private JTextField textField3;
+    private JTextField fldProcDesc;
+    private JTextField fldProcCost;
+    private JTextField fldProcTime;
     private JButton btnAddProcess;
     private JTextArea txtarPreview;
     private JTable tblDetailsTable;
     private JButton btnClear;
+    private JTextField fldProdID;
+    private JTextField fldBomId;
+    private JTextField fldCompID;
+    private JTextField fldProcId;
+    private JButton btnAddBomProdToPrev;
+    private JButton btnLoad;
 
+    private BOMPreviewBuilder bomPreviewBuilder;
     DatabaseTableModel databaseTableModel;
     private static JFrame frame;
 
     private static DatabaseIO dbio;
 
     private SAPAnalyzer(){
-        DBInfo.start();
         dbio = new DatabaseIO();
         for(String s : dbio.getTableNames()){
             cbTableSelect.addItem(s);
@@ -115,6 +122,7 @@ public class SAPAnalyzer extends JFrame{
             }
         });
 
+
         btnSort.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 sortTableModel();
@@ -134,11 +142,37 @@ public class SAPAnalyzer extends JFrame{
             }
         });
 
+        btnAddBomProdToPrev.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addBomProd(e);
+            }
+        });
+
+        btnAddComponent.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addBomProd(e);
+            }
+        });
+
+        btnAddProcess.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addBomProd(e);
+            }
+        });
+
         TableListener listener = new TableListener();
         tblShownInformation.getModel().addTableModelListener(listener);
         txtarPreview.setEditable(false);
         txtarPreview.setVisible(true);
         txtarPreview.setLineWrap(false);
+        bomPreviewBuilder = new BOMPreviewBuilder(txtarPreview);
+        btnLoad.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                DBInfo.start();
+                fillBomProdCbBoxes();
+            }
+        });
+
     }
 
     public static void main(String[] args) {
@@ -175,10 +209,21 @@ public class SAPAnalyzer extends JFrame{
         setDatabaseTableModel(new DatabaseTableModel(getTblShownQuery()));
     }
 
+    private void fillBomProdCbBoxes(){
+        ArrayList<Integer> companyKeys = DBInfo.getTabToPkVals().get("COMPANIES");
+        ArrayList<Integer> plantKeys = DBInfo.getTabToPkVals().get("PLANTS");
+        for(Integer i : companyKeys){
+            cbBOMCompanyID.addItem(i);
+        }
+        for(Integer i : plantKeys){
+            cbBOMPlantID.addItem(i);
+        }
+    }
     private String getSortQuery(){
 
         String sortQuery = "select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
-                " from " + cbTableSelect.getSelectedItem() + ((cbSortCategory.getSelectedIndex() == 0) ? "" : " order by ") + ((cbSortCategory.getSelectedIndex() == 0) ? "" : cbSortCategory.getSelectedItem() + " ") +
+                " from " + cbTableSelect.getSelectedItem() + ((cbSortCategory.getSelectedIndex() == 0) ? "" : " order by ") +
+                ((cbSortCategory.getSelectedIndex() == 0) ? "" : cbSortCategory.getSelectedItem() + " ") +
                 ((cbSortCategory.getSelectedIndex() == 0) ? "" : cbSortWay.getSelectedItem());
 
         return sortQuery;
@@ -204,7 +249,87 @@ public class SAPAnalyzer extends JFrame{
         tblDetailsTable.setModel(temp);
     }
 
+    private void addBomProd(ActionEvent e){
 
+        JButton source = (JButton)e.getSource();
+
+        int maxColWidth = 0;
+        String[] tabs = {"BOM", "PRODUCTS", "COMPONENTS", "PROCESSES"};
+
+        for(int i = 0; i < 4; i ++){
+            maxColWidth = (DBInfo.getTabToColNames().get(tabs[i]).size() > maxColWidth)? DBInfo.getTabToColNames().get(tabs[i]).size() : maxColWidth;
+        }
+
+        if(source == btnAddBomProdToPrev) {
+            String[] bom = new String[maxColWidth];
+            String bomName = fldBOMName.getText();
+            Integer bomId = Integer.parseInt(fldBomId.getText());
+            Integer bomPlantId = (Integer) cbBOMPlantID.getSelectedItem();
+            Integer bomCompanyId = (Integer) cbBOMCompanyID.getSelectedItem();
+            bom[0] = bomId.toString();
+            bom[1] = bomPlantId.toString();
+            bom[2] = bomCompanyId.toString();
+            bom[3] = bomName;
+
+            String[] prod = new String[maxColWidth];
+            Integer prodId = Integer.parseInt(fldProdID.getText());
+            Integer prodCost = Integer.parseInt(fldProdCost.getText());
+            String prodName = fldProdName.getText();
+            prod[0] = prodId.toString();
+            prod[1] = prodName;
+            prod[2] = prodCost.toString();
+
+            bomPreviewBuilder.addBOMProduct(bom, prod);
+            clearAllFields();
+
+        }
+
+        if(source == btnAddComponent) {
+            String[] comp = new String[maxColWidth];
+            String compName = fldCompName.getText();
+            Integer compId = Integer.parseInt(fldCompID.getText());
+            String compDesc = fldCompDesc.getText();
+            comp[0] = compId.toString();
+            comp[1] = compName;
+            comp[2] = compDesc;
+            bomPreviewBuilder.addComponent(comp);
+            clearAllFields();
+        }
+
+        if(source == btnAddProcess) {
+            String[] proc = new String[maxColWidth];
+            String procDesc = fldProcDesc.getText();
+            Integer procId = Integer.parseInt(fldProcId.getText());
+            Integer procCost = Integer.parseInt(fldProcCost.getText());
+            Integer procTime = Integer.parseInt(fldProcTime.getText());
+            proc[0] = procId.toString();
+            proc[1] = procDesc;
+            proc[2] = procCost.toString();
+            proc[3] = procTime.toString();
+            bomPreviewBuilder.addProcess(proc);
+            clearAllFields();
+        }
+
+    }
+
+    private void clearAllFields(){
+
+        fldCompID.setText("");
+        fldCompDesc.setText("");
+        fldCompName.setText("");
+
+        fldBomId.setText("");
+        fldBOMName.setText("");
+
+        fldProdCost.setText("");
+        fldProdName.setText("");
+        fldProdID.setText("");
+
+        fldProcId.setText("");
+        fldProcCost.setText("");
+        fldProcDesc.setText("");
+        fldProcTime.setText("");
+    }
 
 
 
