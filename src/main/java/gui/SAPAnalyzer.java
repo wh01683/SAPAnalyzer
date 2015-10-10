@@ -1,5 +1,6 @@
 package gui;
 
+import com.jgoodies.forms.layout.FormLayout;
 import com.sun.javafx.scene.control.skin.TableHeaderRow;
 import com.sun.javafx.scene.control.skin.TableViewSkin;
 import db.DBInfo;
@@ -10,6 +11,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.TableHeaderUI;
 import javax.swing.plaf.basic.BasicTableHeaderUI;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -55,13 +57,11 @@ public class SAPAnalyzer extends JFrame{
     private JComboBox cbBOMPlantID;
     private JComboBox cbBOMCompanyID;
     private JButton btnAddComponent;
-    private JPanel pnlAddComponents;
     private JPanel pnlSummaryView;
     private JTextField fldProdName;
     private JTextField fldProdCost;
     private JTextField fldCompName;
     private JTextField fldCompDesc;
-    private JPanel pnlAddProcess;
     private JTextField fldProcDesc;
     private JTextField fldProcCost;
     private JTextField fldProcTime;
@@ -75,6 +75,12 @@ public class SAPAnalyzer extends JFrame{
     private JTextField fldProcId;
     private JButton btnAddBomProdToPrev;
     private JButton btnLoad;
+    private JTextField fldProcCompId;
+    private JTextField fldCompProdId;
+    private JTextField fldCompBomId;
+    private JButton btnViewInsertQueries;
+    private JPanel pnlAddComponents;
+    private JPanel pnlAddProcess;
 
     private BOMPreviewBuilder bomPreviewBuilder;
     DatabaseTableModel databaseTableModel;
@@ -160,18 +166,31 @@ public class SAPAnalyzer extends JFrame{
             }
         });
 
-        TableListener listener = new TableListener();
-        tblShownInformation.getModel().addTableModelListener(listener);
-        txtarPreview.setEditable(false);
-        txtarPreview.setVisible(true);
-        txtarPreview.setLineWrap(false);
-        bomPreviewBuilder = new BOMPreviewBuilder(txtarPreview);
         btnLoad.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 DBInfo.start();
                 fillBomProdCbBoxes();
             }
         });
+        btnViewInsertQueries.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+
+                JTextArea textArea = new JTextArea(bomPreviewBuilder.getPrevQueryText());
+                JScrollPane scrollPane = new JScrollPane(textArea);
+                textArea.setLineWrap(true);
+                textArea.setWrapStyleWord(true);
+                scrollPane.setPreferredSize(new Dimension(750, 750));
+                JOptionPane.showMessageDialog(null, scrollPane, "Queries", JOptionPane.CLOSED_OPTION);
+            }
+        });
+        TableListener listener = new TableListener();
+        tblShownInformation.getModel().addTableModelListener(listener);
+        txtarPreview.setEditable(false);
+        txtarPreview.setVisible(true);
+        txtarPreview.setLineWrap(false);
+        bomPreviewBuilder = new BOMPreviewBuilder(txtarPreview);
+
 
     }
 
@@ -289,10 +308,12 @@ public class SAPAnalyzer extends JFrame{
             String compName = fldCompName.getText();
             Integer compId = Integer.parseInt(fldCompID.getText());
             String compDesc = fldCompDesc.getText();
+            Integer bomId = Integer.parseInt(fldCompBomId.getText());
+            Integer prodId = Integer.parseInt(fldCompProdId.getText());
             comp[0] = compId.toString();
             comp[1] = compName;
             comp[2] = compDesc;
-            bomPreviewBuilder.addComponent(comp);
+            bomPreviewBuilder.addComponent(comp, bomId, prodId);
             clearAllFields();
         }
 
@@ -302,11 +323,12 @@ public class SAPAnalyzer extends JFrame{
             Integer procId = Integer.parseInt(fldProcId.getText());
             Integer procCost = Integer.parseInt(fldProcCost.getText());
             Integer procTime = Integer.parseInt(fldProcTime.getText());
+            Integer compId = Integer.parseInt(fldProcCompId.getText());
             proc[0] = procId.toString();
             proc[1] = procDesc;
             proc[2] = procCost.toString();
             proc[3] = procTime.toString();
-            bomPreviewBuilder.addProcess(proc);
+            bomPreviewBuilder.addProcess(proc, compId);
             clearAllFields();
         }
 
@@ -324,8 +346,11 @@ public class SAPAnalyzer extends JFrame{
         fldProdCost.setText("");
         fldProdName.setText("");
         fldProdID.setText("");
+        fldCompProdId.setText("");
+        fldCompBomId.setText("");
 
         fldProcId.setText("");
+        fldProcCompId.setText("");
         fldProcCost.setText("");
         fldProcDesc.setText("");
         fldProcTime.setText("");

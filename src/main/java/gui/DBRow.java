@@ -13,7 +13,7 @@ public class DBRow {
     private ResultSet rowResultSet;
     private Object[] rowArray;
     private Class[] classList;
-
+    private String tableName;
 
 
     public DBRow(ResultSet newContents){
@@ -43,6 +43,11 @@ public class DBRow {
         }
     }
 
+    public DBRow(String tableName, Object... content){
+        this.rowArray = content;
+        this.tableName = tableName;
+    }
+
     public Object getValueAtColumn(int col){
         return rowArray[col];
     }
@@ -62,8 +67,25 @@ public class DBRow {
     public Object[] getRowArray() {
         return rowArray;
     }
-
     public void setRowArray(Object[] rowArray) {
         this.rowArray = rowArray;
+    }
+
+    public String getInsertQuery(String tableName){
+
+        StringBuilder queryBuilder = new StringBuilder("INSERT INTO " + tableName + " VALUES(");
+
+        for(int i = 0; i < this.getRowArray().length; i++){
+            if(i == getRowArray().length - 1){
+                queryBuilder.append(getRowArray()[i] + ")");
+            }else{
+                queryBuilder.append(getRowArray()[i] + ", ");
+            }
+        }
+        return queryBuilder.toString();
+    }
+
+    public String getTableName() {
+        return tableName;
     }
 }
