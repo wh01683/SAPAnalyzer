@@ -136,7 +136,9 @@ public class SAPAnalyzer extends JFrame{
 
         TableListener listener = new TableListener();
         tblShownInformation.getModel().addTableModelListener(listener);
-
+        txtarPreview.setEditable(false);
+        txtarPreview.setVisible(true);
+        txtarPreview.setLineWrap(false);
     }
 
     public static void main(String[] args) {
@@ -145,6 +147,8 @@ public class SAPAnalyzer extends JFrame{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.pack();
+
+
 
     }
 
@@ -199,6 +203,8 @@ public class SAPAnalyzer extends JFrame{
         tblDetailsTable.setCellSelectionEnabled(false);
         tblDetailsTable.setModel(temp);
     }
+
+
 
 
 

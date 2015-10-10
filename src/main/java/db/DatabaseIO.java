@@ -217,6 +217,27 @@ public class DatabaseIO {
             }
             return null;
         }
+
+    public ArrayList<Integer> getPksFromTable(String tableName){
+        try {
+            ArrayList<Integer> pkList = new ArrayList<Integer>(10);
+            ArrayList<ResultSet> tempArr = executeQuery("select " + DBInfo.getTabToPKHash().get(tableName) + " from '" + tableName + "'");
+            for (ResultSet rs : tempArr) {
+                if (!rs.next()) {
+                } else {
+                    do {
+                        for(int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++){
+                            pkList.add(rs.getInt(i));
+                        }
+                    } while (rs.next());
+                }
+            }
+            return pkList;
+        }catch (SQLException s) {
+            s.printStackTrace();
+        }
+        return null;
+    }
     }
 
 

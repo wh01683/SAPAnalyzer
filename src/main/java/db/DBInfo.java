@@ -13,6 +13,7 @@ public class DBInfo {
     private static Hashtable<String, String> tabToPKHash = new Hashtable<String, String>(10);
     private static Hashtable<String, ArrayList<String>> tabToRefTabHash = new Hashtable<String, ArrayList<String>>(10);
     private static Hashtable<String, ArrayList<String>> tabToColNames = new Hashtable<String, ArrayList<String>>(10);
+    private static Hashtable<String, ArrayList<Integer>> tabToPkVals = new Hashtable<String, ArrayList<Integer>>(10);
 
     public static void start() {
         try {
@@ -23,6 +24,7 @@ public class DBInfo {
                 ArrayList<String> tempTabs = dbio.getReferringTables(tables);
                 tabToRefTabHash.put(tables, tempTabs);
                 tabToColNames.put(tables, dbio.getColNames(tables));
+                tabToPkVals.put(tables, dbio.getPksFromTable(tables));
             }
         }catch (SQLException s){
             System.out.printf("Error Code: %d",s.getErrorCode());
@@ -40,5 +42,9 @@ public class DBInfo {
 
     public static Hashtable<String, ArrayList<String>> getTabToColNames() {
         return tabToColNames;
+    }
+
+    public static Hashtable<String, ArrayList<Integer>> getTabToPkVals() {
+        return tabToPkVals;
     }
 }
