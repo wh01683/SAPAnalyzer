@@ -1,16 +1,11 @@
 package gui;
 
-import com.jgoodies.forms.layout.FormLayout;
-import com.sun.javafx.scene.control.skin.TableHeaderRow;
-import com.sun.javafx.scene.control.skin.TableViewSkin;
 import db.DBInfo;
 import db.DatabaseIO;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.TableHeaderUI;
-import javax.swing.plaf.basic.BasicTableHeaderUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,15 +37,8 @@ public class SAPAnalyzer extends JFrame{
     private JButton btnSort;
     private JTabbedPane tbSidePanel;
     private JPanel pnlDetail;
-    private JPanel pnlEdit;
     private JPanel pnlInsert;
     private JComboBox cbTableSelect;
-    private JTabbedPane tbEditTable;
-    private JPanel pnlInsertEmployee;
-    private JPanel pnlInsertBOM;
-    private JPanel pnlInsertProduct;
-    private JPanel pnlInsertComponent;
-    private JPanel pnlInsertProcess;
     private JPanel pnlCreateBOM;
     private JTextField fldBOMName;
     private JPanel pnlBOMForm;
@@ -68,7 +56,6 @@ public class SAPAnalyzer extends JFrame{
     private JButton btnAddProcess;
     private JTextArea txtarPreview;
     private JTable tblDetailsTable;
-    private JButton btnClear;
     private JTextField fldProdID;
     private JTextField fldBomId;
     private JTextField fldCompID;
@@ -79,8 +66,7 @@ public class SAPAnalyzer extends JFrame{
     private JTextField fldCompProdId;
     private JTextField fldCompBomId;
     private JButton btnViewInsertQueries;
-    private JPanel pnlAddComponents;
-    private JPanel pnlAddProcess;
+
 
     private BOMPreviewBuilder bomPreviewBuilder;
     DatabaseTableModel databaseTableModel;

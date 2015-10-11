@@ -7,7 +7,7 @@ import db.QueryStorage;
 import javax.swing.table.AbstractTableModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * Created by robert on 10/8/2015.
@@ -140,6 +140,7 @@ public class DatabaseTableModel extends AbstractTableModel  {
         int rowCount = 0;
 
         ArrayList<DBRow> tempRowList = new ArrayList<DBRow>(10);
+
         for (String s : queries) {
             String[] cols = createColumnHeadings(s);
             rowCount++;
