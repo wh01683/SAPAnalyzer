@@ -31,7 +31,7 @@ public class BOMPreviewBuilder {
     }
 
     public void addBOMProduct(String[] bom, String[] product){
-        if(!usedPks.get("PRODUCTS").contains(product[0]) && !usedPks.get("BOM").contains(bom[0])){
+        if (!usedPks.get("PRODUCTS").contains(Integer.parseInt(product[0])) && !usedPks.get("BOM").contains(Integer.parseInt(bom[0]))) {
 
             StringBuilder builder = new StringBuilder();
             Formatter formatter = new Formatter(builder, Locale.US);
@@ -51,7 +51,7 @@ public class BOMPreviewBuilder {
 
     public void addComponent(String[] component, int bomId, int productid){
 
-        if(!usedPks.get("COMPONENTS").contains(component[0])){
+        if (!usedPks.get("COMPONENTS").contains(Integer.parseInt(component[0]))) {
             StringBuilder builder = new StringBuilder();
             Formatter formatter = new Formatter(builder, Locale.US);
             formatter.format("%n%-20s %-20s %-40s%n", "Component ID", "Name", "Description");
@@ -63,7 +63,7 @@ public class BOMPreviewBuilder {
 
     public void addProcess(String[] process, int compId){
 
-        if(!usedPks.get("PROCESSES").contains(process[0])){
+        if (!usedPks.get("PROCESSES").contains(Integer.parseInt(process[0]))) {
             StringBuilder builder = new StringBuilder();
             Formatter formatter = new Formatter(builder, Locale.US);
             formatter.format("%n%-20s %-40s %-20s %-20s %n", "Process ID", "Description", "Hourly Cost", "Time Est.");
