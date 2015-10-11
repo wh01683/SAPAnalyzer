@@ -239,6 +239,10 @@ public class DatabaseIO {
         return null;
     }
 
+    /**
+     * @param tableName
+     * @return
+     */
     public ArrayList<String> getRefConstraintsForTable(String tableName){
         try {
             ArrayList<String> fkList = new ArrayList<String>(10);

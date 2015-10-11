@@ -21,7 +21,10 @@ public class DatabaseTableModel extends AbstractTableModel  {
     private QueryStorage queryStorage = new QueryStorage();
 
 
-
+    /**
+     * @param tableName
+     * @param pk
+     */
     public DatabaseTableModel(String tableName, Object pk){
 
         ArrayList<String> tabNames = DBInfo.getTabToRefTabHash().get(tableName);
@@ -36,9 +39,14 @@ public class DatabaseTableModel extends AbstractTableModel  {
         }
     }
 
+    /**
+     * Uses an array of Strings to populate the table data. Can be 1 to inf.
+     * @param queries
+     */
     public DatabaseTableModel(String... queries){
         repopulateData(queries);
     }
+
 
     @Override
     public void fireTableRowsUpdated(int firstRow, int lastRow) {
@@ -65,19 +73,33 @@ public class DatabaseTableModel extends AbstractTableModel  {
         return rowList.size();
     }
 
+    /**
+     * Clears model by resetting tableData.
+     */
     public void clearModel() {
         tableData = new Object[0][0];
         rowList = new ArrayList<DBRow>(0);
         columnNames = new String[0];
-
         fireTableDataChanged();
     }
 
+    /**
+     * Checks whether cell is editable. Default is true for this table.
+     * @param rowIndex Row number to check.
+     * @param columnIndex Column number to check.
+     * @return True if editable, false otherwise.
+     */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return true;
     }
 
+    /**
+     * Gets the value located at a given row and column.
+     * @param rowIndex Row of desired value.
+     * @param colIndex Column of desired value.
+     * @return Object located at given location.
+     */
     public Object getValueAt(int rowIndex, int colIndex) {
         try {
             return rowList.get(rowIndex).getRowArray()[colIndex];
@@ -88,6 +110,12 @@ public class DatabaseTableModel extends AbstractTableModel  {
         }
     }
 
+    /**
+     * Sets value at a given location to a new Object value.
+     * @param newVal Value to replace old value.
+     * @param rowIndex Row of value to be replaced.
+     * @param colIndex Column of value to be replaced.
+     */
     @Override
     public void setValueAt(Object newVal, int rowIndex, int colIndex) {
         try {
@@ -101,6 +129,12 @@ public class DatabaseTableModel extends AbstractTableModel  {
     }
 
 
+    /**
+     * Creates a String array of column names given a particular query. Not all columns are present in a query, so this method
+     * will get the unique column name set on an individual query basis.
+     * @param query Query to process.
+     * @return A String array of column names associated with the query.
+     */
     private String[] createColumnHeadings(String query) {
         try {
             ArrayList<ResultSet> resultSets = dbio.executeQuery(query);
@@ -134,6 +168,11 @@ public class DatabaseTableModel extends AbstractTableModel  {
         }
     }
 
+    /**
+     * Processes an array of String queries and will generate a two dimensional Object array for use in the table model.
+     * @param queries Queries to execute.
+     * @return Two dimensional array containing query results.
+     */
     private Object[][] processQueries(String... queries){
 
         int maxColLength = 0;
@@ -176,9 +215,14 @@ public class DatabaseTableModel extends AbstractTableModel  {
         return tempTableData;
     }
 
+    /**
+     * Repopulates the tableData array using an Object array produced by the new queries.
+     * @param queries Queries to repopulate the table with.
+     */
     public void repopulateData(String... queries){
         this.tableData = processQueries(queries);
     }
+
 
     public void populateTable(){
         for (int row = 0; row < tableData.length; row++) {
