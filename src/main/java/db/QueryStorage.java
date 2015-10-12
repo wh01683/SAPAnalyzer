@@ -23,12 +23,26 @@ public class QueryStorage {
     }
 
 
-    public String getPkColNamesQuery(String tableName){
+    public String getPkOrFkNames(String tableName, String type) {
         String query = "SELECT cols.column_name\n" +
                 "FROM all_constraints cons, all_cons_columns cols\n" +
                 "WHERE cols.table_name = '" + tableName + "'\n" +
                 "AND cols.owner = '" + USERNAME + "'\n" +
-                "AND cons.constraint_type = 'P'\n" +
+                "AND cons.constraint_type = '" + type + "'\n" +
+                "AND cols.position = 1\n" +
+                "AND cons.constraint_name = cols.constraint_name\n" +
+                "AND cons.owner = cols.owner\n" +
+                "ORDER BY cols.table_name, cols.position";
+
+        return query;
+    }
+
+    public String getPkAndFkNames(String tableName) {
+        String query = "SELECT cols.column_name\n" +
+                "FROM all_constraints cons, all_cons_columns cols\n" +
+                "WHERE cols.table_name = '" + tableName + "'\n" +
+                "AND cols.owner = '" + USERNAME + "'\n" +
+                "AND cons.constraint_type in ('P', 'R') \n" +
                 "AND cols.position = 1\n" +
                 "AND cons.constraint_name = cols.constraint_name\n" +
                 "AND cons.owner = cols.owner\n" +
@@ -42,7 +56,7 @@ public class QueryStorage {
         return query;
     }
 
-    public String getFkNamesQuery(String tableName){
+    public String getFkConstraintsQuery(String tableName) {
         String query = "select constraint_name \n" +
                 "from all_constraints \n" +
                 "WHERE constraint_type='R'\n" +

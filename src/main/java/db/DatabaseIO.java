@@ -130,6 +130,7 @@ public class DatabaseIO {
         return tableNames;
     }
 
+
     public int[] updateTable(int col, Object pk, Object newData){
         try {
             ArrayList<String> temp = new ArrayList<String>(1);
@@ -169,6 +170,12 @@ public class DatabaseIO {
         return null;
     }
 
+    /**
+     * Gets Array List of all table names referring a given table using foreign keys.
+     *
+     * @param tableName Table name to query.
+     * @return ArrayList containing Strings of all table table names referencing the given table.
+     */
     public ArrayList<String> getReferringTables(String tableName){
         try {
             ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getRefTableQuery(tableName));
@@ -199,10 +206,15 @@ public class DatabaseIO {
         this.currentTable = currentTable;
     }
 
+    /**
+     * Gets column name of primary key column associated with the given table name.
+     * @param tableName Table name to query.
+     * @return Primary Key column name.
+     */
     public String getTablePrimaryKey(String tableName){
             try {
                 String pkColName = "";
-                ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getPkColNamesQuery(tableName));
+                ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getPkOrFkNames(tableName, "P"));
                 for (ResultSet rs : tempArr) {
                     if (!rs.next()) {
                     } else {
@@ -216,8 +228,40 @@ public class DatabaseIO {
                 s.printStackTrace();
             }
             return null;
-        }
+    }
 
+
+    /**
+     * Gets column name of primary key column associated with the given table name.
+     *
+     * @param tableName Table name to query.
+     * @return Primary Key column name.
+     */
+    public ArrayList<String> getTableForeignKey(String tableName) {
+        try {
+            ArrayList<String> fks = new ArrayList<String>(10);
+            ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getPkAndFkNames(tableName));
+            for (ResultSet rs : tempArr) {
+                if (!rs.next()) {
+                } else {
+                    do {
+                        fks.add(rs.getString(1));
+                    } while (rs.next());
+                }
+            }
+            return fks;
+        } catch (SQLException s) {
+            s.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * Gets all primary keys associated with the given table's primary key column.
+     * @param tableName Table name to query.
+     * @return ArrayList of primary keys.
+     */
     public ArrayList<Integer> getPksFromTable(String tableName){
         try {
             ArrayList<Integer> pkList = new ArrayList<Integer>(10);
@@ -239,14 +283,15 @@ public class DatabaseIO {
         return null;
     }
 
-    /**
-     * @param tableName
-     * @return
+    /** Gets all constraint names for a given table.
+     * @param tableName Table name to query for.
+     * @return ArrayList containing all table names referencing the given table's primary key
+     * @should refNames
      */
     public ArrayList<String> getRefConstraintsForTable(String tableName){
         try {
             ArrayList<String> fkList = new ArrayList<String>(10);
-            ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getFkNamesQuery(tableName));
+            ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getFkConstraintsQuery(tableName));
             for (ResultSet rs : tempArr) {
                 if (!rs.next()) {
                 } else {

@@ -101,6 +101,14 @@ public class BOMPreviewBuilder {
     }
 
 
+    public void commitInserts() {
+        for (DBRow row : newRows) {
+            String tableName = row.getTableName();
+            alterConstraints(tableName, false);
+            databaseIO.executeQuery(row.getInsertQuery(tableName));
+            alterConstraints(tableName, true);
+        }
+    }
 
 
 

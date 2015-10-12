@@ -5,12 +5,16 @@ package db;
  */
 public class TestMain {
 
-
+    /**
+     * @param args
+     */
     public static void main(String[] args){
         DatabaseIO testio = new DatabaseIO();
 
         for(String s : testio.getReferringTables("EMPLOYEES")){
             System.out.printf(s);
         }
+
+
     }
 }

@@ -21,9 +21,10 @@ public class DatabaseTableModel extends AbstractTableModel  {
     private QueryStorage queryStorage = new QueryStorage();
 
 
-    /**
-     * @param tableName
-     * @param pk
+    /** Used for populating the details panel table. Finds all information in all tables where the PRIMARY KEY from the GIVEN TABLE
+     * is reference by those tables.
+     * @param tableName Table name of the referenced table.
+     * @param pk Primary key of referenced table.
      */
     public DatabaseTableModel(String tableName, Object pk){
 
@@ -32,8 +33,13 @@ public class DatabaseTableModel extends AbstractTableModel  {
             String[] quers = new String[tabNames.size()];
             int count = 0;
             for (String s : tabNames) {
-                quers[count] = "select * from " + s + " where " + DBInfo.getTabToPKHash().get(tableName) +
-                        " = " + pk.toString();
+                ArrayList<String> fkNames = DBInfo.getTabToForeignKeyNames().get(s);
+
+                for (String fk : fkNames) {
+                    quers[count] = "select * from " + s + " where " + fk +
+                            " = " + pk.toString();
+                }
+
             }
             processQueries(quers);
         }

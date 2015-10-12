@@ -24,8 +24,6 @@ public class SAPAnalyzer extends JFrame{
     private JPanel pnlMain;
     private JTabbedPane tbDatabaseInformation;
     private JPanel pnlTable;
-    private JPanel pnlTree;
-    private JTree treeSAPHierarchy;
     private JPanel pnlTableFilter;
     private JComboBox cbSelection;
     private JPanel pnlMainInformation;
@@ -66,7 +64,10 @@ public class SAPAnalyzer extends JFrame{
     private JTextField fldCompProdId;
     private JTextField fldCompBomId;
     private JButton btnViewInsertQueries;
-
+    private JPanel pnlAddComponents;
+    private JPanel pnlAddProcess;
+    private JButton btnInsert;
+    private static JMenuBar menuBar;
 
     private BOMPreviewBuilder bomPreviewBuilder;
     DatabaseTableModel databaseTableModel;
@@ -128,7 +129,7 @@ public class SAPAnalyzer extends JFrame{
             public void valueChanged(ListSelectionEvent e) {
                 int row = tblShownInformation.getSelectedRow();
                 int col = tblShownInformation.getSelectedColumn();
-                if(row > -1 && col > -1){
+                if (row > -1 && col > -1) {
                     fillDetailsTable(dbio.getCurrentTable(), row, col);
                 }
             }
@@ -154,8 +155,11 @@ public class SAPAnalyzer extends JFrame{
 
         btnLoad.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                DBInfo.start();
-                fillBomProdCbBoxes();
+                javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        DBInfo.showLoadScreen();
+                    }
+                });
             }
         });
         btnViewInsertQueries.addActionListener(new ActionListener() {
@@ -170,6 +174,31 @@ public class SAPAnalyzer extends JFrame{
                 JOptionPane.showMessageDialog(null, scrollPane, "Queries", JOptionPane.CLOSED_OPTION);
             }
         });
+
+        btnInsert.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                bomPreviewBuilder.commitInserts();
+            }
+        });
+
+        menuBar = new JMenuBar();
+        JMenu mnuFile = new JMenu("File");
+        JMenuItem mnuItemLoad = new JMenuItem("Load");
+        mnuItemLoad.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        DBInfo.showLoadScreen();
+                    }
+                });
+
+                fillBomProdCbBoxes();
+            }
+        });
+        mnuFile.add(mnuItemLoad);
+        menuBar.add(mnuFile);
+
+
         TableListener listener = new TableListener();
         tblShownInformation.getModel().addTableModelListener(listener);
         txtarPreview.setEditable(false);
@@ -182,13 +211,12 @@ public class SAPAnalyzer extends JFrame{
 
     public static void main(String[] args) {
         frame = new SAPAnalyzer();
-        frame.setContentPane(new SAPAnalyzer().getContentPane());
+        frame.setContentPane(frame.getContentPane());
+        frame.setJMenuBar(menuBar);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        //new PopupMenu().setVisible(true);
         frame.pack();
-
-
-
     }
 
     public void updateCbBoxes(){
@@ -341,7 +369,6 @@ public class SAPAnalyzer extends JFrame{
         fldProcDesc.setText("");
         fldProcTime.setText("");
     }
-
 
 
 }
