@@ -6,11 +6,11 @@
     <rowspec value="top:385dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
     <colspec value="fill:max(d;4px):noGrow"/>
-    <colspec value="left:93dlu:noGrow"/>
-    <colspec value="fill:1017px:noGrow"/>
+    <colspec value="left:143dlu:noGrow"/>
+    <colspec value="fill:1024px:noGrow"/>
     <colspec value="fill:360px:noGrow"/>
     <constraints>
-      <xy x="20" y="33" width="1601" height="848"/>
+      <xy x="20" y="33" width="1734" height="848"/>
     </constraints>
     <properties/>
     <border type="bevel-raised">
@@ -39,8 +39,7 @@
             <children>
               <grid id="b77d5" binding="pnlTable" layout-manager="FormLayout">
                 <rowspec value="center:869px:noGrow"/>
-                <colspec value="fill:10px:noGrow"/>
-                <colspec value="left:446dlu:noGrow"/>
+                <colspec value="left:451dlu:grow"/>
                 <constraints>
                   <tabbedpane title="Table"/>
                 </constraints>
@@ -49,7 +48,7 @@
                 <children>
                   <component id="f2360" class="javax.swing.JTable" binding="tblShownInformation">
                     <constraints>
-                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="50"/>
                       </grid>
                       <forms defaultalign-horz="false" defaultalign-vert="false"/>
@@ -86,9 +85,9 @@
                       <grid id="d349b" binding="pnlSummaryView" layout-manager="FormLayout">
                         <rowspec value="center:38px:noGrow"/>
                         <rowspec value="center:721px:noGrow"/>
-                        <colspec value="fill:323px:noGrow"/>
+                        <colspec value="fill:323px:grow"/>
                         <colspec value="left:4dlu:noGrow"/>
-                        <colspec value="fill:max(d;4px):noGrow"/>
+                        <colspec value="fill:84px:noGrow"/>
                         <constraints>
                           <grid row="0" column="3" row-span="3" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                           <forms defaultalign-vert="false"/>
@@ -107,6 +106,15 @@
                               <text value="View Insert Queries"/>
                             </properties>
                           </component>
+                          <component id="4d32d" class="javax.swing.JButton" binding="btnInsert">
+                            <constraints>
+                              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                              <forms/>
+                            </constraints>
+                            <properties>
+                              <text value="Commit"/>
+                            </properties>
+                          </component>
                           <component id="def85" class="javax.swing.JTextArea" binding="txtarPreview">
                             <constraints>
                               <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
@@ -116,15 +124,7 @@
                             </constraints>
                             <properties>
                               <editable value="false"/>
-                            </properties>
-                          </component>
-                          <component id="4d32d" class="javax.swing.JButton" binding="btnInsert">
-                            <constraints>
-                              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                              <forms/>
-                            </constraints>
-                            <properties>
-                              <text value="Commit"/>
+                              <text value=""/>
                             </properties>
                           </component>
                         </children>
@@ -594,7 +594,7 @@
         <rowspec value="center:max(d;4px):noGrow"/>
         <rowspec value="center:49px:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="fill:192px:noGrow"/>
+        <colspec value="fill:240px:noGrow"/>
         <constraints>
           <grid row="1" column="1" row-span="3" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
@@ -613,14 +613,14 @@
               <text value="Populate"/>
             </properties>
           </component>
-          <grid id="36013" binding="tblTableSort" layout-manager="FormLayout">
+          <grid id="36013" binding="pnlTableSort" layout-manager="FormLayout">
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="center:39px:noGrow"/>
             <rowspec value="top:9dlu:noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="center:31px:noGrow"/>
             <rowspec value="top:4dlu:noGrow"/>
             <rowspec value="center:43px:noGrow"/>
-            <colspec value="fill:186px:noGrow"/>
+            <colspec value="fill:230px:noGrow"/>
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false" defaultalign-vert="false"/>

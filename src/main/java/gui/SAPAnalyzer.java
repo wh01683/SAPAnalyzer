@@ -9,10 +9,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 
@@ -31,7 +28,7 @@ public class SAPAnalyzer extends JFrame{
     private JPanel pnlMainInformation;
     private JButton btnFillInfo;
     private JTable tblShownInformation;
-    private JPanel tblTableSort;
+    private JPanel pnlTableSort;
     private JComboBox cbSortCategory;
     private JComboBox cbSortWay;
     private JButton btnSort;
@@ -180,6 +177,50 @@ public class SAPAnalyzer extends JFrame{
 
 
         TableListener listener = new TableListener();
+        tblShownInformation.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                int r = tblShownInformation.rowAtPoint(e.getPoint());
+                int c = tblShownInformation.columnAtPoint(e.getPoint());
+                if (r >= 0 && r < tblShownInformation.getRowCount()) {
+                    tblShownInformation.setRowSelectionInterval(r, r);
+                } else {
+                    tblShownInformation.clearSelection();
+                }
+
+                if (c >= 0 && c < tblShownInformation.getColumnCount()) {
+                    tblShownInformation.setColumnSelectionInterval(c, c);
+                } else {
+                    tblShownInformation.clearSelection();
+                }
+
+                int columnindex = tblShownInformation.getSelectedColumn();
+                int rowindex = tblShownInformation.getSelectedRow();
+                /*Object temp = tblShownInformation.getValueAt(rowindex, columnindex);
+                String colName = tblShownInformation.getColumnName(columnindex);
+                String tableName = dbio.getCurrentTable();*/
+
+                if (rowindex < 0 || columnindex < 0)
+                    return;
+                if (e.isPopupTrigger() && e.getComponent() instanceof JTable) {
+
+                    JPopupMenu popup = new PopupMenu();
+                    JMenu mnuView = new JMenu("View");
+                    JMenuItem mnuItemShowDetail = new JMenuItem("Details");
+                    mnuItemShowDetail.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            fillDetailsTable(dbio.getCurrentTable(), tblShownInformation.getSelectedRow(), tblShownInformation.getSelectedColumn());
+                        }
+                    });
+                    mnuView.add(mnuItemShowDetail);
+                    popup.add(mnuView);
+                    //popup.add(new JLabel(String.format("Pk: %s, Column Name: %s, Table Name: %s", temp.toString(), colName, tableName)));
+                    popup.pack();
+                    popup.setSize(300, 100);
+                    popup.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
         tblShownInformation.getModel().addTableModelListener(listener);
         txtarPreview.setEditable(false);
         txtarPreview.setVisible(true);
