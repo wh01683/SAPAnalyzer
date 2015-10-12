@@ -1,5 +1,6 @@
 package gui;
 
+import db.DBInfo;
 import db.Utility;
 
 import java.sql.ResultSet;
@@ -71,15 +72,18 @@ public class DBRow {
         this.rowArray = rowArray;
     }
 
-    public String getInsertQuery(String tableName){
+    public String getInsertQuery() {
 
         StringBuilder queryBuilder = new StringBuilder("INSERT INTO " + tableName + " VALUES(");
 
         for(int i = 0; i < this.getRowArray().length; i++){
+            boolean isString = DBInfo.getColTypes(tableName)[i + 1] == 12;
+
             if(i == getRowArray().length - 1){
-                queryBuilder.append(getRowArray()[i] + ")");
+
+                queryBuilder.append(((isString) ? "'" : "") + getRowArray()[i] + ((isString) ? "'" : "") + ")");
             }else{
-                queryBuilder.append(getRowArray()[i] + ", ");
+                queryBuilder.append(((isString) ? "'" : "") + getRowArray()[i] + ((isString) ? "'" : "") + ", ");
             }
         }
         return queryBuilder.toString();

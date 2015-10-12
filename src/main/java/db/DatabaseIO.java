@@ -308,6 +308,27 @@ public class DatabaseIO {
         }
         return null;
     }
+
+    public int[] getColumnTypes(String tableName) {
+        try {
+            ArrayList<ResultSet> tempArr = executeQuery("select * from " + tableName);
+            int[] colTypes = new int[tempArr.get(0).getMetaData().getColumnCount() + 1];
+            for (ResultSet rs : tempArr) {
+                if (!rs.next()) {
+                } else {
+                    do {
+                        for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                            colTypes[i] = rs.getMetaData().getColumnType(i);
+                        }
+                    } while (rs.next());
+                }
+            }
+            return colTypes;
+        } catch (SQLException s) {
+            s.printStackTrace();
+        }
+        return null;
+    }
 }
 
 

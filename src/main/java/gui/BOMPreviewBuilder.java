@@ -41,8 +41,8 @@ public class BOMPreviewBuilder {
             formatter.format("%-20s %-20s %-20s%n", product[0], product[1], product[2]);
             text.append(builder.toString());
 
-            newRows.add(new DBRow("BOM", bom[0], bom[2], null, bom[1], null, null, bom[3]));
-            newRows.add(new DBRow("PRODUCT", product[0], product[1], product[2], bom[0]));
+            newRows.add(new DBRow("BOM", bom[0], bom[1], null, bom[2], null, null, bom[3]));
+            newRows.add(new DBRow("PRODUCTS", product[0], product[1], product[2], bom[0]));
 
         } else {
             JOptionPane.showMessageDialog(null, "Primary key already taken.");
@@ -88,7 +88,7 @@ public class BOMPreviewBuilder {
     private void makeQueries(){
         insertQueries = new ArrayList<String>(10);
         for(DBRow row : newRows){
-            insertQueries.add(row.getInsertQuery(row.getTableName()));
+            insertQueries.add(row.getInsertQuery());
         }
     }
     public String getPrevQueryText(){
@@ -105,7 +105,7 @@ public class BOMPreviewBuilder {
         for (DBRow row : newRows) {
             String tableName = row.getTableName();
             alterConstraints(tableName, false);
-            databaseIO.executeQuery(row.getInsertQuery(tableName));
+            databaseIO.executeQuery(row.getInsertQuery());
             alterConstraints(tableName, true);
         }
     }

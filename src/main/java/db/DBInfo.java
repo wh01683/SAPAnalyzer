@@ -54,6 +54,7 @@ public class DBInfo extends JPanel
                     for (String s : colNames) {
                         taskOutput.append("Found column " + s + " in " + tables + ".\n");
                     }
+                    tabToColNames.put(tables, colNames);
                     ArrayList<String> fkNames = dbio.getTableForeignKey(tables);
                     for (String s : colNames) {
                         taskOutput.append("Found foreign key " + s + " in " + tables + ".\n");
@@ -162,5 +163,9 @@ public class DBInfo extends JPanel
 
     public static Hashtable<String, ArrayList<String>> getTabToForeignKeyNames() {
         return tabToForeignKeyNames;
+    }
+
+    public static int[] getColTypes(String tableName) {
+        return dbio.getColumnTypes(tableName);
     }
 }
