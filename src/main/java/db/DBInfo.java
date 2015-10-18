@@ -88,7 +88,6 @@ public class DBInfo extends JPanel
                     count += (Math.ceil(100 / (max)));
                     tabCount++;
                     setProgress(Math.min(count, 100));
-                    taskOutput.append("\n===========================================================================\n");
                 }
             } catch (SQLException s) {
                 System.out.printf("Error Code: %d", s.getErrorCode());
@@ -203,5 +202,21 @@ public class DBInfo extends JPanel
 
     public static Hashtable<String, ArrayList<String>> getTabToRefConstraint() {
         return tabToRefConstraint;
+    }
+
+    public static String dbToString() {
+        StringBuilder db = new StringBuilder("DB\n===================================\n");
+
+        for (String table : dbio.getTableNames()) {
+            db.append("Table: ").append(table).append("\n");
+            int colCount = 1;
+            int[] colTypes = dbio.getColumnTypes(table);
+            for (String columnName : dbio.getColNames(table)) {
+                db.append("____").append(colCount).append("_").append(columnName).append("_ Type:_").append(colTypes[colCount]).append("\n");
+                colCount++;
+            }
+            db.append("\n");
+        }
+        return db.toString();
     }
 }

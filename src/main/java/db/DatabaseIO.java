@@ -357,8 +357,9 @@ public class DatabaseIO {
                     } else {
                         do {
                             ArrayList<Object> results = new ArrayList<Object>(10);
+                            results.add(null);
                             for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-                                results.add(i, rs.getObject(i));
+                                results.add(rs.getObject(i));
                             }
                             resultList.add(results);
                         } while (rs.next());
@@ -372,6 +373,12 @@ public class DatabaseIO {
         return null;
     }
 
+    /**
+     * Returns integer array of column types WITH SAME COLUMN NUMBER AS IN TABLE. Index will start at 1
+     *
+     * @param tableName table name to obtain column types for
+     * @return int[] of SQL types.
+     */
     public int[] getColumnTypes(String tableName) {
         try {
             ArrayList<ResultSet> tempArr = executeQuery("select * from " + tableName);

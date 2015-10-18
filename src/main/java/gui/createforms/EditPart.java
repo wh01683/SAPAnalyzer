@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Stack;
 
 /**
@@ -60,8 +61,10 @@ public class EditPart extends JFrame {
     private JButton btnUndo;
     private JButton btnCommit;
     private JButton btnPreview;
+    private JComboBox cbSuppliers;
 
     private Stack<DBRow> rowStack = new Stack<DBRow>();
+    private Hashtable<String, Object> suppNameToPk = new Hashtable<String, Object>(10);
     private DatabaseIO dbio = new DatabaseIO();
     boolean editable = false;
 
@@ -108,8 +111,12 @@ public class EditPart extends JFrame {
         });
         btnUndo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                rowStack.pop();
-                rowStack.pop();
+                try {
+                    rowStack.pop();
+                    rowStack.pop();
+                } catch (NullPointerException n) {
+                    JOptionPane.showMessageDialog(null, "Row stack already empty.");
+                }
             }
         });
         btnPreview.addActionListener(new ActionListener() {
@@ -136,7 +143,9 @@ public class EditPart extends JFrame {
                 if (components[i].getClass().getName().toString().equals("javax.swing.JTextField")) {
                     JTextField temp = (JTextField) components[i];
                     temp.setEditable(editable);
-                    System.out.printf("Index: %d, Name: %s ", i, components[i].getName());
+                } else if (components[i].getClass().getName().toString().equals("javax.swing.JTextArea")) {
+                    JTextArea temp = (JTextArea) components[i];
+                    temp.setEditable(editable);
                 }
             }
         }
@@ -145,27 +154,39 @@ public class EditPart extends JFrame {
     private void fillCbBoxes() {
         ArrayList<String> units = DBInfo.getUnitOfMeasure();
         ArrayList<String> cats = DBInfo.getPartCategories();
-
-
-        for (String s : units) {
-            cbUnits.addItem(s);
-        }
-
-        for (String s : cats) {
-            cbPartCategory.addItem(s);
+        ArrayList<Object> plantId = DBInfo.getTabToPkVals().get("PLANTS");
+        fillSuppHash();
+        try {
+            for (String s : units) {
+                cbUnits.addItem(s);
+            }
+            for (String s : cats) {
+                cbPartCategory.addItem(s);
+            }
+            for (Object o : plantId) {
+                cbPartPlantID.addItem(o);
+            }
+            for (String s : suppNameToPk.keySet()) {
+                cbSuppliers.addItem(s);
+            }
+        } catch (NullPointerException n) {
+            System.out.printf("Load information from database first!\n");
+            n.printStackTrace();
         }
     }
 
     private void insertRows() {
+        ArrayList<String> queries = new ArrayList<String>(rowStack.size());
         for (DBRow row : rowStack) {
-            dbio.executeQuery(row.getInsertQuery());
+            queries.add(row.getInsertQuery());
         }
+        dbio.executeQuery(queries);
     }
     private void makePartRow() {
 
         Integer partid = Integer.parseInt(fldPartID.getText());
         String desc = fldPartDesc.getText();
-        Integer plantID = (Integer) cbPartPlantID.getSelectedItem();
+        Object plantID = cbPartPlantID.getSelectedItem();
         String name = fldPartName.getText();
         String phase = fldPartPhase.getText();
         Character revision = fldPartRev.getText().charAt(0);
@@ -185,13 +206,13 @@ public class EditPart extends JFrame {
     }
 
     private void makeStockRow() {
-        Integer partId = Integer.parseInt(fldPartID.getText());
+        Object partId = Integer.parseInt(fldPartID.getText());
         Integer qtyonhand = Integer.parseInt(fldQtyOnHand.getText());
         Integer allocQty = Integer.parseInt(fldAllocQty.getText());
         Integer availQty = Integer.parseInt(fldAvailQty.getText());
         Integer reorder = Integer.parseInt(fldMinReordLvl.getText());
         Integer leadTime = Integer.parseInt(fldLeadTime.getText());
-        Integer supplierid = Integer.parseInt(fldPartSupplier.getText());
+        Integer supplierid = (Integer) suppNameToPk.get(cbSuppliers.getSelectedItem().toString());
 
         DBRow temp = new DBRow("STOCKDETAIL", partId, qtyonhand, allocQty, availQty, reorder, leadTime, supplierid);
         rowStack.push(temp);
@@ -262,6 +283,14 @@ public class EditPart extends JFrame {
                     temp.setText("");
                 }
             }
+        }
+    }
+
+
+    private void fillSuppHash() {
+        ArrayList<ArrayList<Object>> queryResults = dbio.getMultiObResults("select * from supplier");
+        for (ArrayList<Object> outerArr : queryResults) {
+            suppNameToPk.put(outerArr.get(2).toString(), outerArr.get(1));
         }
     }
 

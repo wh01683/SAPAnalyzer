@@ -4,6 +4,7 @@ import db.DBInfo;
 import db.DatabaseIO;
 import gui.createforms.CreateBOM;
 import gui.createforms.EditPart;
+import gui.createforms.Help;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -217,6 +218,8 @@ public class SAPAnalyzer extends JFrame{
 
         menuBar = new JMenuBar();
         JMenu mnuFile = new JMenu("File");
+        JMenu mnuHelp = new JMenu("Help");
+        JMenuItem mnuItemUnitsNCats = new JMenuItem("Units & Categories");
         JMenuItem mnuLoad = new JMenu("Load");
         JMenuItem mnuItemNew = new JMenu("New");
         JMenuItem mnuItemBOM = new JMenuItem("BOM");
@@ -245,13 +248,21 @@ public class SAPAnalyzer extends JFrame{
                 new CreateBOM().setVisible(true);
             }
         });
+
+        mnuItemUnitsNCats.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Help().setVisible(true);
+            }
+        });
+
         mnuItemNew.add(mnuItemBOM);
         mnuItemNew.add(mnuItemPart);
         mnuFile.add(mnuItemNew);
-
+        mnuHelp.add(mnuItemUnitsNCats);
         mnuLoad.add(mnuItemLoadAll);
         mnuFile.add(mnuLoad);
         menuBar.add(mnuFile);
+        menuBar.add(mnuHelp);
     }
 
     private void addChildMenus(JMenuItem parent, Hashtable<String, ActionListener> namesToActionListeners) {
