@@ -21,7 +21,7 @@ public class DBInfo extends JPanel
     private static Hashtable<String, ArrayList<String>> tabToColNames = new Hashtable<String, ArrayList<String>>(10);
     private static Hashtable<String, ArrayList<String>> tabToForeignKeyNames = new Hashtable<String, ArrayList<String>>(10);
     private static Hashtable<String, ArrayList<String>> tabToRefConstraint = new Hashtable<String, ArrayList<String>>(10);
-    private static Hashtable<String, ArrayList<Integer>> tabToPkVals = new Hashtable<String, ArrayList<Integer>>(10);
+    private static Hashtable<String, ArrayList<Object>> tabToPkVals = new Hashtable<String, ArrayList<Object>>(10);
     private static ArrayList<String> unitOfMeasure = new ArrayList<String>(10);
     private static ArrayList<String> partCategories = new ArrayList<String>(10);
     private static ArrayList<String> matCategories = new ArrayList<String>(10);
@@ -40,56 +40,56 @@ public class DBInfo extends JPanel
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 dbio.updateTableNames();
                 int count = 0;
+                int tabCount = 1;
                 setProgress(0);
                 int max = dbio.getTableNames().size();
-                taskOutput.append("Getting units of measure...");
-                unitOfMeasure = dbio.getStringResults("select uom from units");
-                taskOutput.append("Getting part categories...");
+                taskOutput.append("Getting units of measure...\n");
+                unitOfMeasure = dbio.getStringResults("select unitcode from units");
+                taskOutput.append("Getting part categories...\n");
                 partCategories = dbio.getStringResults("select catname from partcategory");
-                taskOutput.append("Getting material categories...");
-                matCategories = dbio.getStringResults("select matcatname from materialcategory");
-                taskOutput.append("Getting suppliers...");
+                taskOutput.append("Getting suppliers...\n");
                 suppliers = dbio.getStringResults("select name from supplier");
 
-                for (String tables : dbio.getTableNames()) {
-
-                    taskOutput.append("===========================================================================\n");
-                    taskOutput.append("Found table " + tables + "\n");
-                    taskOutput.append("Processing table: " + tables + ". Number " + count + " of " + max + "\n");
-                    String pkColName = dbio.getTablePrimaryKey(tables);
-                    taskOutput.append("Found primary key column " + pkColName + " for " + tables + ".\n");
-                    tabToPKHash.put(tables, pkColName);
-                    taskOutput.append("Obtaining tables referring to " + tables + ".\n");
-                    ArrayList<String> tempTabs = dbio.getReferringTables(tables);
+                for (String table : dbio.getTableNames()) {
+                    taskOutput.append("\n===========================================================================\n");
+                    taskOutput.append("Found table " + table + "\n");
+                    taskOutput.append("Processing table: " + table + ". Number " + tabCount + " of " + max + "\n");
+                    String pkColName = dbio.getTablePrimaryKey(table);
+                    taskOutput.append("Found primary key column " + pkColName + " for " + table + ".\n");
+                    tabToPKHash.put(table, pkColName);
+                    taskOutput.append("Obtaining tables referring to " + table + ".\n");
+                    ArrayList<String> tempTabs = dbio.getReferringTables(table);
                     for (String s : tempTabs) {
-                        taskOutput.append("Found table " + s + " referencing " + tables + ".\n");
+                        taskOutput.append("Found table " + s + " referencing " + table + ".\n");
                     }
-                    tabToRefTabHash.put(tables, tempTabs);
-                    taskOutput.append("Obtaining columns belonging to " + tables + ".\n");
-                    ArrayList<String> colNames = dbio.getColNames(tables);
+                    tabToRefTabHash.put(table, tempTabs);
+                    taskOutput.append("Obtaining columns belonging to " + table + ".\n");
+                    ArrayList<String> colNames = dbio.getColNames(table);
                     for (String s : colNames) {
-                        taskOutput.append("Found column " + s + " in " + tables + ".\n");
+                        taskOutput.append("Found column " + s + " in " + table + ".\n");
                     }
-                    tabToColNames.put(tables, colNames);
-                    ArrayList<String> fkNames = dbio.getTableForeignKey(tables);
+                    tabToColNames.put(table, colNames);
+                    ArrayList<String> fkNames = dbio.getTableForeignKey(table);
                     for (String s : colNames) {
-                        taskOutput.append("Found foreign key " + s + " in " + tables + ".\n");
+                        taskOutput.append("Found foreign key " + s + " in " + table + ".\n");
                     }
-                    tabToForeignKeyNames.put(tables, fkNames);
+                    tabToForeignKeyNames.put(table, fkNames);
 
-                    ArrayList<String> refCon = dbio.getStringResults(queryStorage.getFkConstraintsQuery(tables));
+                    ArrayList<String> refCon = dbio.getRefConstraints(table);
                     for (String s : refCon) {
-                        taskOutput.append("Found reference constraint " + s + " in " + tables + ".\n");
+                        taskOutput.append("Found reference constraint " + s + " in " + table + ".\n");
                     }
-                    tabToRefConstraint.put(tables, refCon);
-                    ArrayList<Integer> pkVals = dbio.getPksFromTable(tables);
-                    for (Integer i : pkVals) {
-                        taskOutput.append("Found primary key " + i + " in " + tables + ".\n");
+                    tabToRefConstraint.put(table, refCon);
+
+                    ArrayList<Object> pkVals = dbio.getPksFromTable(table);
+                    for (Object i : pkVals) {
+                        taskOutput.append("Found primary key " + i + " in " + table + ".\n");
                     }
-                    tabToPkVals.put(tables, dbio.getPksFromTable(tables));
+                    tabToPkVals.put(table, dbio.getPksFromTable(table));
                     count += (Math.ceil(100 / (max)));
+                    tabCount++;
                     setProgress(Math.min(count, 100));
-                    taskOutput.append("===========================================================================\n");
+                    taskOutput.append("\n===========================================================================\n");
                 }
             } catch (SQLException s) {
                 System.out.printf("Error Code: %d", s.getErrorCode());
@@ -179,7 +179,7 @@ public class DBInfo extends JPanel
         return tabToColNames;
     }
 
-    public static Hashtable<String, ArrayList<Integer>> getTabToPkVals() {
+    public static Hashtable<String, ArrayList<Object>> getTabToPkVals() {
         return tabToPkVals;
     }
 

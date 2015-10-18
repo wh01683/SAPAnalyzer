@@ -62,8 +62,8 @@ public class CreateBOM extends JFrame {
 
     private void fillCbBoxes() {
 
-        ArrayList<Integer> itemIDs = DBInfo.getTabToPkVals().get("PART");
-        for (Integer i : itemIDs) {
+        ArrayList<Object> itemIDs = DBInfo.getTabToPkVals().get("PART");
+        for (Object i : itemIDs) {
             cbChildPartID.addItem(i);
             cbParentPartID.addItem(i);
         }

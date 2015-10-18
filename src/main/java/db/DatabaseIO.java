@@ -279,16 +279,16 @@ public class DatabaseIO {
      * @param tableName Table name to query.
      * @return ArrayList of primary keys.
      */
-    public ArrayList<Integer> getPksFromTable(String tableName){
+    public ArrayList<Object> getPksFromTable(String tableName) {
         try {
-            ArrayList<Integer> pkList = new ArrayList<Integer>(10);
+            ArrayList<Object> pkList = new ArrayList<Object>(10);
             ArrayList<ResultSet> tempArr = executeQuery("select " + DBInfo.getTabToPKHash().get(tableName) + " from " + tableName);
             for (ResultSet rs : tempArr) {
                 if (!rs.next()) {
                 } else {
                     do {
                         for(int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++){
-                            pkList.add(rs.getInt(i));
+                            pkList.add(rs.getObject(i));
                         }
                     } while (rs.next());
                 }
@@ -300,6 +300,29 @@ public class DatabaseIO {
         return null;
     }
 
+
+    public ArrayList<String> getRefConstraints(String tableName) {
+
+        ArrayList<String> refList = new ArrayList<String>(10);
+        ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getFkConstraintsQuery(tableName));
+        try {
+            for (ResultSet rs : tempArr) {
+                if (!rs.next()) {
+                } else {
+                    do {
+                        for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                            refList.add(rs.getString(i));
+                        }
+                    } while (rs.next());
+                }
+            }
+
+            return refList;
+        } catch (SQLException s) {
+            s.printStackTrace();
+        }
+        return null;
+    }
 
     public ArrayList<String> getStringResults(String... queries) {
         try {

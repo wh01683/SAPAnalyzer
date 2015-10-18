@@ -2,6 +2,7 @@ package gui;
 
 import db.DBInfo;
 import db.DatabaseIO;
+import gui.createforms.CreateBOM;
 import gui.createforms.EditPart;
 
 import javax.swing.*;
@@ -133,7 +134,7 @@ public class SAPAnalyzer extends JFrame{
                     JMenuItem mnuItemShowDetail = new JMenuItem("Details");
                     mnuItemShowDetail.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            fillDetailsTable(dbio.getCurrentTable(), tblShownInformation.getSelectedRow(), tblShownInformation.getSelectedColumn());
+                            new EditPart(true).setVisible(true);
                         }
                     });
                     mnuView.add(mnuItemShowDetail);
@@ -146,8 +147,6 @@ public class SAPAnalyzer extends JFrame{
             }
         });
         tblShownInformation.getModel().addTableModelListener(listener);
-
-
     }
 
     public static void main(String[] args) {
@@ -236,7 +235,14 @@ public class SAPAnalyzer extends JFrame{
 
         mnuItemPart.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new EditPart().setVisible(true);
+                new EditPart(false).setVisible(true);
+
+            }
+        });
+
+        mnuItemBOM.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new CreateBOM().setVisible(true);
             }
         });
         mnuItemNew.add(mnuItemBOM);

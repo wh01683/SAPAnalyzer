@@ -65,7 +65,11 @@ public class EditPart extends JFrame {
     private DatabaseIO dbio = new DatabaseIO();
     boolean editable = false;
 
-    public EditPart() {
+    public EditPart(boolean viewing) {
+
+        setEditAll(!viewing, pnlGeneral, pnlAdvanced, pnlStock, pnlEditBOM, pnlEditPart);
+        editable = !viewing;
+
         chkAddPart.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 if (chkAddPart.isSelected()) {
@@ -78,6 +82,7 @@ public class EditPart extends JFrame {
         this.setVisible(true);
         pnlMain.setVisible(true);
         this.setContentPane(pnlMain);
+
         btnEdit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 boolean temp = !editable;
@@ -112,6 +117,11 @@ public class EditPart extends JFrame {
                 displayInsertTextPreview();
             }
         });
+        btnCommit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                insertRows();
+            }
+        });
 
         fillCbBoxes();
         this.pack();
@@ -136,6 +146,7 @@ public class EditPart extends JFrame {
         ArrayList<String> units = DBInfo.getUnitOfMeasure();
         ArrayList<String> cats = DBInfo.getPartCategories();
 
+
         for (String s : units) {
             cbUnits.addItem(s);
         }
@@ -145,6 +156,11 @@ public class EditPart extends JFrame {
         }
     }
 
+    private void insertRows() {
+        for (DBRow row : rowStack) {
+            dbio.executeQuery(row.getInsertQuery());
+        }
+    }
     private void makePartRow() {
 
         Integer partid = Integer.parseInt(fldPartID.getText());
