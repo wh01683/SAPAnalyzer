@@ -20,10 +20,17 @@ public class DBInfo extends JPanel
     private static Hashtable<String, ArrayList<String>> tabToRefTabHash = new Hashtable<String, ArrayList<String>>(10);
     private static Hashtable<String, ArrayList<String>> tabToColNames = new Hashtable<String, ArrayList<String>>(10);
     private static Hashtable<String, ArrayList<String>> tabToForeignKeyNames = new Hashtable<String, ArrayList<String>>(10);
+    private static Hashtable<String, ArrayList<String>> tabToRefConstraint = new Hashtable<String, ArrayList<String>>(10);
     private static Hashtable<String, ArrayList<Integer>> tabToPkVals = new Hashtable<String, ArrayList<Integer>>(10);
+    private static ArrayList<String> unitOfMeasure = new ArrayList<String>(10);
+    private static ArrayList<String> partCategories = new ArrayList<String>(10);
+    private static ArrayList<String> matCategories = new ArrayList<String>(10);
+    private static ArrayList<String> suppliers = new ArrayList<String>(10);
+
     private static JTextArea taskOutput = new JTextArea("Loading info from database.");
     private JProgressBar progressBar;
     private static LoadTask task;
+    private QueryStorage queryStorage;
 
     class LoadTask extends SwingWorker<Void, Void> {
 
@@ -35,9 +42,18 @@ public class DBInfo extends JPanel
                 int count = 0;
                 setProgress(0);
                 int max = dbio.getTableNames().size();
+                taskOutput.append("Getting units of measure...");
+                unitOfMeasure = dbio.getStringResults("select uom from units");
+                taskOutput.append("Getting part categories...");
+                partCategories = dbio.getStringResults("select catname from partcategory");
+                taskOutput.append("Getting material categories...");
+                matCategories = dbio.getStringResults("select matcatname from materialcategory");
+                taskOutput.append("Getting suppliers...");
+                suppliers = dbio.getStringResults("select name from supplier");
+
                 for (String tables : dbio.getTableNames()) {
 
-                    System.out.printf("Count :%d ", count);
+                    taskOutput.append("===========================================================================\n");
                     taskOutput.append("Found table " + tables + "\n");
                     taskOutput.append("Processing table: " + tables + ". Number " + count + " of " + max + "\n");
                     String pkColName = dbio.getTablePrimaryKey(tables);
@@ -61,6 +77,11 @@ public class DBInfo extends JPanel
                     }
                     tabToForeignKeyNames.put(tables, fkNames);
 
+                    ArrayList<String> refCon = dbio.getStringResults(queryStorage.getFkConstraintsQuery(tables));
+                    for (String s : refCon) {
+                        taskOutput.append("Found reference constraint " + s + " in " + tables + ".\n");
+                    }
+                    tabToRefConstraint.put(tables, refCon);
                     ArrayList<Integer> pkVals = dbio.getPksFromTable(tables);
                     for (Integer i : pkVals) {
                         taskOutput.append("Found primary key " + i + " in " + tables + ".\n");
@@ -68,6 +89,7 @@ public class DBInfo extends JPanel
                     tabToPkVals.put(tables, dbio.getPksFromTable(tables));
                     count += (Math.ceil(100 / (max)));
                     setProgress(Math.min(count, 100));
+                    taskOutput.append("===========================================================================\n");
                 }
             } catch (SQLException s) {
                 System.out.printf("Error Code: %d", s.getErrorCode());
@@ -167,5 +189,25 @@ public class DBInfo extends JPanel
 
     public static int[] getColTypes(String tableName) {
         return dbio.getColumnTypes(tableName);
+    }
+
+    public static ArrayList<String> getUnitOfMeasure() {
+        return unitOfMeasure;
+    }
+
+    public static ArrayList<String> getPartCategories() {
+        return partCategories;
+    }
+
+    public static ArrayList<String> getMatCategories() {
+        return matCategories;
+    }
+
+    public static ArrayList<String> getSuppliers() {
+        return suppliers;
+    }
+
+    public static Hashtable<String, ArrayList<String>> getTabToRefConstraint() {
+        return tabToRefConstraint;
     }
 }

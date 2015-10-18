@@ -74,16 +74,16 @@ public class DBRow {
 
     public String getInsertQuery() {
 
-        StringBuilder queryBuilder = new StringBuilder("INSERT INTO " + tableName + " VALUES(");
+        StringBuilder queryBuilder = new StringBuilder(new StringBuilder().append("INSERT INTO ").append(tableName).append(" VALUES(").toString());
 
         for(int i = 0; i < this.getRowArray().length; i++){
             boolean isString = DBInfo.getColTypes(tableName)[i + 1] == 12;
 
             if(i == getRowArray().length - 1){
 
-                queryBuilder.append(((isString) ? "'" : "") + getRowArray()[i] + ((isString) ? "'" : "") + ")");
+                queryBuilder.append((isString) ? "'" : "").append(getRowArray()[i]).append((isString) ? "'" : "").append(")");
             }else{
-                queryBuilder.append(((isString) ? "'" : "") + getRowArray()[i] + ((isString) ? "'" : "") + ", ");
+                queryBuilder.append((isString) ? "'" : "").append(getRowArray()[i]).append((isString) ? "'" : "").append(", ");
             }
         }
         return queryBuilder.toString();

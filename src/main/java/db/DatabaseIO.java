@@ -2,6 +2,7 @@ package db;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  * Created by robert on 9/19/2015.
@@ -18,6 +19,8 @@ public class DatabaseIO {
     private ArrayList<String> tableNames;
     private String currentTable;
     private QueryStorage queryStorage;
+    private Hashtable<String, ArrayList<String>> tabsToRefConstraints = new Hashtable<String, ArrayList<String>>(10);
+
     public DatabaseIO(){
         this.queryStorage = new QueryStorage();
         MakeConnection();
@@ -28,8 +31,23 @@ public class DatabaseIO {
             connection = DriverManager.getConnection(
                     "jdbc:oracle:thin:@localhost:1521:" + DATABASE_NAME, USER_NAME, PASSWORD);
             updateTableNames();
+
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    public void alterConstraints(String table, boolean enable) {
+        if (tabsToRefConstraints == null) {
+            tabsToRefConstraints = DBInfo.getTabToRefConstraint();
+        } else {
+            for (int i = 0; i < tabsToRefConstraints.get(table).size(); i++) {
+                String constraintQuery = "alter table " + table + " " + ((enable) ? "enable" : "disable") + " constraint " +
+                        tabsToRefConstraints.get(table).get(i);
+                String triggerQuery = "alter table " + table + " " + ((enable) ? "enable" : "disable") + " all triggers";
+                executeQuery(triggerQuery, constraintQuery);
+            }
         }
     }
 
@@ -65,10 +83,10 @@ public class DatabaseIO {
 
     public ArrayList<String> getColNames(String tableName){
         ArrayList<String> cols = new ArrayList<String>(10);
-        ArrayList<ResultSet> resultSets = executeQuery(queryStorage.getColNamesQuery(tableName));
+        ArrayList<ResultSet> resultSet = executeQuery(queryStorage.getColNamesQuery(tableName));
 
         try {
-            for (ResultSet rs : resultSets) {
+            for (ResultSet rs : resultSet) {
                 if (!rs.next()) {
                 } else {
                     do {
@@ -91,9 +109,9 @@ public class DatabaseIO {
         StringBuilder vals = new StringBuilder("INSERT INTO " + table + " VALUES ("+ values[0] + (values.length > 1? ", " : " "));
         for(int s = 1; s < values.length; s++){
             if(s == values.length - 1){
-                vals.append(values[s] + ")");
+                vals.append(values[s]).append(")");
             }else{
-                vals.append(values[s]+", ");
+                vals.append(values[s]).append(", ");
             }
         }
 
@@ -197,7 +215,6 @@ public class DatabaseIO {
         return null;
     }
 
-
     public String getCurrentTable() {
         return currentTable;
     }
@@ -283,26 +300,24 @@ public class DatabaseIO {
         return null;
     }
 
-    /** Gets all constraint names for a given table.
-     * @param tableName Table name to query for.
-     * @return ArrayList containing all table names referencing the given table's primary key
-     * @should refNames
-     */
-    public ArrayList<String> getRefConstraintsForTable(String tableName){
+
+    public ArrayList<String> getStringResults(String... queries) {
         try {
-            ArrayList<String> fkList = new ArrayList<String>(10);
-            ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getFkConstraintsQuery(tableName));
-            for (ResultSet rs : tempArr) {
-                if (!rs.next()) {
-                } else {
-                    do {
-                        for(int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++){
-                            fkList.add(rs.getString(i));
-                        }
-                    } while (rs.next());
+            ArrayList<String> resultList = new ArrayList<String>(10);
+            for (String s : queries) {
+                ArrayList<ResultSet> tempArr = executeQuery(s);
+                for (ResultSet rs : tempArr) {
+                    if (!rs.next()) {
+                    } else {
+                        do {
+                            for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                                resultList.add(rs.getString(i));
+                            }
+                        } while (rs.next());
+                    }
                 }
             }
-            return fkList;
+            return resultList;
         }catch (SQLException s) {
             s.printStackTrace();
         }
@@ -329,6 +344,7 @@ public class DatabaseIO {
         }
         return null;
     }
+
 }
 
 

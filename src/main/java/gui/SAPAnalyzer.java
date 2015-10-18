@@ -2,15 +2,14 @@ package gui;
 
 import db.DBInfo;
 import db.DatabaseIO;
+import gui.createforms.EditPart;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 
 /**
@@ -34,40 +33,10 @@ public class SAPAnalyzer extends JFrame{
     private JButton btnSort;
     private JTabbedPane tbSidePanel;
     private JPanel pnlDetail;
-    private JPanel pnlInsert;
     private JComboBox cbTableSelect;
-    private JPanel pnlCreateBOM;
-    private JTextField fldBOMName;
-    private JPanel pnlBOMForm;
-    private JComboBox cbBOMPlantID;
-    private JComboBox cbBOMCompanyID;
-    private JButton btnAddComponent;
-    private JPanel pnlSummaryView;
-    private JTextField fldProdName;
-    private JTextField fldProdCost;
-    private JTextField fldCompName;
-    private JTextField fldCompDesc;
-    private JTextField fldProcDesc;
-    private JTextField fldProcCost;
-    private JTextField fldProcTime;
-    private JButton btnAddProcess;
-    private JTextArea txtarPreview;
     private JTable tblDetailsTable;
-    private JTextField fldProdID;
-    private JTextField fldBomId;
-    private JTextField fldCompID;
-    private JTextField fldProcId;
-    private JButton btnAddBomProdToPrev;
-    private JTextField fldProcCompId;
-    private JTextField fldCompProdId;
-    private JTextField fldCompBomId;
-    private JButton btnViewInsertQueries;
-    private JPanel pnlAddComponents;
-    private JPanel pnlAddProcess;
-    private JButton btnInsert;
     private static JMenuBar menuBar;
 
-    private BOMPreviewBuilder bomPreviewBuilder;
     DatabaseTableModel databaseTableModel;
     private static JFrame frame;
 
@@ -120,11 +89,6 @@ public class SAPAnalyzer extends JFrame{
             }
         });
 
-        tbDatabaseInformation.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                fillBomProdCbBoxes();
-            }
-        });
         tblShownInformation.setCellSelectionEnabled(true);
         ListSelectionModel cellSelection = tblShownInformation.getSelectionModel();
 
@@ -135,43 +99,6 @@ public class SAPAnalyzer extends JFrame{
                 if (row > -1 && col > -1) {
                     fillDetailsTable(dbio.getCurrentTable(), row, col);
                 }
-            }
-        });
-
-        btnAddBomProdToPrev.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addBomProd(e);
-            }
-        });
-
-        btnAddComponent.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addBomProd(e);
-            }
-        });
-
-        btnAddProcess.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addBomProd(e);
-            }
-        });
-
-        btnViewInsertQueries.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-
-
-                JTextArea textArea = new JTextArea(bomPreviewBuilder.getPrevQueryText());
-                JScrollPane scrollPane = new JScrollPane(textArea);
-                textArea.setLineWrap(true);
-                textArea.setWrapStyleWord(true);
-                scrollPane.setPreferredSize(new Dimension(750, 750));
-                JOptionPane.showMessageDialog(null, scrollPane, "Queries", JOptionPane.CLOSED_OPTION);
-            }
-        });
-
-        btnInsert.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                bomPreviewBuilder.commitInserts();
             }
         });
 
@@ -196,9 +123,6 @@ public class SAPAnalyzer extends JFrame{
 
                 int columnindex = tblShownInformation.getSelectedColumn();
                 int rowindex = tblShownInformation.getSelectedRow();
-                /*Object temp = tblShownInformation.getValueAt(rowindex, columnindex);
-                String colName = tblShownInformation.getColumnName(columnindex);
-                String tableName = dbio.getCurrentTable();*/
 
                 if (rowindex < 0 || columnindex < 0)
                     return;
@@ -222,10 +146,6 @@ public class SAPAnalyzer extends JFrame{
             }
         });
         tblShownInformation.getModel().addTableModelListener(listener);
-        txtarPreview.setEditable(false);
-        txtarPreview.setVisible(true);
-        txtarPreview.setLineWrap(false);
-        bomPreviewBuilder = new BOMPreviewBuilder(txtarPreview);
 
 
     }
@@ -236,7 +156,6 @@ public class SAPAnalyzer extends JFrame{
         frame.setJMenuBar(menuBar);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        //new PopupMenu().setVisible(true);
         frame.pack();
     }
 
@@ -263,16 +182,6 @@ public class SAPAnalyzer extends JFrame{
         setDatabaseTableModel(new DatabaseTableModel(getTblShownQuery()));
     }
 
-    private void fillBomProdCbBoxes(){
-        ArrayList<Integer> companyKeys = DBInfo.getTabToPkVals().get("COMPANIES");
-        ArrayList<Integer> plantKeys = DBInfo.getTabToPkVals().get("PLANTS");
-        for(Integer i : companyKeys){
-            cbBOMCompanyID.addItem(i);
-        }
-        for(Integer i : plantKeys){
-            cbBOMPlantID.addItem(i);
-        }
-    }
     private String getSortQuery(){
 
         String sortQuery = "select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
@@ -303,93 +212,6 @@ public class SAPAnalyzer extends JFrame{
         tblDetailsTable.setModel(temp);
     }
 
-    private void addBomProd(ActionEvent e){
-
-        JButton source = (JButton)e.getSource();
-
-        int maxColWidth = 0;
-        String[] tabs = {"BOM", "PRODUCTS", "COMPONENTS", "PROCESSES"};
-
-        for (int i = 0; i < tabs.length; i++) {
-            maxColWidth = (DBInfo.getTabToColNames().get(tabs[i]).size() > maxColWidth)? DBInfo.getTabToColNames().get(tabs[i]).size() : maxColWidth;
-        }
-
-        if(source == btnAddBomProdToPrev) {
-            String[] bom = new String[maxColWidth];
-            String bomName = fldBOMName.getText();
-            Integer bomId = Integer.parseInt(fldBomId.getText());
-            Integer bomPlantId = (Integer) cbBOMPlantID.getSelectedItem();
-            Integer bomCompanyId = (Integer) cbBOMCompanyID.getSelectedItem();
-            bom[0] = bomId.toString();
-            bom[1] = bomPlantId.toString();
-            bom[2] = bomName;
-            bom[3] = bomCompanyId.toString();
-
-            String[] prod = new String[maxColWidth];
-            Integer prodId = Integer.parseInt(fldProdID.getText());
-            Integer prodCost = Integer.parseInt(fldProdCost.getText());
-            String prodName = fldProdName.getText();
-            prod[0] = prodId.toString();
-            prod[1] = prodName;
-            prod[2] = prodCost.toString();
-
-            bomPreviewBuilder.addBOMProduct(bom, prod);
-            clearAllFields();
-
-        }
-
-        if(source == btnAddComponent) {
-            String[] comp = new String[maxColWidth];
-            String compName = fldCompName.getText();
-            Integer compId = Integer.parseInt(fldCompID.getText());
-            String compDesc = fldCompDesc.getText();
-            Integer bomId = Integer.parseInt(fldCompBomId.getText());
-            Integer prodId = Integer.parseInt(fldCompProdId.getText());
-            comp[0] = compId.toString();
-            comp[1] = compName;
-            comp[2] = compDesc;
-            bomPreviewBuilder.addComponent(comp, bomId, prodId);
-            clearAllFields();
-        }
-
-        if(source == btnAddProcess) {
-            String[] proc = new String[maxColWidth];
-            String procDesc = fldProcDesc.getText();
-            Integer procId = Integer.parseInt(fldProcId.getText());
-            Integer procCost = Integer.parseInt(fldProcCost.getText());
-            Integer procTime = Integer.parseInt(fldProcTime.getText());
-            Integer compId = Integer.parseInt(fldProcCompId.getText());
-            proc[0] = procId.toString();
-            proc[1] = procDesc;
-            proc[2] = procCost.toString();
-            proc[3] = procTime.toString();
-            bomPreviewBuilder.addProcess(proc, compId);
-            clearAllFields();
-        }
-
-    }
-
-    private void clearAllFields(){
-
-        fldCompID.setText("");
-        fldCompDesc.setText("");
-        fldCompName.setText("");
-
-        fldBomId.setText("");
-        fldBOMName.setText("");
-
-        fldProdCost.setText("");
-        fldProdName.setText("");
-        fldProdID.setText("");
-        fldCompProdId.setText("");
-        fldCompBomId.setText("");
-
-        fldProcId.setText("");
-        fldProcCompId.setText("");
-        fldProcCost.setText("");
-        fldProcDesc.setText("");
-        fldProcTime.setText("");
-    }
 
     private void createMenu() {
 
@@ -399,9 +221,7 @@ public class SAPAnalyzer extends JFrame{
         JMenuItem mnuLoad = new JMenu("Load");
         JMenuItem mnuItemNew = new JMenu("New");
         JMenuItem mnuItemBOM = new JMenuItem("BOM");
-        JMenuItem mnuItemEmp = new JMenuItem("Employee");
-        JMenuItem mnuItemProcess = new JMenuItem("Process");
-        JMenuItem mnuItemComponent = new JMenuItem("Component");
+        JMenuItem mnuItemPart = new JMenuItem("Part");
 
         JMenuItem mnuItemLoadAll = new JMenuItem("All");
         mnuItemLoadAll.addActionListener(new ActionListener() {
@@ -414,17 +234,28 @@ public class SAPAnalyzer extends JFrame{
             }
         });
 
-
+        mnuItemPart.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new EditPart().setVisible(true);
+            }
+        });
         mnuItemNew.add(mnuItemBOM);
-        mnuItemNew.add(mnuItemComponent);
-        mnuItemNew.add(mnuItemProcess);
-        mnuItemNew.add(mnuItemEmp);
+        mnuItemNew.add(mnuItemPart);
         mnuFile.add(mnuItemNew);
 
         mnuLoad.add(mnuItemLoadAll);
         mnuFile.add(mnuLoad);
         menuBar.add(mnuFile);
+    }
 
+    private void addChildMenus(JMenuItem parent, Hashtable<String, ActionListener> namesToActionListeners) {
+        Enumeration enumer = namesToActionListeners.keys();
+        while (enumer.hasMoreElements()) {
+            String label = (String) enumer.nextElement();
+            JMenuItem temp = new JMenuItem(label);
+            temp.addActionListener(namesToActionListeners.get(label));
+            parent.add(temp);
+        }
     }
 
 
