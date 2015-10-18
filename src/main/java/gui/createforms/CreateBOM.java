@@ -35,7 +35,6 @@ public class CreateBOM extends JFrame {
 
     public CreateBOM() {
 
-        fillCbBoxes();
         this.setContentPane(pnlMain);
         undoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -58,14 +57,22 @@ public class CreateBOM extends JFrame {
                 makeRowFromFields();
             }
         });
+        fillCbBoxes();
+        this.pack();
+
     }
 
     private void fillCbBoxes() {
 
         ArrayList<Object> itemIDs = DBInfo.getTabToPkVals().get("PART");
-        for (Object i : itemIDs) {
-            cbChildPartID.addItem(i);
-            cbParentPartID.addItem(i);
+        if (itemIDs == null) {
+            cbChildPartID.addItem("");
+            cbParentPartID.addItem("");
+        } else {
+            for (Object i : itemIDs) {
+                cbChildPartID.addItem(i);
+                cbParentPartID.addItem(i);
+            }
         }
     }
 

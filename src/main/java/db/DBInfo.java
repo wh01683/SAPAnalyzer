@@ -30,7 +30,6 @@ public class DBInfo extends JPanel
     private static JTextArea taskOutput = new JTextArea("Loading info from database.");
     private JProgressBar progressBar;
     private static LoadTask task;
-    private QueryStorage queryStorage;
 
     class LoadTask extends SwingWorker<Void, Void> {
 
@@ -138,13 +137,11 @@ public class DBInfo extends JPanel
 
 
     public void propertyChange(PropertyChangeEvent evt) {
-
-
         if ("progress" == evt.getPropertyName()) {
             int progress = (Integer) evt.getNewValue();
             progressBar.setValue(progress);
             taskOutput.append(String.format(
-                    "Completed %d of task.\n", task.getProgress()));
+                    "Completed %d%% of task.\n", task.getProgress()));
         }
 
     }
@@ -161,9 +158,6 @@ public class DBInfo extends JPanel
         //Display the window.
         frame.pack();
         frame.setVisible(true);
-
-        //Instances of javax.swing.SwingWorker are not reusuable, so
-        //we create new instances as needed.
 
     }
 
