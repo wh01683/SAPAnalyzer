@@ -324,6 +324,31 @@ public class DatabaseIO {
         return null;
     }
 
+    public ArrayList<ArrayList<Object>> getMultiObResults(String... queries) {
+        try {
+            ArrayList<ArrayList<Object>> resultList = new ArrayList<ArrayList<Object>>(10);
+            for (String s : queries) {
+                ArrayList<ResultSet> tempArr = executeQuery(s);
+                for (ResultSet rs : tempArr) {
+                    if (!rs.next()) {
+                    } else {
+                        do {
+                            ArrayList<Object> results = new ArrayList<Object>(10);
+                            for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                                results.add(rs.getObject(i));
+                            }
+                            resultList.add(results);
+                        } while (rs.next());
+                    }
+                }
+            }
+            return resultList;
+        } catch (SQLException s) {
+            s.printStackTrace();
+        }
+        return null;
+    }
+
     public int[] getColumnTypes(String tableName) {
         try {
             ArrayList<ResultSet> tempArr = executeQuery("select * from " + tableName);
