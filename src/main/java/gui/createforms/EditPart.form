@@ -4,6 +4,8 @@
     <rowspec value="center:43px:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:516px:noGrow"/>
     <colspec value="fill:max(d;4px):noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
@@ -13,11 +15,11 @@
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="fill:max(d;4px):noGrow"/>
     <colspec value="left:28dlu:noGrow"/>
-    <colspec value="fill:398px:noGrow"/>
-    <colspec value="left:4dlu:noGrow"/>
-    <colspec value="fill:max(d;4px):noGrow"/>
+    <colspec value="fill:341px:noGrow"/>
+    <colspec value="left:59dlu:noGrow"/>
+    <colspec value="fill:117px:noGrow"/>
     <constraints>
-      <xy x="238" y="20" width="891" height="601"/>
+      <xy x="238" y="20" width="957" height="651"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -42,7 +44,7 @@
       </component>
       <tabbedpane id="7800d" binding="tbPart">
         <constraints>
-          <grid row="3" column="2" row-span="1" col-span="9" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="5" column="2" row-span="1" col-span="9" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="200" height="200"/>
           </grid>
           <forms defaultalign-vert="false"/>
@@ -196,7 +198,7 @@
                       <text value="Transport Cost:"/>
                     </properties>
                   </component>
-                  <component id="2a3c6" class="javax.swing.JTextField" binding="fldPartTCost">
+                  <component id="2a3c6" class="javax.swing.JTextField" binding="fldPartTransCost">
                     <constraints>
                       <grid row="8" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -685,7 +687,7 @@
       </component>
       <component id="2d550" class="javax.swing.JButton" binding="btnEdit">
         <constraints>
-          <grid row="0" column="10" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="9" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties>
@@ -699,6 +701,51 @@
         </constraints>
         <properties>
           <text value="Add Part"/>
+        </properties>
+      </component>
+      <component id="f973e" class="javax.swing.JButton" binding="btnAddNew">
+        <constraints>
+          <grid row="1" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <text value="Create Part"/>
+        </properties>
+      </component>
+      <component id="84f" class="javax.swing.JButton" binding="btnUndo">
+        <constraints>
+          <grid row="1" column="10" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false"/>
+        </constraints>
+        <properties>
+          <text value="Undo"/>
+        </properties>
+      </component>
+      <component id="f2661" class="javax.swing.JButton" binding="btnClear">
+        <constraints>
+          <grid row="3" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <text value="Clear Fields"/>
+        </properties>
+      </component>
+      <component id="75fee" class="javax.swing.JButton" binding="btnCommit">
+        <constraints>
+          <grid row="3" column="10" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false"/>
+        </constraints>
+        <properties>
+          <text value="Commit"/>
+        </properties>
+      </component>
+      <component id="2e47e" class="javax.swing.JButton" binding="btnPreview">
+        <constraints>
+          <grid row="3" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false"/>
+        </constraints>
+        <properties>
+          <text value="Preview"/>
         </properties>
       </component>
     </children>
