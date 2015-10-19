@@ -20,7 +20,7 @@ public class DatabaseIO {
     private static QueryStorage queryStorage;
 
     public DatabaseIO(){
-        this.queryStorage = new QueryStorage();
+        queryStorage = new QueryStorage();
         MakeConnection(this);
     }
 
@@ -36,7 +36,7 @@ public class DatabaseIO {
     }
 
 
-    public static void alterConstraints(DatabaseIO databaseIO, boolean enable, String... tables) {
+    public static void alterConstraints(boolean enable, String... tables) {
 
         ArrayList<String> queries = new ArrayList<String>(10);
 
@@ -63,7 +63,8 @@ public class DatabaseIO {
                 results.add(rs);
                 stmt = connection.createStatement();
             }
-            return results;
+            stmt.close();
+
         }catch (SQLException e){
             for (String s : queries) {
                 System.out.printf(s);
@@ -71,6 +72,8 @@ public class DatabaseIO {
             e.printStackTrace();
             return null;
         }
+
+        return results;
     }
 
     public static ArrayList<ResultSet> executeQuery(String... queries) {
@@ -98,11 +101,11 @@ public class DatabaseIO {
                     } while (rs.next());
                 }
             }
-            return cols;
         }catch (SQLException s ){
             s.printStackTrace();
+            return null;
         }
-        return null;
+        return cols;
     }
 
     public static int[] insertIntoTable(DatabaseIO databaseIO, String table, String... values) throws SQLException {
@@ -153,9 +156,7 @@ public class DatabaseIO {
 
     public static int[] updateTable(DatabaseIO databaseIO, int col, Object pk, Object newData) {
         try {
-            ArrayList<String> temp = new ArrayList<String>(1);
-            temp.add("select * from " + currentTable);
-            ArrayList<ResultSet> temprs = executeQuery(temp);
+            ArrayList<ResultSet> temprs = executeQuery("select * from " + currentTable);
             String colName = "";
             Class<?> colType = null;
             String pkName = "";

@@ -11,7 +11,6 @@ import java.sql.SQLException;
  */
 public class DBRow {
 
-    private ResultSet rowResultSet;
     private Object[] rowArray;
     private Class[] classList;
     private String tableName;
@@ -20,7 +19,6 @@ public class DBRow {
     public DBRow(ResultSet newContents){
 
         try {
-            rowResultSet = newContents;
             rowArray = new Object[newContents.getMetaData().getColumnCount()];
             classList = new Class[newContents.getMetaData().getColumnCount()];
             for (int c = 1; c < newContents.getMetaData().getColumnCount() + 1; c++) {
@@ -28,6 +26,7 @@ public class DBRow {
                 classList[c-1] = dynamicClass;
                 rowArray[c-1] = dynamicClass.cast(newContents.getObject(c));
             }
+            newContents.close();
         }catch (SQLException e){
             e.printStackTrace();
         }catch (ClassNotFoundException c){
@@ -37,7 +36,6 @@ public class DBRow {
 
     public DBRow(String[] namesArr){
         rowArray = namesArr;
-        rowResultSet = null;
         classList = new Class[namesArr.length];
         for(int i = 0; i < namesArr.length; i++){
             classList[i] = String.class;
@@ -55,14 +53,6 @@ public class DBRow {
 
     public void setValueAtColumn(int col, Object newVal){
         rowArray[col] = newVal;
-    }
-
-    public ResultSet getRowResultSet() {
-        return rowResultSet;
-    }
-
-    public void setRowResultSet(ResultSet rowResultSet) {
-        this.rowResultSet = rowResultSet;
     }
 
     public Object[] getRowArray() {

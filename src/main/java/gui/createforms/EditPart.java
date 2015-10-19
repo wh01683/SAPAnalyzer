@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.Hashtable;
 import java.util.Stack;
 
@@ -117,7 +118,7 @@ public class EditPart extends JFrame {
                     rowStack.pop();
                     rowStack.pop();
                     rowStack.pop();
-                } catch (NullPointerException n) {
+                } catch (EmptyStackException n) {
                     JOptionPane.showMessageDialog(null, "Row stack already empty.");
                 }
             }
@@ -149,12 +150,28 @@ public class EditPart extends JFrame {
                 } else if (components[i].getClass().getName().toString().equals("javax.swing.JTextArea")) {
                     JTextArea temp = (JTextArea) components[i];
                     temp.setEditable(editable);
+                } else if (components[i].getClass().getName().toString().equals("javax.swing.JComboBox")) {
+                    JComboBox temp = (JComboBox) components[i];
+                    temp.setEnabled(editable);
+                    if (editable) {
+                        fillCbBoxes();
+                    } else {
+                        cbUnits.removeAllItems();
+                        cbSuppliers.removeAllItems();
+                        cbPartCategory.removeAllItems();
+                        cbPartPlantID.removeAllItems();
+                    }
                 }
             }
         }
     }
 
     private void fillCbBoxes() {
+        cbUnits.removeAllItems();
+        cbSuppliers.removeAllItems();
+        cbPartCategory.removeAllItems();
+        cbPartPlantID.removeAllItems();
+
         ArrayList<String> units = DBInfo.getUnitOfMeasure();
         ArrayList<String> cats = DBInfo.getPartCategories();
         ArrayList<Object> plantId = DBInfo.getTabToPkVals().get("PLANTS");
@@ -180,12 +197,12 @@ public class EditPart extends JFrame {
 
     private void insertRows() {
         ArrayList<String> queries = new ArrayList<String>(rowStack.size());
-        DatabaseIO.alterConstraints(dbio, false, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
+        DatabaseIO.alterConstraints(false, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
         for (DBRow row : rowStack) {
             queries.add(row.getInsertQuery());
         }
         DatabaseIO.executeQuery(queries);
-        DatabaseIO.alterConstraints(dbio, true, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
+        DatabaseIO.alterConstraints(true, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
 
     }
     private void makePartRow() {
