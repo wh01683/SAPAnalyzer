@@ -14,21 +14,21 @@ public class DatabaseIO {
     private final String DATABASE_NAME = "sap";
     private final String USER_NAME = "HOWERTONSAP";
     private final String PASSWORD = "database015";
-    private Connection connection = null;
-    private ArrayList<String> tableNames;
-    private String currentTable;
-    private QueryStorage queryStorage;
+    private static Connection connection = null;
+    private static ArrayList<String> tableNames;
+    private static String currentTable;
+    private static QueryStorage queryStorage;
 
     public DatabaseIO(){
         this.queryStorage = new QueryStorage();
-        MakeConnection();
+        MakeConnection(this);
     }
 
-    public void MakeConnection() {
+    public static void MakeConnection(DatabaseIO databaseIO) {
         try {
-            connection = DriverManager.getConnection(
-                    "jdbc:oracle:thin:@localhost:1521:" + DATABASE_NAME, USER_NAME, PASSWORD);
-            updateTableNames();
+            databaseIO.connection = DriverManager.getConnection(
+                    "jdbc:oracle:thin:@localhost:1521:" + databaseIO.DATABASE_NAME, databaseIO.USER_NAME, databaseIO.PASSWORD);
+            DatabaseIO.updateTableNames(databaseIO);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -36,7 +36,7 @@ public class DatabaseIO {
     }
 
 
-    public void alterConstraints(boolean enable, String... tables) {
+    public static void alterConstraints(DatabaseIO databaseIO, boolean enable, String... tables) {
 
         ArrayList<String> queries = new ArrayList<String>(10);
 
@@ -47,10 +47,10 @@ public class DatabaseIO {
             }
             queries.add("alter table " + table + " " + ((enable) ? "enable" : "disable") + " all triggers");
             }
-        executeQuery(queries);
+        DatabaseIO.executeQuery(queries);
     }
 
-    public ArrayList<ResultSet> executeQuery(ArrayList<String> queries){
+    public static ArrayList<ResultSet> executeQuery(ArrayList<String> queries) {
 
         Statement stmt = null;
         ArrayList<ResultSet> results = new ArrayList<ResultSet>(10);
@@ -73,7 +73,7 @@ public class DatabaseIO {
         }
     }
 
-    public ArrayList<ResultSet> executeQuery(String... queries){
+    public static ArrayList<ResultSet> executeQuery(String... queries) {
         ArrayList<String> quers = new ArrayList<String>(queries.length);
 
         for(String query : queries){
@@ -83,7 +83,7 @@ public class DatabaseIO {
         return executeQuery(quers);
     }
 
-    public ArrayList<String> getColNames(String tableName){
+    public static ArrayList<String> getColNames(String tableName) {
         ArrayList<String> cols = new ArrayList<String>(10);
         ArrayList<ResultSet> resultSet = executeQuery(queryStorage.getColNamesQuery(tableName));
 
@@ -105,7 +105,7 @@ public class DatabaseIO {
         return null;
     }
 
-    public int[] insertIntoTable(String table, String...values) throws SQLException{
+    public static int[] insertIntoTable(DatabaseIO databaseIO, String table, String... values) throws SQLException {
 
         Statement stmt = null;
         StringBuilder vals = new StringBuilder("INSERT INTO " + table + " VALUES ("+ values[0] + (values.length > 1? ", " : " "));
@@ -118,14 +118,14 @@ public class DatabaseIO {
         }
 
         try {
-            this.connection.setAutoCommit(false);
-            stmt = this.connection.createStatement();
+            databaseIO.connection.setAutoCommit(false);
+            stmt = databaseIO.connection.createStatement();
             stmt.addBatch(vals.toString());
 
             System.out.printf(vals.toString());
             int[] updateCount = stmt.executeBatch();
 
-            this.connection.commit();
+            databaseIO.connection.commit();
             return updateCount;
 
         }catch (SQLException e){
@@ -133,16 +133,16 @@ public class DatabaseIO {
             return null;
         } finally {
             if (stmt != null) { stmt.close(); }
-            this.connection.setAutoCommit(true);
+            databaseIO.connection.setAutoCommit(true);
         }
     }
 
-    public void updateTableNames()throws SQLException{
+    public static void updateTableNames(DatabaseIO databaseIO) throws SQLException {
 
-        tableNames = new ArrayList<String>(10);
-        ResultSet rs = connection.getMetaData().getTables(null, USER_NAME, "%", null);
+        databaseIO.tableNames = new ArrayList<String>(10);
+        ResultSet rs = connection.getMetaData().getTables(null, databaseIO.USER_NAME, "%", null);
         while (rs.next()) {
-            tableNames.add(rs.getString(3));
+            databaseIO.tableNames.add(rs.getString(3));
         }
     }
 
@@ -151,7 +151,7 @@ public class DatabaseIO {
     }
 
 
-    public int[] updateTable(int col, Object pk, Object newData){
+    public static int[] updateTable(DatabaseIO databaseIO, int col, Object pk, Object newData) {
         try {
             ArrayList<String> temp = new ArrayList<String>(1);
             temp.add("select * from " + currentTable);
@@ -164,7 +164,7 @@ public class DatabaseIO {
             for (ResultSet tableRs : temprs) {
                 colName = tableRs.getMetaData().getColumnName(col + 1);
                 colType = Class.forName(Utility.ConvertType(tableRs.getMetaData().getColumnType(col + 1)));
-                isStringType = (tableRs.getMetaData().getColumnType(col + 1) == 12);
+                isStringType = (tableRs.getMetaData().getColumnType(col + 1) == 12 || tableRs.getMetaData().getColumnType(col + 1) == 1);
                 pkName = tableRs.getMetaData().getColumnName(1);
             }
 
@@ -172,15 +172,15 @@ public class DatabaseIO {
             StringBuilder vals = new StringBuilder("UPDATE " + currentTable + " SET " + colName +" = " + (isStringType? "'" : "")
                     + colType.cast(newData) + (isStringType? "'" : "") + " WHERE " + pkName + " = " + pk);
 
-            this.connection.setAutoCommit(false);
-            stmt = this.connection.createStatement();
+            databaseIO.connection.setAutoCommit(false);
+            stmt = databaseIO.connection.createStatement();
             stmt.addBatch(vals.toString());
 
             System.out.printf(vals.toString());
 
             int[] updateCount = stmt.executeBatch();
 
-            this.connection.commit();
+            databaseIO.connection.commit();
 
             return updateCount;
         }catch (SQLException s){
@@ -197,7 +197,7 @@ public class DatabaseIO {
      * @param tableName Table name to query.
      * @return ArrayList containing Strings of all table table names referencing the given table.
      */
-    public ArrayList<String> getReferringTables(String tableName){
+    public static ArrayList<String> getReferringTables(String tableName) {
         try {
             ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getRefTableQuery(tableName));
             ArrayList<String> refTableNames = new ArrayList<String>(10);
@@ -222,8 +222,8 @@ public class DatabaseIO {
         return currentTable;
     }
 
-    public void setCurrentTable(String currentTable) {
-        this.currentTable = currentTable;
+    public static void setCurrentTable(DatabaseIO databaseIO, String currentTable) {
+        databaseIO.currentTable = currentTable;
     }
 
     /**
@@ -257,7 +257,7 @@ public class DatabaseIO {
      * @param tableName Table name to query.
      * @return Primary Key column name.
      */
-    public ArrayList<String> getTableForeignKey(String tableName) {
+    public static ArrayList<String> getTableForeignKey(String tableName) {
         try {
             ArrayList<String> fks = new ArrayList<String>(10);
             ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getPkAndFkNames(tableName));
@@ -282,7 +282,7 @@ public class DatabaseIO {
      * @param tableName Table name to query.
      * @return ArrayList of primary keys.
      */
-    public ArrayList<Object> getPksFromTable(String tableName) {
+    public static ArrayList<Object> getPksFromTable(String tableName) {
         try {
             ArrayList<Object> pkList = new ArrayList<Object>(10);
             ArrayList<ResultSet> tempArr = executeQuery("select " + DBInfo.getTabToPKHash().get(tableName) + " from " + tableName);
@@ -304,7 +304,7 @@ public class DatabaseIO {
     }
 
 
-    public ArrayList<String> getRefConstraints(String tableName) {
+    public static ArrayList<String> getRefConstraints(String tableName) {
 
         ArrayList<String> refList = new ArrayList<String>(10);
         ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getFkConstraintsQuery(tableName));
@@ -327,7 +327,7 @@ public class DatabaseIO {
         return null;
     }
 
-    public ArrayList<String> getStringResults(String... queries) {
+    public static ArrayList<String> getStringResults(String... queries) {
         try {
             ArrayList<String> resultList = new ArrayList<String>(10);
             for (String s : queries) {
@@ -350,7 +350,7 @@ public class DatabaseIO {
         return null;
     }
 
-    public ArrayList<ArrayList<Object>> getMultiObResults(String... queries) {
+    public static ArrayList<ArrayList<Object>> getMultiObResults(String... queries) {
         try {
             ArrayList<ArrayList<Object>> resultList = new ArrayList<ArrayList<Object>>(10);
             for (String s : queries) {
@@ -362,7 +362,6 @@ public class DatabaseIO {
                             ArrayList<Object> results = new ArrayList<Object>(10);
                             results.add(null);
                             for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-
                                 results.add((rs.getObject(i) == null) ? "" : rs.getObject(i));
                             }
                             resultList.add(results);
@@ -383,7 +382,7 @@ public class DatabaseIO {
      * @param tableName table name to obtain column types for
      * @return int[] of SQL types.
      */
-    public int[] getColumnTypes(String tableName) {
+    public static int[] getColumnTypes(String tableName) {
         try {
             ArrayList<ResultSet> tempArr = executeQuery("select * from " + tableName);
             int[] colTypes = new int[tempArr.get(0).getMetaData().getColumnCount() + 1];

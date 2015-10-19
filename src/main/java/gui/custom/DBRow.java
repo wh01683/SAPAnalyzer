@@ -1,4 +1,4 @@
-package gui;
+package gui.custom;
 
 import db.DBInfo;
 import db.Utility;

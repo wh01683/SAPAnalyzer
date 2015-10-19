@@ -24,15 +24,6 @@
     <properties/>
     <border type="none"/>
     <children>
-      <component id="faf63" class="javax.swing.JTextField" binding="fldPartID">
-        <constraints>
-          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-          <forms defaultalign-horz="false"/>
-        </constraints>
-        <properties/>
-      </component>
       <component id="d9398" class="javax.swing.JLabel">
         <constraints>
           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -55,7 +46,7 @@
           <grid id="8fdb1" binding="pnlEditPart" layout-manager="FormLayout">
             <rowspec value="center:305px:noGrow"/>
             <rowspec value="top:4dlu:noGrow"/>
-            <rowspec value="center:359px:grow"/>
+            <rowspec value="center:140px:grow"/>
             <colspec value="fill:503px:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:m:grow"/>
@@ -119,46 +110,12 @@
                       <text value="Cost:"/>
                     </properties>
                   </component>
-                  <component id="a1f75" class="javax.swing.JTextField" binding="fldPartDesc">
-                    <constraints>
-                      <grid row="4" column="3" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                    </properties>
-                  </component>
-                  <component id="e973e" class="javax.swing.JTextField" binding="fldPartCost">
-                    <constraints>
-                      <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                      <text value=""/>
-                    </properties>
-                  </component>
                   <component id="bf3f2" class="javax.swing.JComboBox" binding="cbUnits">
                     <constraints>
                       <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                       <forms/>
                     </constraints>
                     <properties/>
-                  </component>
-                  <component id="77a15" class="javax.swing.JTextField" binding="fldPartName">
-                    <constraints>
-                      <grid row="2" column="3" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                    </properties>
                   </component>
                   <component id="16f61" class="javax.swing.JLabel">
                     <constraints>
@@ -178,17 +135,6 @@
                       <text value="Wastage (%):"/>
                     </properties>
                   </component>
-                  <component id="9468d" class="javax.swing.JTextField" binding="fldPartWaste">
-                    <constraints>
-                      <grid row="6" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                    </properties>
-                  </component>
                   <component id="69dc8" class="javax.swing.JLabel">
                     <constraints>
                       <grid row="8" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -196,17 +142,6 @@
                     </constraints>
                     <properties>
                       <text value="Transport Cost:"/>
-                    </properties>
-                  </component>
-                  <component id="2a3c6" class="javax.swing.JTextField" binding="fldPartTransCost">
-                    <constraints>
-                      <grid row="8" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
                     </properties>
                   </component>
                   <component id="fa7ac" class="javax.swing.JLabel">
@@ -224,6 +159,51 @@
                       <forms/>
                     </constraints>
                     <properties/>
+                  </component>
+                  <component id="c21ca" class="gui.custom.InsertTextField" binding="fldPartName">
+                    <constraints>
+                      <grid row="2" column="3" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                  <component id="1e153" class="gui.custom.InsertTextField" binding="fldPartDesc">
+                    <constraints>
+                      <grid row="4" column="3" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                  <component id="e32dd" class="gui.custom.InsertTextField" binding="fldPartCost">
+                    <constraints>
+                      <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                  <component id="3c698" class="gui.custom.InsertTextField" binding="fldWaste">
+                    <constraints>
+                      <grid row="6" column="7" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                  <component id="fc0dc" class="gui.custom.InsertTextField" binding="fldTransCost">
+                    <constraints>
+                      <grid row="8" column="7" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
                   </component>
                 </children>
               </grid>
@@ -311,61 +291,6 @@
                       <text value="Category"/>
                     </properties>
                   </component>
-                  <component id="fa77b" class="javax.swing.JTextField" binding="fldQtyOnHand">
-                    <constraints>
-                      <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                    </properties>
-                  </component>
-                  <component id="d18a2" class="javax.swing.JTextField" binding="fldAllocQty">
-                    <constraints>
-                      <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                    </properties>
-                  </component>
-                  <component id="74c76" class="javax.swing.JTextField" binding="fldAvailQty">
-                    <constraints>
-                      <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                    </properties>
-                  </component>
-                  <component id="e0e08" class="javax.swing.JTextField" binding="fldMinReordLvl">
-                    <constraints>
-                      <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                    </properties>
-                  </component>
-                  <component id="7051" class="javax.swing.JTextField" binding="fldLeadTime">
-                    <constraints>
-                      <grid row="10" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                    </properties>
-                  </component>
                   <component id="4f24" class="javax.swing.JComboBox" binding="cbPartCategory">
                     <constraints>
                       <grid row="12" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
@@ -388,6 +313,51 @@
                       <forms/>
                     </constraints>
                     <properties/>
+                  </component>
+                  <component id="b4bc1" class="gui.custom.InsertTextField" binding="fldQtyOnHand">
+                    <constraints>
+                      <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                  <component id="aea9" class="gui.custom.InsertTextField" binding="fldAllocQty">
+                    <constraints>
+                      <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                  <component id="249f7" class="gui.custom.InsertTextField" binding="fldAvailQty">
+                    <constraints>
+                      <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                  <component id="8f083" class="gui.custom.InsertTextField" binding="fldReorderLvl">
+                    <constraints>
+                      <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                  <component id="e89b8" class="gui.custom.InsertTextField" binding="fldLeadTime">
+                    <constraints>
+                      <grid row="10" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
                   </component>
                 </children>
               </grid>
@@ -449,54 +419,6 @@
                       <text value="Reference Designators:"/>
                     </properties>
                   </component>
-                  <component id="91753" class="javax.swing.JTextField" binding="fldPartPhase">
-                    <constraints>
-                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                      <text value=""/>
-                    </properties>
-                  </component>
-                  <component id="cb837" class="javax.swing.JTextField" binding="fldPartRev">
-                    <constraints>
-                      <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                      <text value=""/>
-                    </properties>
-                  </component>
-                  <component id="ddc0c" class="javax.swing.JTextField" binding="fldPartProcType">
-                    <constraints>
-                      <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                      <text value=""/>
-                    </properties>
-                  </component>
-                  <component id="bfd3d" class="javax.swing.JTextField" binding="fldPartRefDes">
-                    <constraints>
-                      <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <forms defaultalign-horz="false"/>
-                    </constraints>
-                    <properties>
-                      <editable value="false"/>
-                      <text value=""/>
-                    </properties>
-                  </component>
                   <component id="38161" class="javax.swing.JLabel">
                     <constraints>
                       <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -512,6 +434,42 @@
                         <preferred-size width="150" height="50"/>
                       </grid>
                       <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                  <component id="4df80" class="gui.custom.InsertTextField" binding="fldPhase">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                  <component id="4bad1" class="gui.custom.InsertTextField" binding="fldRevision">
+                    <constraints>
+                      <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                  <component id="66d02" class="gui.custom.InsertTextField" binding="fldProcType">
+                    <constraints>
+                      <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                  <component id="714d0" class="gui.custom.InsertTextField" binding="fldRefDes">
+                    <constraints>
+                      <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <forms/>
                     </constraints>
                     <properties>
                       <editable value="false"/>
@@ -565,17 +523,6 @@
                   <text value="Step:"/>
                 </properties>
               </component>
-              <component id="6a2ee" class="javax.swing.JTextField" binding="fldBOMStep">
-                <constraints>
-                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties>
-                  <editable value="false"/>
-                </properties>
-              </component>
               <component id="d18ff" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -601,39 +548,6 @@
                 </constraints>
                 <properties>
                   <text value="Hour Est.:"/>
-                </properties>
-              </component>
-              <component id="8fae8" class="javax.swing.JTextField" binding="fldBOMQty">
-                <constraints>
-                  <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties>
-                  <editable value="false"/>
-                </properties>
-              </component>
-              <component id="7f0e4" class="javax.swing.JTextField" binding="fldBOMHrlyCost">
-                <constraints>
-                  <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties>
-                  <editable value="false"/>
-                </properties>
-              </component>
-              <component id="bd771" class="javax.swing.JTextField" binding="fldBOMHrEst">
-                <constraints>
-                  <grid row="10" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties>
-                  <editable value="false"/>
                 </properties>
               </component>
               <component id="f895" class="javax.swing.JTree" binding="treeBOMHierarchy">
@@ -668,6 +582,42 @@
                 </constraints>
                 <properties>
                   <text value="Select BOM: "/>
+                </properties>
+              </component>
+              <component id="ed79e" class="gui.custom.InsertTextField" binding="fldBomStep">
+                <constraints>
+                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <editable value="false"/>
+                </properties>
+              </component>
+              <component id="c47b" class="gui.custom.InsertTextField" binding="fldBomQty">
+                <constraints>
+                  <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <editable value="false"/>
+                </properties>
+              </component>
+              <component id="aafac" class="gui.custom.InsertTextField" binding="fldBomHrlyCost">
+                <constraints>
+                  <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <editable value="false"/>
+                </properties>
+              </component>
+              <component id="af6a6" class="gui.custom.InsertTextField" binding="fldHrEst">
+                <constraints>
+                  <grid row="10" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <editable value="false"/>
                 </properties>
               </component>
             </children>
@@ -745,6 +695,13 @@
         <properties>
           <text value="Preview"/>
         </properties>
+      </component>
+      <component id="f2efc" class="gui.custom.InsertTextField" binding="fldPartId">
+        <constraints>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties/>
       </component>
     </children>
   </grid>

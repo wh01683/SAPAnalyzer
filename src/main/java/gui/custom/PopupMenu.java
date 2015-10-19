@@ -1,4 +1,4 @@
-package gui;
+package gui.custom;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;

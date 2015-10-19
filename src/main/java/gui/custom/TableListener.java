@@ -1,4 +1,7 @@
-package gui;
+package gui.custom;
+
+import db.DatabaseIO;
+import gui.SAPAnalyzer;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -18,7 +21,7 @@ public class TableListener implements TableModelListener{
             Object pkdata = model.getValueAt(row, 0);
             System.out.println("row: " + row + " column: " + column);
             System.out.println(data.toString());
-            SAPAnalyzer.getDbio().updateTable(column, pkdata, data);
+            DatabaseIO.updateTable(SAPAnalyzer.getDbio(), column, pkdata, data);
         }
     }
 

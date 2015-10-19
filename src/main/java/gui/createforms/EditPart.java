@@ -2,7 +2,8 @@ package gui.createforms;
 
 import db.DBInfo;
 import db.DatabaseIO;
-import gui.DBRow;
+import gui.custom.DBRow;
+import gui.custom.InsertTextField;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -28,33 +29,13 @@ public class EditPart extends JFrame {
     private JPanel pnlGeneral;
     private JPanel pnlStock;
     private JPanel pnlAdvanced;
-    private JTextField fldPartID;
-    private JTextField fldPartDesc;
     private JComboBox cbUnits;
-    private JTextField fldQtyOnHand;
     private JComboBox cbPartCategory;
-    private JTextField fldPartName;
-    private JTextField fldPartCost;
-    private JTextField fldPartTransCost;
-    private JTextField fldPartWaste;
-    private JTextField fldAllocQty;
-    private JTextField fldAvailQty;
-    private JTextField fldMinReordLvl;
-    private JTextField fldLeadTime;
-    private JTextField fldPartPhase;
-    private JTextField fldPartRev;
-    private JTextField fldPartProcType;
-    private JTextField fldPartRefDes;
     private JTextArea txtarPartNotes;
     private JComboBox cbBOMSelect;
-    private JTextField fldBOMStep;
-    private JTextField fldBOMQty;
-    private JTextField fldBOMHrlyCost;
-    private JTextField fldBOMHrEst;
     private JTree treeBOMHierarchy;
     private JCheckBox chkAddPart;
     private JComboBox cbLevelsFilter;
-    private JTextField fldPartSupplier;
     private JComboBox cbPartPlantID;
     private JButton btnAddNew;
     private JButton btnClear;
@@ -62,6 +43,26 @@ public class EditPart extends JFrame {
     private JButton btnCommit;
     private JButton btnPreview;
     private JComboBox cbSuppliers;
+    private InsertTextField fldPartId;
+    private InsertTextField fldPartDesc;
+    private InsertTextField fldPartCost;
+    private InsertTextField fldQtyOnHand;
+    private InsertTextField fldAllocQty;
+    private InsertTextField fldAvailQty;
+    private InsertTextField fldLeadTime;
+    private InsertTextField fldPartName;
+
+    private InsertTextField fldWaste;
+    private InsertTextField fldTransCost;
+    private InsertTextField fldReorderLvl;
+    private InsertTextField fldBomStep;
+    private InsertTextField fldBomQty;
+    private InsertTextField fldBomHrlyCost;
+    private InsertTextField fldHrEst;
+    private InsertTextField fldPhase;
+    private InsertTextField fldRevision;
+    private InsertTextField fldProcType;
+    private InsertTextField fldRefDes;
 
     private Stack<DBRow> rowStack = new Stack<DBRow>();
     private Hashtable<String, Object> suppNameToPk = new Hashtable<String, Object>(10);
@@ -142,8 +143,8 @@ public class EditPart extends JFrame {
         for (int p = 0; p < panels.length; p++) {
             Component[] components = panels[p].getComponents();
             for (int i = 0; i < components.length; i++) {
-                if (components[i].getClass().getName().toString().equals("javax.swing.JTextField")) {
-                    JTextField temp = (JTextField) components[i];
+                if (components[i].getClass().getName().toString().equals("gui.custom.InsertTextField")) {
+                    InsertTextField temp = (InsertTextField) components[i];
                     temp.setEditable(editable);
                 } else if (components[i].getClass().getName().toString().equals("javax.swing.JTextArea")) {
                     JTextArea temp = (JTextArea) components[i];
@@ -179,28 +180,28 @@ public class EditPart extends JFrame {
 
     private void insertRows() {
         ArrayList<String> queries = new ArrayList<String>(rowStack.size());
-        dbio.alterConstraints(false, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
+        DatabaseIO.alterConstraints(dbio, false, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
         for (DBRow row : rowStack) {
             queries.add(row.getInsertQuery());
         }
-        dbio.executeQuery(queries);
-        dbio.alterConstraints(true, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
+        DatabaseIO.executeQuery(queries);
+        DatabaseIO.alterConstraints(dbio, true, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
 
     }
     private void makePartRow() {
 
-        Object partid = Integer.parseInt(fldPartID.getText());
+        Integer partid = fldPartId.getInt();
         String desc = fldPartDesc.getText();
         Object plantID = cbPartPlantID.getSelectedItem();
         String name = fldPartName.getText();
-        String phase = fldPartPhase.getText();
-        Character revision = fldPartRev.getText().charAt(0);
-        String procType = fldPartProcType.getText();
-        String refDes = fldPartRefDes.getText();
+        String phase = fldPhase.getText();
+        Character revision = fldRevision.getChar();
+        String procType = fldProcType.getText();
+        String refDes = fldRefDes.getText();
         String notes = txtarPartNotes.getText();
-        Double tcost = Double.parseDouble(fldPartTransCost.getText());
-        Double cost = Double.parseDouble(fldPartCost.getText());
-        Double wast = Double.parseDouble(fldPartWaste.getText());
+        Double tcost = fldTransCost.getDouble();
+        Double cost = fldPartCost.getDouble();
+        Double wast = fldWaste.getDouble();
         String catid = (String) cbPartCategory.getSelectedItem();
         String unit = (String) cbUnits.getSelectedItem();
 
@@ -211,39 +212,40 @@ public class EditPart extends JFrame {
     }
 
     private void makeStockRow() {
-        Object partId = Integer.parseInt(fldPartID.getText());
-        Integer qtyonhand = Integer.parseInt(fldQtyOnHand.getText());
-        Integer allocQty = Integer.parseInt(fldAllocQty.getText());
-        Integer availQty = Integer.parseInt(fldAvailQty.getText());
-        Integer reorder = Integer.parseInt(fldMinReordLvl.getText());
-        Integer leadTime = Integer.parseInt(fldLeadTime.getText());
-        Object supplierid = Integer.parseInt(suppNameToPk.get(cbSuppliers.getSelectedItem()).toString());
+        Integer partId = fldPartId.getInt();
+        Integer qtyonhand = fldQtyOnHand.getInt();
+        Integer allocQty = fldAllocQty.getInt();
+        Integer availQty = fldAvailQty.getInt();
+        Integer reorder = fldReorderLvl.getInt();
+        Integer leadTime = fldLeadTime.getInt();
+        Integer supplierid = Integer.parseInt(suppNameToPk.get(cbSuppliers.getSelectedItem()).toString());
 
         DBRow temp = new DBRow("STOCKDETAIL", partId, qtyonhand, allocQty, availQty, reorder, leadTime, supplierid);
         rowStack.push(temp);
     }
 
     private void makePartSupplierRow() {
-        Object partId = Integer.parseInt(fldPartID.getText());
+        Integer partId = fldPartId.getInt();
         Object supplierid = Integer.parseInt(suppNameToPk.get(cbSuppliers.getSelectedItem()).toString());
         DBRow temp = new DBRow("PART_SUPPLIER", partId, supplierid);
         rowStack.add(temp);
     }
 
     public void fillFields() throws NullPointerException {
-        ArrayList<Object> partResults = dbio.getMultiObResults(
-                "select * from part where partid = " + Integer.parseInt(fldPartID.getText())).get(0);
+        ArrayList<Object> partResults = DatabaseIO.getMultiObResults(
+                "select * from part where partid = " + fldPartId.getInt()).get(0);
+
 
         fldPartName.setText(partResults.get(4).toString());
         fldPartDesc.setText(partResults.get(2).toString());
-        fldPartPhase.setText(partResults.get(5).toString());
-        fldPartRev.setText(partResults.get(6).toString());
-        fldPartProcType.setText(partResults.get(7).toString());
-        fldPartRefDes.setText(partResults.get(8).toString());
+        fldPhase.setText(partResults.get(5).toString());
+        fldRevision.setText(partResults.get(6).toString());
+        fldProcType.setText(partResults.get(7).toString());
+        fldRefDes.setText(partResults.get(8).toString());
         txtarPartNotes.setText(partResults.get(9).toString());
-        fldPartTransCost.setText(partResults.get(10).toString());
+        fldTransCost.setText(partResults.get(10).toString());
         fldPartCost.setText(partResults.get(11).toString());
-        fldPartWaste.setText(partResults.get(12).toString());
+        fldWaste.setText(partResults.get(12).toString());
 
 
         cbUnits.removeAllItems();
@@ -259,13 +261,13 @@ public class EditPart extends JFrame {
         cbPartPlantID.setEnabled(false);
 
 
-        ArrayList<Object> stockResults = dbio.getMultiObResults(
-                "select * from stockdetail where partid = " + Integer.parseInt(fldPartID.getText())).get(0);
+        ArrayList<Object> stockResults = DatabaseIO.getMultiObResults(
+                "select * from stockdetail where partid = " + fldPartId.getInt()).get(0);
 
         fldQtyOnHand.setText(stockResults.get(2).toString());
         fldAllocQty.setText(stockResults.get(3).toString());
         fldAvailQty.setText(stockResults.get(4).toString());
-        fldMinReordLvl.setText(stockResults.get(5).toString());
+        fldReorderLvl.setText(stockResults.get(5).toString());
         fldLeadTime.setText(stockResults.get(6).toString());
         cbSuppliers.removeAllItems();
         cbSuppliers.addItem(stockResults.get(7).toString());
@@ -292,8 +294,8 @@ public class EditPart extends JFrame {
         for (int p = 0; p < panels.length; p++) {
             Component[] components = panels[p].getComponents();
             for (int i = 0; i < components.length; i++) {
-                if (components[i].getClass().getName().toString().equals("javax.swing.JTextField")) {
-                    JTextField temp = (JTextField) components[i];
+                if (components[i].getClass().getName().toString().equals("gui.custom.InsertTextField")) {
+                    InsertTextField temp = (InsertTextField) components[i];
                     temp.setText("");
                 }
             }
@@ -302,14 +304,14 @@ public class EditPart extends JFrame {
 
 
     private void fillSuppHash() {
-        ArrayList<ArrayList<Object>> queryResults = dbio.getMultiObResults("select * from supplier");
+        ArrayList<ArrayList<Object>> queryResults = DatabaseIO.getMultiObResults("select * from supplier");
         for (ArrayList<Object> outerArr : queryResults) {
             suppNameToPk.put(outerArr.get(2).toString(), outerArr.get(1));
         }
     }
 
     public void setFldPartID(String newPartId) {
-        this.fldPartID.setText(newPartId);
+        this.fldPartId.setText(newPartId);
     }
 
 }

@@ -1,6 +1,6 @@
 package gui.createforms;
 
-import gui.DatabaseTableModel;
+import gui.custom.DatabaseTableModel;
 
 import javax.swing.*;
 
@@ -15,12 +15,8 @@ public class Help extends JFrame {
     private JTable tblUnits;
     private JTable tblCategories;
 
-    private DatabaseTableModel categoriesModel;
-    private DatabaseTableModel unitsModel;
-
     public Help() {
         this.setContentPane(pnlMain);
-
         tblCategories.setModel(new DatabaseTableModel("select * from partcategory"));
         tblUnits.setModel(new DatabaseTableModel("select * from units"));
         this.pack();

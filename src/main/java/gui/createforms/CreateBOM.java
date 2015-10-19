@@ -1,7 +1,8 @@
 package gui.createforms;
 
 import db.DBInfo;
-import gui.DBRow;
+import gui.custom.DBRow;
+import gui.custom.InsertTextField;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -19,17 +20,17 @@ public class CreateBOM extends JFrame {
     private JPanel pnlMain;
     private JPanel pnlEditBOM;
     private JComboBox cbChildPartID;
-    private JTextField fldBOMStep;
-    private JTextField fldBOMQty;
-    private JTextField fldBOMHrlyCost;
-    private JTextField fldBOMHrEst;
     private JTree treeBOMHierarchy;
     private JComboBox cbParentPartID;
-    private JTextField fldEmpAssigned;
     private JButton btnAdd;
     private JButton undoButton;
     private JButton btnCommit;
     private JButton btnClearFields;
+    private InsertTextField fldStep;
+    private InsertTextField fldQty;
+    private InsertTextField fldHrlyCost;
+    private InsertTextField fldHrEst;
+    private InsertTextField fldEmpAssigned;
     private Stack<DBRow> rowStack = new Stack<DBRow>();
     private Stack<DefaultMutableTreeNode> nodeStack = new Stack<DefaultMutableTreeNode>();
 
@@ -81,11 +82,11 @@ public class CreateBOM extends JFrame {
         StringBuilder nodeString = new StringBuilder();
         Integer childKey = (Integer) cbChildPartID.getSelectedItem();
         Integer parentKey = (Integer) cbParentPartID.getSelectedItem();
-        Integer step = Integer.parseInt(fldBOMStep.getText());
-        Integer qty = Integer.parseInt(fldBOMQty.getText());
-        Integer hrlyCost = Integer.parseInt(fldBOMHrlyCost.getText());
-        Integer hrEst = Integer.parseInt(fldBOMHrEst.getText());
-        Integer empID = Integer.parseInt(fldEmpAssigned.getText());
+        Integer step = fldStep.getInt();
+        Integer qty = fldQty.getInt();
+        Double hrlyCost = fldHrlyCost.getDouble();
+        Double hrEst = fldHrEst.getDouble();
+        Integer empID = fldEmpAssigned.getInt();
 
         nodeString.append("Parent: ").append(parentKey).append("| Child: ").append(childKey).append("| step: ").append(step)
                 .append("| qty: ").append(qty).append("| hrly cost: ").append(hrlyCost).append("| hr est: ").append(hrEst).append("| emp: ").append(empID)
@@ -102,8 +103,8 @@ public class CreateBOM extends JFrame {
 
         Component[] components = pnlEditBOM.getComponents();
         for (int i = 0; i < components.length; i++) {
-            if (components[i].getClass().getName().toString().equals("javax.swing.JTextField")) {
-                JTextField temp = (JTextField) components[i];
+            if (components[i].getClass().getName().toString().equals("gui.custom.InsertTextField")) {
+                InsertTextField temp = (InsertTextField) components[i];
                 temp.setText("");
             }
         }

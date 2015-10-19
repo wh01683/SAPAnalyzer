@@ -5,6 +5,9 @@ import db.DatabaseIO;
 import gui.createforms.CreateBOM;
 import gui.createforms.EditPart;
 import gui.createforms.Help;
+import gui.custom.DatabaseTableModel;
+import gui.custom.PopupMenu;
+import gui.custom.TableListener;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -27,7 +30,6 @@ public class SAPAnalyzer extends JFrame{
     private JPanel pnlTableFilter;
     private JComboBox cbSelection;
     private JPanel pnlMainInformation;
-    private JButton btnFillInfo;
     private JTable tblShownInformation;
     private JPanel pnlTableSort;
     private JComboBox cbSortCategory;
@@ -37,6 +39,7 @@ public class SAPAnalyzer extends JFrame{
     private JPanel pnlDetail;
     private JComboBox cbTableSelect;
     private JTable tblDetailsTable;
+    private JScrollPane scrlTable;
     private static JMenuBar menuBar;
 
     DatabaseTableModel databaseTableModel;
@@ -56,16 +59,9 @@ public class SAPAnalyzer extends JFrame{
         tblShownInformation.setVisible(true);
         tblShownInformation.setModel(new DatabaseTableModel(getTblShownQuery()));
 
-        this.btnFillInfo.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fillTableModel();
-            }
-        });
-
         pnlDetail.setVisible(true);
         tblDetailsTable.setVisible(true);
-
-        fillTableModel();
+        scrlTable.setVisible(true);
 
         cbTableSelect.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -77,7 +73,8 @@ public class SAPAnalyzer extends JFrame{
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     tblShownInformation.clearSelection();
                     tblShownInformation.setCellSelectionEnabled(false);
-                    fillTableModel();
+                    DatabaseIO.setCurrentTable(dbio, cbTableSelect.getSelectedItem().toString());
+                    setDatabaseTableModel(new DatabaseTableModel("select * from " + cbTableSelect.getSelectedItem().toString()));
                     updateCbBoxes();
                     tblShownInformation.setCellSelectionEnabled(true);
                 }
@@ -178,17 +175,12 @@ public class SAPAnalyzer extends JFrame{
     public void setDatabaseTableModel(DatabaseTableModel databaseTableModel) {
         databaseTableModel.addTableModelListener(new TableListener());
         this.databaseTableModel = databaseTableModel;
-        dbio.setCurrentTable((String) cbTableSelect.getSelectedItem());
+        DatabaseIO.setCurrentTable(dbio, (String) cbTableSelect.getSelectedItem());
         tblShownInformation.setModel(databaseTableModel);
         updateCbBoxes();
     }
 
-    private void fillTableModel(){
-        setDatabaseTableModel(new DatabaseTableModel(getTblShownQuery()));
-    }
-
     private String getSortQuery(){
-
         String sortQuery = "select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
                 " from " + cbTableSelect.getSelectedItem() + ((cbSortCategory.getSelectedIndex() == 0) ? "" : " order by ") +
                 ((cbSortCategory.getSelectedIndex() == 0) ? "" : cbSortCategory.getSelectedItem() + " ") +

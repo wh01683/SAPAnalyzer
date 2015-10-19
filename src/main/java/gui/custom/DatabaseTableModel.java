@@ -1,8 +1,7 @@
-package gui;
+package gui.custom;
 
 import db.DBInfo;
 import db.DatabaseIO;
-import db.QueryStorage;
 
 import javax.swing.table.AbstractTableModel;
 import java.sql.ResultSet;
@@ -17,8 +16,7 @@ public class DatabaseTableModel extends AbstractTableModel  {
     private Object[][] tableData = new Object[0][0];
     private String[] columnNames = new String[0];
     private ArrayList<DBRow> rowList = new ArrayList<DBRow>(10);
-    private DatabaseIO dbio = new DatabaseIO();
-    private QueryStorage queryStorage = new QueryStorage();
+    private static DatabaseIO dbio = new DatabaseIO();
 
 
     /** Used for populating the details panel table. Finds all information in all tables where the PRIMARY KEY from the GIVEN TABLE
@@ -39,7 +37,6 @@ public class DatabaseTableModel extends AbstractTableModel  {
                     quers[count] = "select * from " + s + " where " + fk +
                             " = " + pk.toString();
                 }
-
             }
             processQueries(quers);
         }
@@ -182,23 +179,21 @@ public class DatabaseTableModel extends AbstractTableModel  {
     private Object[][] processQueries(String... queries){
 
         int maxColLength = 0;
-        int rowCount = 0;
 
         ArrayList<DBRow> tempRowList = new ArrayList<DBRow>(10);
 
         for (String s : queries) {
-            String[] cols = createColumnHeadings(s);
-            rowCount++;
-            tempRowList.add(new DBRow(cols));
-            ArrayList<ResultSet> tempQuerySet = dbio.executeQuery(queries);
+            columnNames = createColumnHeadings(s);
+            ArrayList<ResultSet> tempQuerySet = dbio.executeQuery(s);
             for (ResultSet rs : tempQuerySet) {
                 try {
                     if (!rs.next()) {
                     } else {
                         do {
                             DBRow temp = new DBRow(rs);
+                            maxColLength = (temp.getRowArray().length > maxColLength) ?
+                                    temp.getRowArray().length : maxColLength;
                             tempRowList.add(temp);
-                            rowCount++;
                         } while (rs.next());
                     }
                 }catch (SQLException sql){
@@ -206,8 +201,6 @@ public class DatabaseTableModel extends AbstractTableModel  {
                     sql.printStackTrace();
                 }
             }
-            maxColLength = (cols.length > maxColLength) ? cols.length : maxColLength;
-            this.columnNames = (this.columnNames.length < cols.length)? cols : this.columnNames;
         }
 
         Object[][] tempTableData = new Object[tempRowList.size()][maxColLength];

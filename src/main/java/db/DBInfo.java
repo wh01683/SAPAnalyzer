@@ -37,17 +37,17 @@ public class DBInfo extends JPanel
         protected Void doInBackground() {
             try {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                dbio.updateTableNames();
+                DatabaseIO.updateTableNames(dbio);
                 int progress = 0;
                 int tabCount = 1;
                 setProgress(0);
                 int max = dbio.getTableNames().size();
                 taskOutput.append("Getting units of measure...\n");
-                unitOfMeasure = dbio.getStringResults("select unitcode from units");
+                unitOfMeasure = DatabaseIO.getStringResults("select unitcode from units");
                 taskOutput.append("Getting part categories...\n");
-                partCategories = dbio.getStringResults("select catname from partcategory");
+                partCategories = DatabaseIO.getStringResults("select catname from partcategory");
                 taskOutput.append("Getting suppliers...\n");
-                suppliers = dbio.getStringResults("select name from supplier");
+                suppliers = DatabaseIO.getStringResults("select name from supplier");
 
                 for (String table : dbio.getTableNames()) {
                     taskOutput.append("\n===========================================================================\n");
@@ -57,34 +57,34 @@ public class DBInfo extends JPanel
                     taskOutput.append("Found primary key column " + pkColName + " for " + table + ".\n");
                     tabToPKHash.put(table, pkColName);
                     taskOutput.append("Obtaining tables referring to " + table + ".\n");
-                    ArrayList<String> tempTabs = dbio.getReferringTables(table);
+                    ArrayList<String> tempTabs = DatabaseIO.getReferringTables(table);
                     for (String s : tempTabs) {
                         taskOutput.append("Found table " + s + " referencing " + table + ".\n");
                     }
                     tabToRefTabHash.put(table, tempTabs);
                     taskOutput.append("Obtaining columns belonging to " + table + ".\n");
-                    ArrayList<String> colNames = dbio.getColNames(table);
+                    ArrayList<String> colNames = DatabaseIO.getColNames(table);
                     for (String s : colNames) {
                         taskOutput.append("Found column " + s + " in " + table + ".\n");
                     }
                     tabToColNames.put(table, colNames);
-                    ArrayList<String> fkNames = dbio.getTableForeignKey(table);
+                    ArrayList<String> fkNames = DatabaseIO.getTableForeignKey(table);
                     for (String s : colNames) {
                         taskOutput.append("Found foreign key " + s + " in " + table + ".\n");
                     }
                     tabToForeignKeyNames.put(table, fkNames);
 
-                    ArrayList<String> refCon = dbio.getRefConstraints(table);
+                    ArrayList<String> refCon = DatabaseIO.getRefConstraints(table);
                     for (String s : refCon) {
                         taskOutput.append("Found reference constraint " + s + " in " + table + ".\n");
                     }
                     tabToRefConstraint.put(table, refCon);
 
-                    ArrayList<Object> pkVals = dbio.getPksFromTable(table);
+                    ArrayList<Object> pkVals = DatabaseIO.getPksFromTable(table);
                     for (Object i : pkVals) {
                         taskOutput.append("Found primary key " + i + " in " + table + ".\n");
                     }
-                    tabToPkVals.put(table, dbio.getPksFromTable(table));
+                    tabToPkVals.put(table, DatabaseIO.getPksFromTable(table));
                     progress += (Math.ceil(100 / (max)));
                     tabCount++;
                     setProgress(Math.min(progress, 100));
@@ -182,7 +182,7 @@ public class DBInfo extends JPanel
     }
 
     public static int[] getColTypes(String tableName) {
-        return dbio.getColumnTypes(tableName);
+        return DatabaseIO.getColumnTypes(tableName);
     }
 
     public static ArrayList<String> getUnitOfMeasure() {
@@ -211,8 +211,8 @@ public class DBInfo extends JPanel
         for (String table : dbio.getTableNames()) {
             db.append("Table: ").append(table).append("\n");
             int colCount = 1;
-            int[] colTypes = dbio.getColumnTypes(table);
-            for (String columnName : dbio.getColNames(table)) {
+            int[] colTypes = DatabaseIO.getColumnTypes(table);
+            for (String columnName : DatabaseIO.getColNames(table)) {
                 db.append("____").append(colCount).append("_").append(columnName).append("_ Type:_").append(colTypes[colCount]).append("\n");
                 colCount++;
             }
