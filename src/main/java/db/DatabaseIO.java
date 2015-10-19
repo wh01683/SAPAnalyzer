@@ -2,7 +2,6 @@ package db;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 /**
  * Created by robert on 9/19/2015.
@@ -19,7 +18,6 @@ public class DatabaseIO {
     private ArrayList<String> tableNames;
     private String currentTable;
     private QueryStorage queryStorage;
-    private Hashtable<String, ArrayList<String>> tabsToRefConstraints = new Hashtable<String, ArrayList<String>>(10);
 
     public DatabaseIO(){
         this.queryStorage = new QueryStorage();
@@ -38,17 +36,18 @@ public class DatabaseIO {
     }
 
 
-    public void alterConstraints(String table, boolean enable) {
-        if (tabsToRefConstraints == null) {
-            tabsToRefConstraints = DBInfo.getTabToRefConstraint();
-        } else {
-            for (int i = 0; i < tabsToRefConstraints.get(table).size(); i++) {
-                String constraintQuery = "alter table " + table + " " + ((enable) ? "enable" : "disable") + " constraint " +
-                        tabsToRefConstraints.get(table).get(i);
-                String triggerQuery = "alter table " + table + " " + ((enable) ? "enable" : "disable") + " all triggers";
-                executeQuery(triggerQuery, constraintQuery);
+    public void alterConstraints(boolean enable, String... tables) {
+
+        ArrayList<String> queries = new ArrayList<String>(10);
+
+        for (String table : tables) {
+            ArrayList<String> constraints = DBInfo.getTabToRefConstraint().get(table);
+            for (String constraint : constraints) {
+                queries.add("alter table " + table + " " + ((enable) ? "enable" : "disable") + " constraint " + constraint);
             }
-        }
+            queries.add("alter table " + table + " " + ((enable) ? "enable" : "disable") + " all triggers");
+            }
+        executeQuery(queries);
     }
 
     public ArrayList<ResultSet> executeQuery(ArrayList<String> queries){
@@ -66,6 +65,9 @@ public class DatabaseIO {
             }
             return results;
         }catch (SQLException e){
+            for (String s : queries) {
+                System.out.printf(s);
+            }
             e.printStackTrace();
             return null;
         }
@@ -175,6 +177,7 @@ public class DatabaseIO {
             stmt.addBatch(vals.toString());
 
             System.out.printf(vals.toString());
+
             int[] updateCount = stmt.executeBatch();
 
             this.connection.commit();
@@ -202,8 +205,8 @@ public class DatabaseIO {
                 if (!rs.next()) {
                 } else {
                     do {
-                        for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
-                            refTableNames.add(rs.getString(i + 1));
+                        for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                            refTableNames.add(rs.getString(i));
                         }
                     } while (rs.next());
                 }
@@ -384,14 +387,11 @@ public class DatabaseIO {
             ArrayList<ResultSet> tempArr = executeQuery("select * from " + tableName);
             int[] colTypes = new int[tempArr.get(0).getMetaData().getColumnCount() + 1];
             for (ResultSet rs : tempArr) {
-                if (!rs.next()) {
-                } else {
-                    do {
-                        for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-                            colTypes[i] = rs.getMetaData().getColumnType(i);
-                        }
-                    } while (rs.next());
-                }
+                do {
+                    for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                        colTypes[i] = rs.getMetaData().getColumnType(i);
+                    }
+                } while (rs.next());
             }
             return colTypes;
         } catch (SQLException s) {

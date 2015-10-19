@@ -77,7 +77,7 @@ public class DBRow {
         StringBuilder queryBuilder = new StringBuilder(new StringBuilder().append("INSERT INTO ").append(tableName).append(" VALUES(").toString());
 
         for(int i = 0; i < this.getRowArray().length; i++){
-            boolean isString = DBInfo.getColTypes(tableName)[i + 1] == 12;
+            boolean isString = (DBInfo.getColTypes(tableName)[i + 1] == 12 || DBInfo.getColTypes(tableName)[i + 1] == 1);
 
             if(i == getRowArray().length - 1){
 

@@ -107,11 +107,13 @@ public class EditPart extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 makePartRow();
                 makeStockRow();
+                makePartSupplierRow();
             }
         });
         btnUndo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
+                    rowStack.pop();
                     rowStack.pop();
                     rowStack.pop();
                 } catch (NullPointerException n) {
@@ -177,14 +179,17 @@ public class EditPart extends JFrame {
 
     private void insertRows() {
         ArrayList<String> queries = new ArrayList<String>(rowStack.size());
+        dbio.alterConstraints(false, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
         for (DBRow row : rowStack) {
             queries.add(row.getInsertQuery());
         }
         dbio.executeQuery(queries);
+        dbio.alterConstraints(true, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
+
     }
     private void makePartRow() {
 
-        Integer partid = Integer.parseInt(fldPartID.getText());
+        Object partid = Integer.parseInt(fldPartID.getText());
         String desc = fldPartDesc.getText();
         Object plantID = cbPartPlantID.getSelectedItem();
         String name = fldPartName.getText();
@@ -212,10 +217,17 @@ public class EditPart extends JFrame {
         Integer availQty = Integer.parseInt(fldAvailQty.getText());
         Integer reorder = Integer.parseInt(fldMinReordLvl.getText());
         Integer leadTime = Integer.parseInt(fldLeadTime.getText());
-        Integer supplierid = (Integer) suppNameToPk.get(cbSuppliers.getSelectedItem().toString());
+        Object supplierid = Integer.parseInt(suppNameToPk.get(cbSuppliers.getSelectedItem()).toString());
 
         DBRow temp = new DBRow("STOCKDETAIL", partId, qtyonhand, allocQty, availQty, reorder, leadTime, supplierid);
         rowStack.push(temp);
+    }
+
+    private void makePartSupplierRow() {
+        Object partId = Integer.parseInt(fldPartID.getText());
+        Object supplierid = Integer.parseInt(suppNameToPk.get(cbSuppliers.getSelectedItem()).toString());
+        DBRow temp = new DBRow("PART_SUPPLIER", partId, supplierid);
+        rowStack.add(temp);
     }
 
     private void fillFields() {
