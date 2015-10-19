@@ -230,7 +230,7 @@ public class EditPart extends JFrame {
         rowStack.add(temp);
     }
 
-    private void fillFields() {
+    public void fillFields() throws NullPointerException {
         ArrayList<Object> partResults = dbio.getMultiObResults(
                 "select * from part where partid = " + Integer.parseInt(fldPartID.getText())).get(0);
 
@@ -244,6 +244,7 @@ public class EditPart extends JFrame {
         fldPartTransCost.setText(partResults.get(10).toString());
         fldPartCost.setText(partResults.get(11).toString());
         fldPartWaste.setText(partResults.get(12).toString());
+
 
         cbUnits.removeAllItems();
         cbPartCategory.removeAllItems();
@@ -266,13 +267,14 @@ public class EditPart extends JFrame {
         fldAvailQty.setText(stockResults.get(4).toString());
         fldMinReordLvl.setText(stockResults.get(5).toString());
         fldLeadTime.setText(stockResults.get(6).toString());
-        fldPartSupplier.setText(stockResults.get(7).toString());
-
+        cbSuppliers.removeAllItems();
+        cbSuppliers.addItem(stockResults.get(7).toString());
+        cbSuppliers.setEnabled(false);
     }
 
     private void displayInsertTextPreview() {
 
-        JTextArea textArea = new JTextArea("INSERT PREVIEW\n=================================================");
+        JTextArea textArea = new JTextArea("INSERT PREVIEW\n=================================================\n");
 
         for (DBRow row : rowStack) {
             textArea.append(row.getInsertQuery().concat("\n"));
@@ -304,6 +306,10 @@ public class EditPart extends JFrame {
         for (ArrayList<Object> outerArr : queryResults) {
             suppNameToPk.put(outerArr.get(2).toString(), outerArr.get(1));
         }
+    }
+
+    public void setFldPartID(String newPartId) {
+        this.fldPartID.setText(newPartId);
     }
 
 }

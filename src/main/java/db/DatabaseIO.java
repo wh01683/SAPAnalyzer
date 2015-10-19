@@ -362,7 +362,8 @@ public class DatabaseIO {
                             ArrayList<Object> results = new ArrayList<Object>(10);
                             results.add(null);
                             for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-                                results.add(rs.getObject(i));
+
+                                results.add((rs.getObject(i) == null) ? "" : rs.getObject(i));
                             }
                             resultList.add(results);
                         } while (rs.next());

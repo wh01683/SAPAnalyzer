@@ -38,7 +38,7 @@ public class DBInfo extends JPanel
             try {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 dbio.updateTableNames();
-                int count = 0;
+                int progress = 0;
                 int tabCount = 1;
                 setProgress(0);
                 int max = dbio.getTableNames().size();
@@ -85,10 +85,11 @@ public class DBInfo extends JPanel
                         taskOutput.append("Found primary key " + i + " in " + table + ".\n");
                     }
                     tabToPkVals.put(table, dbio.getPksFromTable(table));
-                    count += (Math.ceil(100 / (max)));
+                    progress += (Math.ceil(100 / (max)));
                     tabCount++;
-                    setProgress(Math.min(count, 100));
+                    setProgress(Math.min(progress, 100));
                 }
+                setProgress(100);
             } catch (SQLException s) {
                 System.out.printf("Error Code: %d", s.getErrorCode());
                 s.printStackTrace();
