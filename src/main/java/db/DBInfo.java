@@ -37,7 +37,7 @@ public class DBInfo extends JPanel
         protected Void doInBackground() {
             try {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                DatabaseIO.updateTableNames(dbio);
+                DatabaseIO.updateTableNames();
                 int progress = 0;
                 int tabCount = 1;
                 setProgress(0);

@@ -1,6 +1,9 @@
 package db;
 
-import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -11,24 +14,24 @@ import java.util.ArrayList;
 public class DatabaseIO {
 
 
-    private final String DATABASE_NAME = "sap";
-    private final String USER_NAME = "HOWERTONSAP";
-    private final String PASSWORD = "database015";
-    private static Connection connection = null;
+    private final static String DATABASE_NAME = "sap";
+    private final static String USER_NAME = "HOWERTONSAP";
+    private final static String PASSWORD = "database015";
+    private static ConnectionDelegator con = null;
     private static ArrayList<String> tableNames;
     private static String currentTable;
     private static QueryStorage queryStorage;
 
     public DatabaseIO(){
         queryStorage = new QueryStorage();
-        MakeConnection(this);
+        MakeConnection();
     }
 
-    public static void MakeConnection(DatabaseIO databaseIO) {
+    public static void MakeConnection() {
         try {
-            databaseIO.connection = DriverManager.getConnection(
-                    "jdbc:oracle:thin:@localhost:1521:" + databaseIO.DATABASE_NAME, databaseIO.USER_NAME, databaseIO.PASSWORD);
-            DatabaseIO.updateTableNames(databaseIO);
+            con = new ConnectionDelegator(DriverManager.getConnection(
+                    "jdbc:oracle:thin:@localhost:1521:" + DATABASE_NAME, USER_NAME, PASSWORD));
+            DatabaseIO.updateTableNames();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -56,14 +59,13 @@ public class DatabaseIO {
         ArrayList<ResultSet> results = new ArrayList<ResultSet>(10);
 
         try {
-            stmt = connection.createStatement();
+            stmt = con.createStatement();
 
             for (String query : queries){
                 ResultSet rs = stmt.executeQuery(query);
                 results.add(rs);
-                stmt = connection.createStatement();
+                stmt = con.createStatement();
             }
-            stmt.close();
 
         }catch (SQLException e){
             for (String s : queries) {
@@ -121,14 +123,14 @@ public class DatabaseIO {
         }
 
         try {
-            databaseIO.connection.setAutoCommit(false);
-            stmt = databaseIO.connection.createStatement();
+            databaseIO.con.setAutoCommit(false);
+            stmt = databaseIO.con.createStatement();
             stmt.addBatch(vals.toString());
 
             System.out.printf(vals.toString());
             int[] updateCount = stmt.executeBatch();
 
-            databaseIO.connection.commit();
+            databaseIO.con.commit();
             return updateCount;
 
         }catch (SQLException e){
@@ -136,16 +138,16 @@ public class DatabaseIO {
             return null;
         } finally {
             if (stmt != null) { stmt.close(); }
-            databaseIO.connection.setAutoCommit(true);
+            databaseIO.con.setAutoCommit(true);
         }
     }
 
-    public static void updateTableNames(DatabaseIO databaseIO) throws SQLException {
+    public static void updateTableNames() throws SQLException {
 
-        databaseIO.tableNames = new ArrayList<String>(10);
-        ResultSet rs = connection.getMetaData().getTables(null, databaseIO.USER_NAME, "%", null);
+        tableNames = new ArrayList<String>(10);
+        ResultSet rs = con.getMetaData().getTables(null, USER_NAME, "%", null);
         while (rs.next()) {
-            databaseIO.tableNames.add(rs.getString(3));
+            tableNames.add(rs.getString(3));
         }
     }
 
@@ -173,15 +175,15 @@ public class DatabaseIO {
             StringBuilder vals = new StringBuilder("UPDATE " + currentTable + " SET " + colName +" = " + (isStringType? "'" : "")
                     + colType.cast(newData) + (isStringType? "'" : "") + " WHERE " + pkName + " = " + pk);
 
-            databaseIO.connection.setAutoCommit(false);
-            stmt = databaseIO.connection.createStatement();
+            databaseIO.con.setAutoCommit(false);
+            stmt = databaseIO.con.createStatement();
             stmt.addBatch(vals.toString());
 
             System.out.printf(vals.toString());
 
             int[] updateCount = stmt.executeBatch();
 
-            databaseIO.connection.commit();
+            databaseIO.con.commit();
 
             return updateCount;
         }catch (SQLException s){

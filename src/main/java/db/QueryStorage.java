@@ -65,5 +65,34 @@ public class QueryStorage {
         return query;
     }
 
+    /*
+    *
+    *
+    *
+    *
+    * SELECT DISTINCT ac1.table_name ref_table
+FROM all_constraints ac1 JOIN all_constraints ac2
+ON ac1.r_constraint_name = ac2.constraint_name
+WHERE ac1.constraint_type='R'
+AND ac2.constraint_type IN ('P', 'U')
+AND ac1.owner = 'HOWERTONSAP'
+AND ac2.table_name = 'PART';
+
+desc all_constraints;
+
+create or replace view howertonref
+as select ac1.table_name ref_table, ac1.constraint_name ref_con
+from all_constraints ac1 JOIN all_constraints ac2
+ON ac1.r_constraint_name = ac2.constraint_name
+WHERE ac1.constraint_type = 'R'
+AND ac1.owner = 'HOWERTONSAP'
+AND ac2.owner = 'HOWERTONSAP'
+    *
+    *
+    *
+    *
+    *
+    * */
+
 
 }

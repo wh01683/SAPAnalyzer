@@ -7,24 +7,30 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class ConnectionDelegator implements Connection {
+
+    public ConnectionDelegator(Connection delegate) {
+        this.delegate = delegate;
+        this.log = new HashMap<String, LogEntry>();
+    }
+
     public void setSchema(String schema) throws SQLException {
 
     }
 
     public String getSchema() throws SQLException {
-        return null;
+        return delegate.getSchema();
     }
 
     public void abort(Executor executor) throws SQLException {
-
+        delegate.abort(executor);
     }
 
     public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
-
+        delegate.setNetworkTimeout(executor, milliseconds);
     }
 
     public int getNetworkTimeout() throws SQLException {
-        return 0;
+        return delegate.getNetworkTimeout();
     }
 
     public static class LogEntry {
@@ -37,11 +43,6 @@ public class ConnectionDelegator implements Connection {
     private Connection delegate;
 
     private Map<String, LogEntry> log;
-
-    public ConnectionDelegator(Connection delegate) {
-        this.delegate = delegate;
-        this.log = new HashMap<String, LogEntry>();
-    }
 
     public Map<String, LogEntry> getLog() {
         return log;
@@ -337,4 +338,6 @@ public class ConnectionDelegator implements Connection {
     public <T> T unwrap(Class<T> iface) {
         return iface.cast(delegate);
     }
+
+
 }
