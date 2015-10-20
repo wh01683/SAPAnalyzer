@@ -1,7 +1,7 @@
 package gui.createforms;
 
+import db.DBIO;
 import db.DBInfo;
-import db.DatabaseIO;
 import gui.custom.DBRow;
 import gui.custom.InsertTextField;
 
@@ -67,11 +67,12 @@ public class EditPart extends JFrame {
 
     private Stack<DBRow> rowStack = new Stack<DBRow>();
     private Hashtable<String, Object> suppNameToPk = new Hashtable<String, Object>(10);
-    private DatabaseIO dbio = new DatabaseIO();
+    private DBIO dbio = new DBIO();
     boolean editable = false;
 
     public EditPart(boolean viewing) {
 
+        //<editor-fold desc="Constructor">
         setEditAll(!viewing, pnlGeneral, pnlAdvanced, pnlStock, pnlEditBOM, pnlEditPart);
         editable = !viewing;
 
@@ -136,6 +137,8 @@ public class EditPart extends JFrame {
 
         fillCbBoxes();
         this.pack();
+        //</editor-fold>
+
     }
 
 
@@ -197,12 +200,12 @@ public class EditPart extends JFrame {
 
     private void insertRows() {
         ArrayList<String> queries = new ArrayList<String>(rowStack.size());
-        DatabaseIO.alterConstraints(false, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
+        DBIO.alterConstraints(false, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
         for (DBRow row : rowStack) {
             queries.add(row.getInsertQuery());
         }
-        DatabaseIO.executeQuery(queries);
-        DatabaseIO.alterConstraints(true, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
+        //DBIO.executeQuery(queries);
+        DBIO.alterConstraints(true, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
 
     }
     private void makePartRow() {
@@ -249,7 +252,7 @@ public class EditPart extends JFrame {
     }
 
     public void fillFields() throws NullPointerException {
-        ArrayList<Object> partResults = DatabaseIO.getMultiObResults(
+        ArrayList<Object> partResults = DBIO.getMultiObResults(
                 "select * from part where partid = " + fldPartId.getInt()).get(0);
 
 
@@ -278,7 +281,7 @@ public class EditPart extends JFrame {
         cbPartPlantID.setEnabled(false);
 
 
-        ArrayList<Object> stockResults = DatabaseIO.getMultiObResults(
+        ArrayList<Object> stockResults = DBIO.getMultiObResults(
                 "select * from stockdetail where partid = " + fldPartId.getInt()).get(0);
 
         fldQtyOnHand.setText(stockResults.get(2).toString());
@@ -321,7 +324,7 @@ public class EditPart extends JFrame {
 
 
     private void fillSuppHash() {
-        ArrayList<ArrayList<Object>> queryResults = DatabaseIO.getMultiObResults("select * from supplier");
+        ArrayList<ArrayList<Object>> queryResults = DBIO.getMultiObResults("select * from supplier");
         for (ArrayList<Object> outerArr : queryResults) {
             suppNameToPk.put(outerArr.get(2).toString(), outerArr.get(1));
         }

@@ -1,11 +1,9 @@
 package gui.custom;
 
+import db.DBIO;
 import db.DBInfo;
-import db.DatabaseIO;
 
 import javax.swing.table.AbstractTableModel;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -13,10 +11,9 @@ import java.util.ArrayList;
  */
 public class DatabaseTableModel extends AbstractTableModel  {
 
-    private Object[][] tableData = new Object[0][0];
-    private String[] columnNames = new String[0];
-    private ArrayList<DBRow> rowList = new ArrayList<DBRow>(10);
-    private static DatabaseIO dbio = new DatabaseIO();
+    private Object[][] tableData;
+    private String[] columnNames;
+    private ArrayList<DBRow> rowList;
 
 
     /** Used for populating the details panel table. Finds all information in all tables where the PRIMARY KEY from the GIVEN TABLE
@@ -28,17 +25,16 @@ public class DatabaseTableModel extends AbstractTableModel  {
 
         ArrayList<String> tabNames = DBInfo.getTabToRefTabHash().get(tableName);
         if(!(tabNames == null)) {
-            String[] quers = new String[tabNames.size()];
-            int count = 0;
+            ArrayList<String> quers = new ArrayList<String>(10);
             for (String s : tabNames) {
                 ArrayList<String> fkNames = DBInfo.getTabToForeignKeyNames().get(s);
 
                 for (String fk : fkNames) {
-                    quers[count] = "select * from " + s + " where " + fk +
-                            " = " + pk.toString();
+                    quers.add("select * from " + s + " where " + fk +
+                            " = " + pk.toString());
                 }
             }
-            processQueries(quers);
+            this.tableData = processQueries(quers.toArray(new String[quers.size()]));
         }
     }
 
@@ -53,9 +49,7 @@ public class DatabaseTableModel extends AbstractTableModel  {
 
     @Override
     public void fireTableRowsUpdated(int firstRow, int lastRow) {
-        if(firstRow != 0 && lastRow != 0) {
-            super.fireTableRowsUpdated(firstRow, lastRow);
-        }
+        super.fireTableRowsUpdated(firstRow, lastRow);
     }
 
     @Override
@@ -106,9 +100,22 @@ public class DatabaseTableModel extends AbstractTableModel  {
     public Object getValueAt(int rowIndex, int colIndex) {
         try {
             return rowList.get(rowIndex).getRowArray()[colIndex];
+
+
         }catch (NullPointerException n) {
             System.out.println("Null pointer caught in DBModel getValAt");
             n.printStackTrace();
+            return null;
+
+
+        } catch (ArrayIndexOutOfBoundsException a) {
+            System.out.printf("Array index out of bounds. Row: %d, Col: %d\n", rowIndex, colIndex);
+            for (DBRow row : rowList) {
+                System.out.printf("\n_ROW_Size: %s\n", row.getRowArray().length);
+                for (Object o : row.getRowArray()) {
+                    System.out.printf("_%s_", o.toString());
+                }
+            }
             return null;
         }
     }
@@ -133,83 +140,26 @@ public class DatabaseTableModel extends AbstractTableModel  {
 
 
     /**
-     * Creates a String array of column names given a particular query. Not all columns are present in a query, so this method
-     * will get the unique column name set on an individual query basis.
-     * @param query Query to process.
-     * @return A String array of column names associated with the query.
-     */
-    private String[] createColumnHeadings(String query) {
-        try {
-            ArrayList<ResultSet> resultSets = dbio.executeQuery(query);
-            int c = 0;
-            ArrayList<String> temp = new ArrayList<String>();
-            for (ResultSet r : resultSets) {
-                for (int i = 1; i < r.getMetaData().getColumnCount() + 1; i++) {
-                    temp.add(r.getMetaData().getColumnName(i));
-                    c = i;
-                }
-            }
-            String[] arr = new String[c];
-            int count = 0;
-            for (String s : temp) {
-                arr[count] = s;
-                count++;
-            }
-            return arr;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public String[] getColumnNames() {
-        try {
-            return columnNames;
-        }catch (NullPointerException n){
-            n.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
      * Processes an array of String queries and will generate a two dimensional Object array for use in the table model.
      * @param queries Queries to execute.
      * @return Two dimensional array containing query results.
      */
     private Object[][] processQueries(String... queries){
-
-        int maxColLength = 0;
-
         ArrayList<DBRow> tempRowList = new ArrayList<DBRow>(10);
-
         for (String s : queries) {
-            columnNames = createColumnHeadings(s);
-            ArrayList<ResultSet> tempQuerySet = dbio.executeQuery(s);
-            for (ResultSet rs : tempQuerySet) {
-                try {
-                    if (!rs.next()) {
-                    } else {
-                        do {
-                            DBRow temp = new DBRow(rs);
-                            maxColLength = (temp.getRowArray().length > maxColLength) ?
-                                    temp.getRowArray().length : maxColLength;
-                            tempRowList.add(temp);
-                        } while (rs.next());
-                    }
-                }catch (SQLException sql){
-                    System.out.println("SQL exception caught in processQueries method in DBModelClass.");
-                    sql.printStackTrace();
-                }
+            columnNames = DBIO.getColNames(s).toArray(new String[DBIO.getColNames(s).size()]);
+            ArrayList<ArrayList<Object>> tempQuerySet = DBIO.getMultiObResults(s);
+            for (ArrayList<Object> row : tempQuerySet) {
+                DBRow temp = new DBRow(row, DBIO.getColClasses(s));
+                tempRowList.add(temp);
             }
         }
-
-        Object[][] tempTableData = new Object[tempRowList.size()][maxColLength];
+        Object[][] tempTableData = new Object[tempRowList.size()][columnNames.length];
         int countRows = 0;
         for(DBRow rows : tempRowList) {
             tempTableData[countRows] = rows.getRowArray();
             countRows++;
         }
-
         this.rowList = tempRowList;
         return tempTableData;
     }
@@ -222,7 +172,6 @@ public class DatabaseTableModel extends AbstractTableModel  {
         this.tableData = processQueries(queries);
     }
 
-
     public void populateTable(){
         for (int row = 0; row < tableData.length; row++) {
             for (int col = 0; col < tableData[row].length; col++) {
@@ -231,4 +180,7 @@ public class DatabaseTableModel extends AbstractTableModel  {
         }
     }
 
+    public String[] getColumnNames() {
+        return columnNames;
+    }
 }

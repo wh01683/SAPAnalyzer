@@ -1,7 +1,7 @@
 package gui;
 
+import db.DBIO;
 import db.DBInfo;
-import db.DatabaseIO;
 import gui.createforms.CreateBOM;
 import gui.createforms.EditPart;
 import gui.createforms.Help;
@@ -45,11 +45,9 @@ public class SAPAnalyzer extends JFrame{
     DatabaseTableModel databaseTableModel;
     private static JFrame frame;
 
-    private static DatabaseIO dbio;
-
     private SAPAnalyzer(){
-        dbio = new DatabaseIO();
-        for(String s : dbio.getTableNames()){
+        DBIO.instantiate();
+        for (String s : DBIO.getTableNames()) {
             cbTableSelect.addItem(s);
         }
         createMenu();
@@ -73,7 +71,7 @@ public class SAPAnalyzer extends JFrame{
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     tblShownInformation.clearSelection();
                     tblShownInformation.setCellSelectionEnabled(false);
-                    DatabaseIO.setCurrentTable(dbio, cbTableSelect.getSelectedItem().toString());
+                    DBIO.setCurrentTable(cbTableSelect.getSelectedItem().toString());
                     setDatabaseTableModel(new DatabaseTableModel("select * from " + cbTableSelect.getSelectedItem().toString()));
                     updateCbBoxes();
                     tblShownInformation.setCellSelectionEnabled(true);
@@ -96,7 +94,7 @@ public class SAPAnalyzer extends JFrame{
                 int row = tblShownInformation.getSelectedRow();
                 int col = tblShownInformation.getSelectedColumn();
                 if (row > -1 && col > -1) {
-                    fillDetailsTable(dbio.getCurrentTable(), row, col);
+                    fillDetailsTable(DBIO.getCurrentTable(), row, col);
                 }
             }
         });
@@ -175,7 +173,7 @@ public class SAPAnalyzer extends JFrame{
     public void setDatabaseTableModel(DatabaseTableModel databaseTableModel) {
         databaseTableModel.addTableModelListener(new TableListener());
         this.databaseTableModel = databaseTableModel;
-        DatabaseIO.setCurrentTable(dbio, (String) cbTableSelect.getSelectedItem());
+        DBIO.setCurrentTable((String) cbTableSelect.getSelectedItem());
         tblShownInformation.setModel(databaseTableModel);
         updateCbBoxes();
     }
@@ -193,10 +191,6 @@ public class SAPAnalyzer extends JFrame{
         String shownQuery = "select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
                 " from " + cbTableSelect.getSelectedItem();
         return shownQuery;
-    }
-
-    public static DatabaseIO getDbio(){
-        return dbio;
     }
 
     private void sortTableModel(){

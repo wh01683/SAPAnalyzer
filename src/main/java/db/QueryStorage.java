@@ -5,9 +5,9 @@ package db;
  */
 public class QueryStorage {
 
-    private final String USERNAME = "HOWERTONSAP";
+    private final static String USERNAME = "HOWERTONSAP";
 
-    private final String REFERENCING_TABLES_QUERY = "SELECT DISTINCT ac1.table_name ref_table\n" +
+    private final static String REFERENCING_TABLES_QUERY = "SELECT DISTINCT ac1.table_name ref_table\n" +
             "FROM all_constraints ac1 JOIN all_constraints ac2\n" +
             "ON ac1.r_constraint_name = ac2.constraint_name\n" +
             "WHERE ac1.constraint_type='R'\n" +
@@ -16,14 +16,13 @@ public class QueryStorage {
             "AND ac2.table_name = ";
 
 
-
-    public String getRefTableQuery(String primaryTableName){
+    public static String getRefTableQuery(String primaryTableName) {
         String query = REFERENCING_TABLES_QUERY + "'" + primaryTableName + "'";
         return query;
     }
 
 
-    public String getPkOrFkNames(String tableName, String type) {
+    public static String getPkOrFkNames(String tableName, String type) {
         String query = "SELECT cols.column_name\n" +
                 "FROM all_constraints cons, all_cons_columns cols\n" +
                 "WHERE cols.table_name = '" + tableName + "'\n" +
@@ -37,7 +36,7 @@ public class QueryStorage {
         return query;
     }
 
-    public String getPkAndFkNames(String tableName) {
+    public static String getPkAndFkNames(String tableName) {
         String query = "SELECT cols.column_name\n" +
                 "FROM all_constraints cons, all_cons_columns cols\n" +
                 "WHERE cols.table_name = '" + tableName + "'\n" +
@@ -51,12 +50,12 @@ public class QueryStorage {
         return query;
     }
 
-    public String getColNamesQuery(String tableName){
+    public static String getColNamesQuery(String tableName) {
         String query = "select COLUMN_NAME from ALL_TAB_COLUMNS where TABLE_NAME='"+ tableName+"' AND owner = '"+ USERNAME+"'";
         return query;
     }
 
-    public String getFkConstraintsQuery(String tableName) {
+    public static String getFkConstraintsQuery(String tableName) {
         String query = "select constraint_name \n" +
                 "from all_constraints \n" +
                 "WHERE constraint_type='R'\n" +

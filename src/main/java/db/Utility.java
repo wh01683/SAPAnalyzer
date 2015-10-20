@@ -1,34 +1,39 @@
 package db;
 
+import java.lang.reflect.Array;
+
 /**
  * Created by robert on 10/6/2015.
  */
 public class Utility {
 
-    public static String ConvertType(int sqlType) {
+    public static Class<?> ConvertType(int sqlType) {
         switch (sqlType) {
             case -8:
-                return "java.lang.Integer";
+                return Integer.class;
             case 4:
-                return "java.lang.Integer";
+                return Integer.class;
             case 0:
-                return "java.lang.ref.Null";
+                return Object.class;
             case 2003:
-                return "java.lang.reflect.Array";
+                return Array.class;
             case 16:
-                return "java.lang.Boolean";
+                return Boolean.class;
             case 91:
-                return "java.lang.String";
+                return String.class;
             case 12:
-                return "java.lang.String";
+                return String.class;
             case 2:
-                return "java.lang.Number";
+                return Number.class;
             case 3:
-                return "java.lang.Float";
+                return Float.class;
             case 8:
-                return "java.lang.Double";
+                return Double.class;
+            case 1:
+                return String.class;
             default:
-                return "java.lang.Object";
+                return Object.class;
         }
     }
+
 }

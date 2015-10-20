@@ -1,10 +1,8 @@
 package gui.custom;
 
 import db.DBInfo;
-import db.Utility;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Created by robert on 10/8/2015.
@@ -16,29 +14,18 @@ public class DBRow {
     private String tableName;
 
 
-    public DBRow(ResultSet newContents){
+    public DBRow(ArrayList<Object> row, Class[] classes) {
+        rowArray = new Object[row.size()];
+        classList = classes;
 
-        try {
-            rowArray = new Object[newContents.getMetaData().getColumnCount()];
-            classList = new Class[newContents.getMetaData().getColumnCount()];
-            for (int c = 1; c < newContents.getMetaData().getColumnCount() + 1; c++) {
-                Class<?> dynamicClass = Class.forName(Utility.ConvertType(newContents.getMetaData().getColumnType(c)));
-                classList[c-1] = dynamicClass;
-                rowArray[c-1] = dynamicClass.cast(newContents.getObject(c));
+        for (int i = 0; i < row.size(); i++) {
+            try {
+                rowArray[i] = classList[i].cast(row.get(i));
+            } catch (ClassCastException c) {
+                System.out.printf("Could not cast %s to %s.\n", row.get(i).toString(), classList[i]);
             }
-        }catch (SQLException e){
-            e.printStackTrace();
-        }catch (ClassNotFoundException c){
-            System.out.printf("Class not found when dynamically grabbing classes.");
-        }
-    }
+            }
 
-    public DBRow(String[] namesArr){
-        rowArray = namesArr;
-        classList = new Class[namesArr.length];
-        for(int i = 0; i < namesArr.length; i++){
-            classList[i] = String.class;
-        }
     }
 
     public DBRow(String tableName, Object... content){

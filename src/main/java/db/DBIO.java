@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 
 
-public class DatabaseIO {
+public class DBIO {
 
 
     private final static String DATABASE_NAME = "sap";
@@ -20,18 +20,19 @@ public class DatabaseIO {
     private static ConnectionDelegator con = null;
     private static ArrayList<String> tableNames;
     private static String currentTable;
-    private static QueryStorage queryStorage;
 
-    public DatabaseIO(){
-        queryStorage = new QueryStorage();
+    public DBIO() {
         MakeConnection();
     }
 
+    public static void instantiate() {
+        MakeConnection();
+    }
     public static void MakeConnection() {
         try {
             con = new ConnectionDelegator(DriverManager.getConnection(
                     "jdbc:oracle:thin:@localhost:1521:" + DATABASE_NAME, USER_NAME, PASSWORD));
-            DatabaseIO.updateTableNames();
+            DBIO.updateTableNames();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -39,6 +40,13 @@ public class DatabaseIO {
     }
 
 
+    /**
+     * Alters constraints on a set of given tables by enabling (pass true) or disabling (pass false) each foreign key
+     * and each trigger associated with each table.
+     *
+     * @param enable True: enable all triggers and reference constraints. False: Disable all.
+     * @param tables Array of table names to alter.
+     */
     public static void alterConstraints(boolean enable, String... tables) {
 
         ArrayList<String> queries = new ArrayList<String>(10);
@@ -49,22 +57,27 @@ public class DatabaseIO {
                 queries.add("alter table " + table + " " + ((enable) ? "enable" : "disable") + " constraint " + constraint);
             }
             queries.add("alter table " + table + " " + ((enable) ? "enable" : "disable") + " all triggers");
-            }
-        DatabaseIO.executeQuery(queries);
+        }
+        DBIO.executeQuery(queries);
     }
 
-    public static ArrayList<ResultSet> executeQuery(ArrayList<String> queries) {
+    /**
+     * Executes an arraylist of String queries and returns an ArrayList of the associated result sets.
+     *
+     * @param queries ArrayList of queries to execute.
+     * @return ArrayList of ResultSet objects.
+     */
+    private static ArrayList<ResultSet> executeQuery(ArrayList<String> queries) {
 
         Statement stmt = null;
         ArrayList<ResultSet> results = new ArrayList<ResultSet>(10);
 
         try {
-            stmt = con.createStatement();
 
-            for (String query : queries){
+            for (String query : queries) {
+                stmt = con.prepareStatement(query);
                 ResultSet rs = stmt.executeQuery(query);
                 results.add(rs);
-                stmt = con.createStatement();
             }
 
         }catch (SQLException e){
@@ -78,7 +91,13 @@ public class DatabaseIO {
         return results;
     }
 
-    public static ArrayList<ResultSet> executeQuery(String... queries) {
+    /**
+     * Overrides executeQuery by taking an array of queries instead of an arraylist. Can accept 0, 1, inf
+     *
+     * @param queries Queries to execute
+     * @return returns arraylist of associated ResultSets
+     */
+    private static ArrayList<ResultSet> executeQuery(String... queries) {
         ArrayList<String> quers = new ArrayList<String>(queries.length);
 
         for(String query : queries){
@@ -88,19 +107,25 @@ public class DatabaseIO {
         return executeQuery(quers);
     }
 
-    public static ArrayList<String> getColNames(String tableName) {
+    /**
+     * Retrieves all column names associated with a given query's result set.
+     * Uses select * from.. to get names of all columnnames
+     *
+     * @param query Query to execute
+     * @return returns an ArrayList of associated column names.
+     */
+    public static ArrayList<String> getColNames(String query) {
         ArrayList<String> cols = new ArrayList<String>(10);
-        ArrayList<ResultSet> resultSet = executeQuery(queryStorage.getColNamesQuery(tableName));
+        ArrayList<ResultSet> resultSet = executeQuery(query);
 
         try {
             for (ResultSet rs : resultSet) {
                 if (!rs.next()) {
                 } else {
-                    do {
-                        for(int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++){
-                            cols.add(rs.getString(i));
-                        }
-                    } while (rs.next());
+                    for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                        cols.add(rs.getMetaData().getColumnName(i));
+                    }
+                    rs.close();
                 }
             }
         }catch (SQLException s ){
@@ -110,7 +135,16 @@ public class DatabaseIO {
         return cols;
     }
 
-    public static int[] insertIntoTable(DatabaseIO databaseIO, String table, String... values) throws SQLException {
+
+    /**
+     * Inserts any number of values (Object []) into a given table. Must insert a value for all columns.
+     *
+     * @param table  Table to insert to.
+     * @param values Objects to insert.
+     * @return returns number of rows updated.
+     * @throws SQLException
+     */
+    public static int[] insertIntoTable(String table, Object... values) throws SQLException {
 
         Statement stmt = null;
         StringBuilder vals = new StringBuilder("INSERT INTO " + table + " VALUES ("+ values[0] + (values.length > 1? ", " : " "));
@@ -123,24 +157,27 @@ public class DatabaseIO {
         }
 
         try {
-            databaseIO.con.setAutoCommit(false);
-            stmt = databaseIO.con.createStatement();
+            con.setAutoCommit(false);
+            stmt = con.prepareStatement(vals.toString());
             stmt.addBatch(vals.toString());
 
             System.out.printf(vals.toString());
             int[] updateCount = stmt.executeBatch();
 
-            databaseIO.con.commit();
+            con.commit();
             return updateCount;
 
         }catch (SQLException e){
             e.printStackTrace();
             return null;
         } finally {
-            if (stmt != null) { stmt.close(); }
-            databaseIO.con.setAutoCommit(true);
+            if (stmt != null) {
+                stmt.close();
+            }
+            con.setAutoCommit(true);
         }
     }
+
 
     public static void updateTableNames() throws SQLException {
 
@@ -151,12 +188,12 @@ public class DatabaseIO {
         }
     }
 
-    public ArrayList<String> getTableNames() {
+    public static ArrayList<String> getTableNames() {
         return tableNames;
     }
 
 
-    public static int[] updateTable(DatabaseIO databaseIO, int col, Object pk, Object newData) {
+    public static int[] updateTable(int col, Object pk, Object newData) {
         try {
             ArrayList<ResultSet> temprs = executeQuery("select * from " + currentTable);
             String colName = "";
@@ -166,30 +203,30 @@ public class DatabaseIO {
 
             for (ResultSet tableRs : temprs) {
                 colName = tableRs.getMetaData().getColumnName(col + 1);
-                colType = Class.forName(Utility.ConvertType(tableRs.getMetaData().getColumnType(col + 1)));
+                colType = Utility.ConvertType(tableRs.getMetaData().getColumnType(col + 1));
                 isStringType = (tableRs.getMetaData().getColumnType(col + 1) == 12 || tableRs.getMetaData().getColumnType(col + 1) == 1);
                 pkName = tableRs.getMetaData().getColumnName(1);
             }
+
 
             Statement stmt = null;
             StringBuilder vals = new StringBuilder("UPDATE " + currentTable + " SET " + colName +" = " + (isStringType? "'" : "")
                     + colType.cast(newData) + (isStringType? "'" : "") + " WHERE " + pkName + " = " + pk);
 
-            databaseIO.con.setAutoCommit(false);
-            stmt = databaseIO.con.createStatement();
+            DBIO.con.setAutoCommit(false);
+            stmt = DBIO.con.createStatement();
             stmt.addBatch(vals.toString());
 
             System.out.printf(vals.toString());
 
             int[] updateCount = stmt.executeBatch();
 
-            databaseIO.con.commit();
+            DBIO.con.commit();
 
+            stmt.close();
             return updateCount;
-        }catch (SQLException s){
+        }catch (SQLException s) {
             s.printStackTrace();
-        }catch (ClassNotFoundException c){
-            c.printStackTrace();
         }
         return null;
     }
@@ -202,7 +239,7 @@ public class DatabaseIO {
      */
     public static ArrayList<String> getReferringTables(String tableName) {
         try {
-            ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getRefTableQuery(tableName));
+            ArrayList<ResultSet> tempArr = executeQuery(QueryStorage.getRefTableQuery(tableName));
             ArrayList<String> refTableNames = new ArrayList<String>(10);
             for (ResultSet rs : tempArr) {
                 if (!rs.next()) {
@@ -221,62 +258,12 @@ public class DatabaseIO {
         return null;
     }
 
-    public String getCurrentTable() {
+    public static String getCurrentTable() {
         return currentTable;
     }
 
-    public static void setCurrentTable(DatabaseIO databaseIO, String currentTable) {
-        databaseIO.currentTable = currentTable;
-    }
-
-    /**
-     * Gets column name of primary key column associated with the given table name.
-     * @param tableName Table name to query.
-     * @return Primary Key column name.
-     */
-    public String getTablePrimaryKey(String tableName){
-            try {
-                String pkColName = "";
-                ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getPkOrFkNames(tableName, "P"));
-                for (ResultSet rs : tempArr) {
-                    if (!rs.next()) {
-                    } else {
-                        do {
-                            pkColName = rs.getString(1);
-                        } while (rs.next());
-                    }
-                }
-                return pkColName;
-            }catch (SQLException s){
-                s.printStackTrace();
-            }
-            return null;
-    }
-
-
-    /**
-     * Gets column name of primary key column associated with the given table name.
-     *
-     * @param tableName Table name to query.
-     * @return Primary Key column name.
-     */
-    public static ArrayList<String> getTableForeignKey(String tableName) {
-        try {
-            ArrayList<String> fks = new ArrayList<String>(10);
-            ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getPkAndFkNames(tableName));
-            for (ResultSet rs : tempArr) {
-                if (!rs.next()) {
-                } else {
-                    do {
-                        fks.add(rs.getString(1));
-                    } while (rs.next());
-                }
-            }
-            return fks;
-        } catch (SQLException s) {
-            s.printStackTrace();
-        }
-        return null;
+    public static void setCurrentTable(String currentTable) {
+        DBIO.currentTable = currentTable;
     }
 
 
@@ -306,11 +293,54 @@ public class DatabaseIO {
         return null;
     }
 
+    /**
+     * @param tableName Table name to obtain keys for.
+     * @param types
+     * @return
+     * @should getKeys
+     */
+    public static ArrayList<String> getKeys(String tableName, String... types) {
+        ArrayList<String> results = new ArrayList<String>(10);
+        if (types.length > 1) {
+            try {
+                ArrayList<ResultSet> tempArr = executeQuery(QueryStorage.getPkAndFkNames(tableName));
+                for (ResultSet rs : tempArr) {
+                    if (!rs.next()) {
+                    } else {
+                        do {
+                            results.add(rs.getString(1));
+                        } while (rs.next());
+                    }
+                }
+                return results;
+            } catch (SQLException s) {
+                s.printStackTrace();
+            }
+            return null;
+        } else {
+            try {
+                ArrayList<ResultSet> tempArr = executeQuery(QueryStorage.getPkOrFkNames(tableName, types[0]));
+                for (ResultSet rs : tempArr) {
+                    if (!rs.next()) {
+                    } else {
+                        do {
+                            results.add(rs.getString(1));
+                        } while (rs.next());
+                    }
+                }
+                return results;
+            } catch (SQLException s) {
+                s.printStackTrace();
+            }
+            return null;
+        }
+
+    }
 
     public static ArrayList<String> getRefConstraints(String tableName) {
 
         ArrayList<String> refList = new ArrayList<String>(10);
-        ArrayList<ResultSet> tempArr = executeQuery(queryStorage.getFkConstraintsQuery(tableName));
+        ArrayList<ResultSet> tempArr = executeQuery(QueryStorage.getFkConstraintsQuery(tableName));
         try {
             for (ResultSet rs : tempArr) {
                 if (!rs.next()) {
@@ -362,10 +392,9 @@ public class DatabaseIO {
                     if (!rs.next()) {
                     } else {
                         do {
-                            ArrayList<Object> results = new ArrayList<Object>(10);
-                            results.add(null);
+                            ArrayList<Object> results = new ArrayList<Object>(5);
                             for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-                                results.add((rs.getObject(i) == null) ? "" : rs.getObject(i));
+                                results.add(rs.getObject(i));
                             }
                             resultList.add(results);
                         } while (rs.next());
@@ -380,19 +409,20 @@ public class DatabaseIO {
     }
 
     /**
-     * Returns integer array of column types WITH SAME COLUMN NUMBER AS IN TABLE. Index will start at 1
+     * Returns integer array of column types. Index will start at 0
      *
-     * @param tableName table name to obtain column types for
+     * @param query query to get column types for.
      * @return int[] of SQL types.
      */
-    public static int[] getColumnTypes(String tableName) {
+
+    public static int[] getColumnTypes(String query) {
         try {
-            ArrayList<ResultSet> tempArr = executeQuery("select * from " + tableName);
-            int[] colTypes = new int[tempArr.get(0).getMetaData().getColumnCount() + 1];
+            ArrayList<ResultSet> tempArr = executeQuery(query);
+            int[] colTypes = new int[tempArr.get(0).getMetaData().getColumnCount()];
             for (ResultSet rs : tempArr) {
                 do {
                     for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-                        colTypes[i] = rs.getMetaData().getColumnType(i);
+                        colTypes[i - 1] = rs.getMetaData().getColumnType(i);
                     }
                 } while (rs.next());
             }
@@ -401,6 +431,23 @@ public class DatabaseIO {
             s.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Gets array of classes to associate with a given query's resultant columns
+     *
+     * @param query query to execute
+     * @return returns array of Classes.
+     */
+    public static Class[] getColClasses(String query) {
+
+        int[] colTypes = getColumnTypes(query);
+        Class[] classes = new Class[colTypes.length];
+
+        for (int i = 0; i < colTypes.length; i++) {
+            classes[i] = Utility.ConvertType(colTypes[i]);
+        }
+        return classes;
     }
 
 }
