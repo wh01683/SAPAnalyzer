@@ -100,8 +100,6 @@ public class DatabaseTableModel extends AbstractTableModel  {
     public Object getValueAt(int rowIndex, int colIndex) {
         try {
             return rowList.get(rowIndex).getRowArray()[colIndex];
-
-
         }catch (NullPointerException n) {
             System.out.println("Null pointer caught in DBModel getValAt");
             n.printStackTrace();

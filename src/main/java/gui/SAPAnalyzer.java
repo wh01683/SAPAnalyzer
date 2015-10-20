@@ -46,6 +46,7 @@ public class SAPAnalyzer extends JFrame{
     private static JFrame frame;
 
     private SAPAnalyzer(){
+        //<editor-fold desc="SAP Constructor">
         DBIO.instantiate();
         for (String s : DBIO.getTableNames()) {
             cbTableSelect.addItem(s);
@@ -148,6 +149,7 @@ public class SAPAnalyzer extends JFrame{
             }
         });
         tblShownInformation.getModel().addTableModelListener(listener);
+        //</editor-fold>
     }
 
     public static void main(String[] args) {

@@ -256,25 +256,25 @@ public class EditPart extends JFrame {
                 "select * from part where partid = " + fldPartId.getInt()).get(0);
 
 
-        fldPartName.setText(partResults.get(4).toString());
-        fldPartDesc.setText(partResults.get(2).toString());
-        fldPhase.setText(partResults.get(5).toString());
-        fldRevision.setText(partResults.get(6).toString());
-        fldProcType.setText(partResults.get(7).toString());
-        fldRefDes.setText(partResults.get(8).toString());
-        txtarPartNotes.setText(partResults.get(9).toString());
-        fldTransCost.setText(partResults.get(10).toString());
-        fldPartCost.setText(partResults.get(11).toString());
-        fldWaste.setText(partResults.get(12).toString());
+        fldPartName.setText(partResults.get(3).toString());
+        fldPartDesc.setText(partResults.get(1).toString());
+        fldPhase.setText(partResults.get(4).toString());
+        fldRevision.setText(partResults.get(5).toString());
+        fldProcType.setText(partResults.get(6).toString());
+        fldRefDes.setText(partResults.get(7).toString());
+        txtarPartNotes.setText(partResults.get(8).toString());
+        fldTransCost.setText(partResults.get(9).toString());
+        fldPartCost.setText(partResults.get(10).toString());
+        fldWaste.setText(partResults.get(11).toString());
 
 
         cbUnits.removeAllItems();
         cbPartCategory.removeAllItems();
         cbPartPlantID.removeAllItems();
 
-        cbUnits.addItem(partResults.get(14));
-        cbPartPlantID.addItem(partResults.get(3));
-        cbPartCategory.addItem(partResults.get(13));
+        cbUnits.addItem(partResults.get(13));
+        cbPartPlantID.addItem(partResults.get(2));
+        cbPartCategory.addItem(partResults.get(12));
 
         cbUnits.setEnabled(false);
         cbPartCategory.setEnabled(false);
@@ -284,13 +284,13 @@ public class EditPart extends JFrame {
         ArrayList<Object> stockResults = DBIO.getMultiObResults(
                 "select * from stockdetail where partid = " + fldPartId.getInt()).get(0);
 
-        fldQtyOnHand.setText(stockResults.get(2).toString());
-        fldAllocQty.setText(stockResults.get(3).toString());
-        fldAvailQty.setText(stockResults.get(4).toString());
-        fldReorderLvl.setText(stockResults.get(5).toString());
-        fldLeadTime.setText(stockResults.get(6).toString());
+        fldQtyOnHand.setText(stockResults.get(1).toString());
+        fldAllocQty.setText(stockResults.get(2).toString());
+        fldAvailQty.setText(stockResults.get(3).toString());
+        fldReorderLvl.setText(stockResults.get(4).toString());
+        fldLeadTime.setText(stockResults.get(5).toString());
         cbSuppliers.removeAllItems();
-        cbSuppliers.addItem(stockResults.get(7).toString());
+        cbSuppliers.addItem(stockResults.get(6).toString());
         cbSuppliers.setEnabled(false);
     }
 
@@ -326,7 +326,7 @@ public class EditPart extends JFrame {
     private void fillSuppHash() {
         ArrayList<ArrayList<Object>> queryResults = DBIO.getMultiObResults("select * from supplier");
         for (ArrayList<Object> outerArr : queryResults) {
-            suppNameToPk.put(outerArr.get(2).toString(), outerArr.get(1));
+            suppNameToPk.put(outerArr.get(1).toString(), outerArr.get(0));
         }
     }
 

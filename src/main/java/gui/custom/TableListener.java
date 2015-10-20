@@ -4,6 +4,7 @@ import db.DBIO;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import java.sql.SQLException;
 
 /**
  * Created by robert on 10/8/2015.
@@ -20,7 +21,11 @@ public class TableListener implements TableModelListener{
             Object pkdata = model.getValueAt(row, 0);
             System.out.println("row: " + row + " column: " + column);
             System.out.println(data.toString());
-            DBIO.updateTable(column, pkdata, data);
+            try {
+                DBIO.updateTable(column, pkdata, data);
+            } catch (SQLException s) {
+                s.printStackTrace();
+            }
         }
     }
 

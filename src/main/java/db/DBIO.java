@@ -28,6 +28,7 @@ public class DBIO {
     public static void instantiate() {
         MakeConnection();
     }
+
     public static void MakeConnection() {
         try {
             con = new ConnectionDelegator(DriverManager.getConnection(
@@ -47,48 +48,55 @@ public class DBIO {
      * @param enable True: enable all triggers and reference constraints. False: Disable all.
      * @param tables Array of table names to alter.
      */
-    public static void alterConstraints(boolean enable, String... tables) {
+    public static int[] alterConstraints(boolean enable, String... tables) {
 
-        ArrayList<String> queries = new ArrayList<String>(10);
 
-        for (String table : tables) {
-            ArrayList<String> constraints = DBInfo.getTabToRefConstraint().get(table);
-            for (String constraint : constraints) {
-                queries.add("alter table " + table + " " + ((enable) ? "enable" : "disable") + " constraint " + constraint);
-            }
-            queries.add("alter table " + table + " " + ((enable) ? "enable" : "disable") + " all triggers");
-        }
-        DBIO.executeQuery(queries);
-    }
-
-    /**
-     * Executes an arraylist of String queries and returns an ArrayList of the associated result sets.
-     *
-     * @param queries ArrayList of queries to execute.
-     * @return ArrayList of ResultSet objects.
-     */
-    private static ArrayList<ResultSet> executeQuery(ArrayList<String> queries) {
-
-        Statement stmt = null;
-        ArrayList<ResultSet> results = new ArrayList<ResultSet>(10);
-
+        int[] results = new int[0];
         try {
-
-            for (String query : queries) {
-                stmt = con.prepareStatement(query);
-                ResultSet rs = stmt.executeQuery(query);
-                results.add(rs);
+            Statement stmt = con.createStatement();
+            for (String table : tables) {
+                ArrayList<String> constraints = DBInfo.getTabToRefConstraint().get(table);
+                for (String constraint : constraints) {
+                    stmt.addBatch("alter table " + table + " " + ((enable) ? "enable" : "disable") + " constraint " + constraint);
+                }
+                stmt.addBatch("alter table " + table + " " + ((enable) ? "enable" : "disable") + " all triggers");
             }
 
-        }catch (SQLException e){
-            for (String s : queries) {
-                System.out.printf(s);
+            results = stmt.executeBatch();
+
+            if (stmt != null) {
+                stmt.close();
             }
+        } catch (SQLException e) {
             e.printStackTrace();
-            return null;
         }
 
         return results;
+    }
+
+    /**
+     * Executes an arraylist of String query and returns an ArrayList of the associated result sets.
+     *
+     * @param query ArrayList of query to execute.
+     * @return ArrayList of ResultSet objects.
+     */
+    private static ResultSet executeQuery(String query) throws SQLException {
+
+        ArrayList<ResultSet> results = new ArrayList<ResultSet>(10);
+
+        Statement stmt = con.prepareStatement(query);
+
+        try {
+
+            ResultSet rs = stmt.executeQuery(query);
+            results.add(rs);
+
+            return rs;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -98,13 +106,19 @@ public class DBIO {
      * @return returns arraylist of associated ResultSets
      */
     private static ArrayList<ResultSet> executeQuery(String... queries) {
-        ArrayList<String> quers = new ArrayList<String>(queries.length);
 
-        for(String query : queries){
-            quers.add(query);
+        ArrayList<ResultSet> resultSets = new ArrayList<ResultSet>(10);
+
+        try {
+            for (String query : queries) {
+                resultSets.add(executeQuery(query));
+            }
+
+        } catch (SQLException s) {
+            s.printStackTrace();
         }
 
-        return executeQuery(quers);
+        return resultSets;
     }
 
     /**
@@ -116,19 +130,18 @@ public class DBIO {
      */
     public static ArrayList<String> getColNames(String query) {
         ArrayList<String> cols = new ArrayList<String>(10);
-        ArrayList<ResultSet> resultSet = executeQuery(query);
-
         try {
-            for (ResultSet rs : resultSet) {
-                if (!rs.next()) {
-                } else {
-                    for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-                        cols.add(rs.getMetaData().getColumnName(i));
-                    }
-                    rs.close();
+            ResultSet rs = executeQuery(query);
+
+            if (!rs.next()) {
+            } else {
+                for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                    cols.add(rs.getMetaData().getColumnName(i));
                 }
             }
-        }catch (SQLException s ){
+            rs.close();
+
+        } catch (SQLException s) {
             s.printStackTrace();
             return null;
         }
@@ -144,21 +157,21 @@ public class DBIO {
      * @return returns number of rows updated.
      * @throws SQLException
      */
-    public static int[] insertIntoTable(String table, Object... values) throws SQLException {
+    static int[] insertIntoTable(String table, Object... values) throws SQLException {
 
         Statement stmt = null;
-        StringBuilder vals = new StringBuilder("INSERT INTO " + table + " VALUES ("+ values[0] + (values.length > 1? ", " : " "));
-        for(int s = 1; s < values.length; s++){
-            if(s == values.length - 1){
+        StringBuilder vals = new StringBuilder("INSERT INTO " + table + " VALUES (" + values[0] + (values.length > 1 ? ", " : " "));
+        for (int s = 1; s < values.length; s++) {
+            if (s == values.length - 1) {
                 vals.append(values[s]).append(")");
-            }else{
+            } else {
                 vals.append(values[s]).append(", ");
             }
         }
 
         try {
             con.setAutoCommit(false);
-            stmt = con.prepareStatement(vals.toString());
+            stmt = con.createStatement();
             stmt.addBatch(vals.toString());
 
             System.out.printf(vals.toString());
@@ -167,7 +180,7 @@ public class DBIO {
             con.commit();
             return updateCount;
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         } finally {
@@ -186,6 +199,7 @@ public class DBIO {
         while (rs.next()) {
             tableNames.add(rs.getString(3));
         }
+        rs.close();
     }
 
     public static ArrayList<String> getTableNames() {
@@ -193,40 +207,44 @@ public class DBIO {
     }
 
 
-    public static int[] updateTable(int col, Object pk, Object newData) {
+    /**
+     * Updates a column in a given table with a new value.
+     *
+     * @param col     Column to update
+     * @param pk      Primary key value to match with the row to be updated
+     * @param newData Object containing new PK value.
+     * @return returns int array of updates
+     */
+    public static int[] updateTable(int col, Object pk, Object newData) throws SQLException {
+
+        Statement stmt = null;
+
         try {
-            ArrayList<ResultSet> temprs = executeQuery("select * from " + currentTable);
-            String colName = "";
-            Class<?> colType = null;
-            String pkName = "";
-            boolean isStringType = false;
 
-            for (ResultSet tableRs : temprs) {
-                colName = tableRs.getMetaData().getColumnName(col + 1);
-                colType = Utility.ConvertType(tableRs.getMetaData().getColumnType(col + 1));
-                isStringType = (tableRs.getMetaData().getColumnType(col + 1) == 12 || tableRs.getMetaData().getColumnType(col + 1) == 1);
-                pkName = tableRs.getMetaData().getColumnName(1);
-            }
+            Class<?> colType = getColClasses("select * from " + currentTable)[col];
+            boolean isStringType = (colType == String.class || colType == Character.class);
 
+            StringBuilder vals = new StringBuilder("UPDATE " + currentTable + " SET " + DBInfo.getTabToColNames().get(currentTable).get(col) + " = " + (isStringType ? "'" : "")
+                    + colType.cast(newData) + (isStringType ? "'" : "") + " WHERE " + DBInfo.getTabToPKHash().get(currentTable) + " = " + pk);
 
-            Statement stmt = null;
-            StringBuilder vals = new StringBuilder("UPDATE " + currentTable + " SET " + colName +" = " + (isStringType? "'" : "")
-                    + colType.cast(newData) + (isStringType? "'" : "") + " WHERE " + pkName + " = " + pk);
+            con.setAutoCommit(false);
 
-            DBIO.con.setAutoCommit(false);
-            stmt = DBIO.con.createStatement();
+            stmt = con.createStatement();
             stmt.addBatch(vals.toString());
-
-            System.out.printf(vals.toString());
 
             int[] updateCount = stmt.executeBatch();
 
-            DBIO.con.commit();
-
+            con.commit();
             stmt.close();
+
             return updateCount;
-        }catch (SQLException s) {
+        } catch (SQLException s) {
             s.printStackTrace();
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            con.setAutoCommit(true);
         }
         return null;
     }
@@ -239,20 +257,20 @@ public class DBIO {
      */
     public static ArrayList<String> getReferringTables(String tableName) {
         try {
-            ArrayList<ResultSet> tempArr = executeQuery(QueryStorage.getRefTableQuery(tableName));
+            ResultSet rs = executeQuery(QueryStorage.getRefTableQuery(tableName));
             ArrayList<String> refTableNames = new ArrayList<String>(10);
-            for (ResultSet rs : tempArr) {
-                if (!rs.next()) {
-                } else {
-                    do {
-                        for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-                            refTableNames.add(rs.getString(i));
-                        }
-                    } while (rs.next());
-                }
+            if (!rs.next()) {
+            } else {
+                do {
+                    for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                        refTableNames.add(rs.getString(i));
+                    }
+                } while (rs.next());
             }
+
+            rs.close();
             return refTableNames;
-        }catch (SQLException s){
+        } catch (SQLException s) {
             s.printStackTrace();
         }
         return null;
@@ -269,25 +287,27 @@ public class DBIO {
 
     /**
      * Gets all primary keys associated with the given table's primary key column.
+     *
      * @param tableName Table name to query.
      * @return ArrayList of primary keys.
      */
     public static ArrayList<Object> getPksFromTable(String tableName) {
         try {
             ArrayList<Object> pkList = new ArrayList<Object>(10);
-            ArrayList<ResultSet> tempArr = executeQuery("select " + DBInfo.getTabToPKHash().get(tableName) + " from " + tableName);
-            for (ResultSet rs : tempArr) {
-                if (!rs.next()) {
-                } else {
-                    do {
-                        for(int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++){
-                            pkList.add(rs.getObject(i));
-                        }
-                    } while (rs.next());
-                }
+
+            ResultSet rs = executeQuery("select " + DBInfo.getTabToPKHash().get(tableName) + " from " + tableName);
+            if (!rs.next()) {
+            } else {
+                do {
+                    for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                        pkList.add(rs.getObject(i));
+                    }
+                } while (rs.next());
             }
+            rs.close();
+
             return pkList;
-        }catch (SQLException s) {
+        } catch (SQLException s) {
             s.printStackTrace();
         }
         return null;
@@ -303,15 +323,14 @@ public class DBIO {
         ArrayList<String> results = new ArrayList<String>(10);
         if (types.length > 1) {
             try {
-                ArrayList<ResultSet> tempArr = executeQuery(QueryStorage.getPkAndFkNames(tableName));
-                for (ResultSet rs : tempArr) {
-                    if (!rs.next()) {
-                    } else {
-                        do {
-                            results.add(rs.getString(1));
-                        } while (rs.next());
-                    }
+                ResultSet rs = executeQuery(QueryStorage.getPkAndFkNames(tableName));
+                if (!rs.next()) {
+                } else {
+                    do {
+                        results.add(rs.getString(1));
+                    } while (rs.next());
                 }
+                rs.close();
                 return results;
             } catch (SQLException s) {
                 s.printStackTrace();
@@ -319,15 +338,14 @@ public class DBIO {
             return null;
         } else {
             try {
-                ArrayList<ResultSet> tempArr = executeQuery(QueryStorage.getPkOrFkNames(tableName, types[0]));
-                for (ResultSet rs : tempArr) {
-                    if (!rs.next()) {
-                    } else {
-                        do {
-                            results.add(rs.getString(1));
-                        } while (rs.next());
-                    }
+                ResultSet rs = executeQuery(QueryStorage.getPkOrFkNames(tableName, types[0]));
+                if (!rs.next()) {
+                } else {
+                    do {
+                        results.add(rs.getString(1));
+                    } while (rs.next());
                 }
+                rs.close();
                 return results;
             } catch (SQLException s) {
                 s.printStackTrace();
@@ -340,17 +358,17 @@ public class DBIO {
     public static ArrayList<String> getRefConstraints(String tableName) {
 
         ArrayList<String> refList = new ArrayList<String>(10);
-        ArrayList<ResultSet> tempArr = executeQuery(QueryStorage.getFkConstraintsQuery(tableName));
+
         try {
-            for (ResultSet rs : tempArr) {
-                if (!rs.next()) {
-                } else {
-                    do {
-                        for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-                            refList.add(rs.getString(i));
-                        }
-                    } while (rs.next());
-                }
+            ResultSet rs = executeQuery(QueryStorage.getFkConstraintsQuery(tableName));
+            if (!rs.next()) {
+            } else {
+                do {
+                    for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                        refList.add(rs.getString(i));
+                    }
+                } while (rs.next());
+                rs.close();
             }
 
             return refList;
@@ -364,20 +382,19 @@ public class DBIO {
         try {
             ArrayList<String> resultList = new ArrayList<String>(10);
             for (String s : queries) {
-                ArrayList<ResultSet> tempArr = executeQuery(s);
-                for (ResultSet rs : tempArr) {
-                    if (!rs.next()) {
-                    } else {
-                        do {
-                            for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-                                resultList.add(rs.getString(i));
-                            }
-                        } while (rs.next());
-                    }
+                ResultSet rs = executeQuery(s);
+                if (!rs.next()) {
+                } else {
+                    do {
+                        for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                            resultList.add(rs.getString(i));
+                        }
+                    } while (rs.next());
+                    rs.close();
                 }
             }
             return resultList;
-        }catch (SQLException s) {
+        } catch (SQLException s) {
             s.printStackTrace();
         }
         return null;
@@ -387,19 +404,20 @@ public class DBIO {
         try {
             ArrayList<ArrayList<Object>> resultList = new ArrayList<ArrayList<Object>>(10);
             for (String s : queries) {
-                ArrayList<ResultSet> tempArr = executeQuery(s);
-                for (ResultSet rs : tempArr) {
-                    if (!rs.next()) {
-                    } else {
-                        do {
-                            ArrayList<Object> results = new ArrayList<Object>(5);
-                            for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-                                results.add(rs.getObject(i));
-                            }
-                            resultList.add(results);
-                        } while (rs.next());
-                    }
+                ResultSet rs = executeQuery(s);
+                if (!rs.next()) {
+                } else {
+                    do {
+                        ArrayList<Object> results = new ArrayList<Object>(5);
+                        for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+                            Object temp = rs.getObject(i);
+                            results.add((temp == null) ? "" : temp);
+                        }
+                        resultList.add(results);
+                    } while (rs.next());
                 }
+                rs.close();
+
             }
             return resultList;
         } catch (SQLException s) {
@@ -417,15 +435,18 @@ public class DBIO {
 
     public static int[] getColumnTypes(String query) {
         try {
-            ArrayList<ResultSet> tempArr = executeQuery(query);
-            int[] colTypes = new int[tempArr.get(0).getMetaData().getColumnCount()];
-            for (ResultSet rs : tempArr) {
+
+            ResultSet rs = executeQuery(query);
+            int[] colTypes = new int[rs.getMetaData().getColumnCount()];
+            if (!rs.next()) {
+            } else {
                 do {
                     for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
                         colTypes[i - 1] = rs.getMetaData().getColumnType(i);
                     }
                 } while (rs.next());
             }
+            rs.close();
             return colTypes;
         } catch (SQLException s) {
             s.printStackTrace();
