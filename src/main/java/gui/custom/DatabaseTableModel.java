@@ -100,12 +100,11 @@ public class DatabaseTableModel extends AbstractTableModel  {
     public Object getValueAt(int rowIndex, int colIndex) {
         try {
             return rowList.get(rowIndex).getRowArray()[colIndex];
+
         }catch (NullPointerException n) {
             System.out.println("Null pointer caught in DBModel getValAt");
             n.printStackTrace();
             return null;
-
-
         } catch (ArrayIndexOutOfBoundsException a) {
             System.out.printf("Array index out of bounds. Row: %d, Col: %d\n", rowIndex, colIndex);
             for (DBRow row : rowList) {

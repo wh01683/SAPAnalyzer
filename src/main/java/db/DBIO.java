@@ -75,53 +75,6 @@ public class DBIO {
     }
 
     /**
-     * Executes an arraylist of String query and returns an ArrayList of the associated result sets.
-     *
-     * @param query ArrayList of query to execute.
-     * @return ArrayList of ResultSet objects.
-     */
-    private static ResultSet executeQuery(String query) throws SQLException {
-
-        ArrayList<ResultSet> results = new ArrayList<ResultSet>(10);
-
-        Statement stmt = con.prepareStatement(query);
-
-        try {
-
-            ResultSet rs = stmt.executeQuery(query);
-            results.add(rs);
-
-            return rs;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Overrides executeQuery by taking an array of queries instead of an arraylist. Can accept 0, 1, inf
-     *
-     * @param queries Queries to execute
-     * @return returns arraylist of associated ResultSets
-     */
-    private static ArrayList<ResultSet> executeQuery(String... queries) {
-
-        ArrayList<ResultSet> resultSets = new ArrayList<ResultSet>(10);
-
-        try {
-            for (String query : queries) {
-                resultSets.add(executeQuery(query));
-            }
-
-        } catch (SQLException s) {
-            s.printStackTrace();
-        }
-
-        return resultSets;
-    }
-
-    /**
      * Retrieves all column names associated with a given query's result set.
      * Uses select * from.. to get names of all columnnames
      *
@@ -131,7 +84,7 @@ public class DBIO {
     public static ArrayList<String> getColNames(String query) {
         ArrayList<String> cols = new ArrayList<String>(10);
         try {
-            ResultSet rs = executeQuery(query);
+            ResultSet rs = con.createStatement().executeQuery(query);
 
             if (!rs.next()) {
             } else {
@@ -184,9 +137,7 @@ public class DBIO {
             e.printStackTrace();
             return null;
         } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
+            stmt.close();
             con.setAutoCommit(true);
         }
     }
@@ -257,7 +208,7 @@ public class DBIO {
      */
     public static ArrayList<String> getReferringTables(String tableName) {
         try {
-            ResultSet rs = executeQuery(QueryStorage.getRefTableQuery(tableName));
+            ResultSet rs = con.createStatement().executeQuery(QueryStorage.getRefTableQuery(tableName));
             ArrayList<String> refTableNames = new ArrayList<String>(10);
             if (!rs.next()) {
             } else {
@@ -295,7 +246,7 @@ public class DBIO {
         try {
             ArrayList<Object> pkList = new ArrayList<Object>(10);
 
-            ResultSet rs = executeQuery("select " + DBInfo.getTabToPKHash().get(tableName) + " from " + tableName);
+            ResultSet rs = con.createStatement().executeQuery("select " + DBInfo.getTabToPKHash().get(tableName) + " from " + tableName);
             if (!rs.next()) {
             } else {
                 do {
@@ -323,7 +274,7 @@ public class DBIO {
         ArrayList<String> results = new ArrayList<String>(10);
         if (types.length > 1) {
             try {
-                ResultSet rs = executeQuery(QueryStorage.getPkAndFkNames(tableName));
+                ResultSet rs = con.createStatement().executeQuery(QueryStorage.getPkAndFkNames(tableName));
                 if (!rs.next()) {
                 } else {
                     do {
@@ -338,7 +289,7 @@ public class DBIO {
             return null;
         } else {
             try {
-                ResultSet rs = executeQuery(QueryStorage.getPkOrFkNames(tableName, types[0]));
+                ResultSet rs = con.createStatement().executeQuery(QueryStorage.getPkOrFkNames(tableName, types[0]));
                 if (!rs.next()) {
                 } else {
                     do {
@@ -360,7 +311,7 @@ public class DBIO {
         ArrayList<String> refList = new ArrayList<String>(10);
 
         try {
-            ResultSet rs = executeQuery(QueryStorage.getFkConstraintsQuery(tableName));
+            ResultSet rs = con.createStatement().executeQuery(QueryStorage.getFkConstraintsQuery(tableName));
             if (!rs.next()) {
             } else {
                 do {
@@ -382,7 +333,7 @@ public class DBIO {
         try {
             ArrayList<String> resultList = new ArrayList<String>(10);
             for (String s : queries) {
-                ResultSet rs = executeQuery(s);
+                ResultSet rs = con.createStatement().executeQuery(s);
                 if (!rs.next()) {
                 } else {
                     do {
@@ -404,7 +355,7 @@ public class DBIO {
         try {
             ArrayList<ArrayList<Object>> resultList = new ArrayList<ArrayList<Object>>(10);
             for (String s : queries) {
-                ResultSet rs = executeQuery(s);
+                ResultSet rs = con.createStatement().executeQuery(s);
                 if (!rs.next()) {
                 } else {
                     do {
@@ -436,7 +387,7 @@ public class DBIO {
     public static int[] getColumnTypes(String query) {
         try {
 
-            ResultSet rs = executeQuery(query);
+            ResultSet rs = con.createStatement().executeQuery(query);
             int[] colTypes = new int[rs.getMetaData().getColumnCount()];
             if (!rs.next()) {
             } else {

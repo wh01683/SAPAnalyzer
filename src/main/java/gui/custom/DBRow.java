@@ -56,7 +56,6 @@ public class DBRow {
             boolean isString = (DBInfo.getColTypes(tableName)[i + 1] == 12 || DBInfo.getColTypes(tableName)[i + 1] == 1);
 
             if(i == getRowArray().length - 1){
-
                 queryBuilder.append((isString) ? "'" : "").append(getRowArray()[i]).append((isString) ? "'" : "").append(")");
             }else{
                 queryBuilder.append((isString) ? "'" : "").append(getRowArray()[i]).append((isString) ? "'" : "").append(", ");
