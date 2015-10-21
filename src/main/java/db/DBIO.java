@@ -41,6 +41,7 @@ public class DBIO {
     }
 
 
+    //<editor-fold desc="Working code.">
     /**
      * Alters constraints on a set of given tables by enabling (pass true) or disabling (pass false) each foreign key
      * and each trigger associated with each table.
@@ -101,6 +102,23 @@ public class DBIO {
         return cols;
     }
 
+    /**
+     * Handles string inserts by wrapping in single quotes if the object is a string. Otherwise,
+     * the method will simply return the object as a string.
+     * Ex.
+     * "Human" passed will be returned as "'Human'"
+     * 1234 will be returned as "1234"
+     *
+     * @param o Object to wrap in single quotes.
+     * @return returns string form.
+     */
+    private static String handleStringInsert(Object o) {
+        if (o instanceof java.lang.String) {
+            return "'" + o.toString() + "'";
+        } else {
+            return o.toString();
+        }
+    }
 
     /**
      * Inserts any number of values (Object []) into a given table. Must insert a value for all columns.
@@ -113,12 +131,14 @@ public class DBIO {
     static int[] insertIntoTable(String table, Object... values) throws SQLException {
 
         Statement stmt = null;
-        StringBuilder vals = new StringBuilder("INSERT INTO " + table + " VALUES (" + values[0] + (values.length > 1 ? ", " : " "));
+        StringBuilder vals = new StringBuilder("INSERT INTO " + table + " VALUES (" +
+                handleStringInsert(values[0]) +
+                (values.length > 1 ? ", " : " "));
         for (int s = 1; s < values.length; s++) {
             if (s == values.length - 1) {
-                vals.append(values[s]).append(")");
+                vals.append(handleStringInsert(values[s])).append(")");
             } else {
-                vals.append(values[s]).append(", ");
+                vals.append(handleStringInsert(values[s])).append(",");
             }
         }
 
@@ -127,7 +147,7 @@ public class DBIO {
             stmt = con.createStatement();
             stmt.addBatch(vals.toString());
 
-            System.out.printf(vals.toString());
+            System.out.printf(vals.toString() + "\n");
             int[] updateCount = stmt.executeBatch();
 
             con.commit();
@@ -242,7 +262,7 @@ public class DBIO {
      * @param tableName Table name to query.
      * @return ArrayList of primary keys.
      */
-    public static ArrayList<Object> getPksFromTable(String tableName) {
+    public static ArrayList<Object> getPrimaryKeyValues(String tableName) {
         try {
             ArrayList<Object> pkList = new ArrayList<Object>(10);
 
@@ -421,6 +441,31 @@ public class DBIO {
         }
         return classes;
     }
+
+    /**
+     * Executes any number of queries and returns an int array with the rows updated results.
+     *
+     * @param queries Queries to execute.
+     * @return Number of rows updated feedback.
+     */
+    public static int[] executeWithoutReturn(String... queries) {
+        try {
+
+            Statement statement = con.createStatement();
+            for (String s : queries) {
+                statement.addBatch(s);
+            }
+            int[] results = statement.executeBatch();
+            statement.close();
+
+            return results;
+        } catch (SQLException s) {
+            s.printStackTrace();
+        }
+
+        return null;
+    }
+    //</editor-fold>
 
 }
 

@@ -81,7 +81,7 @@ public class DBInfo extends JPanel
                     tabToRefConstraint.put(table, refCon);
 
 
-                    ArrayList<Object> pkVals = DBIO.getPksFromTable(table);
+                    ArrayList<Object> pkVals = DBIO.getPrimaryKeyValues(table);
 
                     for (Object i : pkVals) {
                         if (i != null) {
@@ -89,7 +89,7 @@ public class DBInfo extends JPanel
                         }
                     }
 
-                    tabToPkVals.put(table, DBIO.getPksFromTable(table));
+                    tabToPkVals.put(table, DBIO.getPrimaryKeyValues(table));
                     progress += (Math.ceil(100 / (max)));
                     tabCount++;
                     setProgress(Math.min(progress, 100));
