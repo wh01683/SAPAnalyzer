@@ -20,7 +20,11 @@ import java.util.Stack;
  * Author: William Robert Howerton III
  * Created: 10/17/2015
  */
+
 public class EditPart extends JFrame {
+
+    //<editor-fold desc="GUI Fields">
+
     private JPanel pnlMain;
     private JButton btnFindPart;
     private JTabbedPane tbPart;
@@ -64,15 +68,20 @@ public class EditPart extends JFrame {
     private InsertTextField fldRevision;
     private InsertTextField fldProcType;
     private InsertTextField fldRefDes;
+    //</editor-fold>
 
     private Stack<DBRow> rowStack = new Stack<DBRow>();
     private Hashtable<String, Object> suppNameToPk = new Hashtable<String, Object>(10);
+
     private DBIO dbio = new DBIO();
     boolean editable = false;
 
     public EditPart(boolean viewing) {
 
         //<editor-fold desc="Constructor">
+        if (viewing) {
+            fillFields();
+        }
         setEditAll(!viewing, pnlGeneral, pnlAdvanced, pnlStock, pnlEditBOM, pnlEditPart);
         editable = !viewing;
 
@@ -140,7 +149,6 @@ public class EditPart extends JFrame {
         //</editor-fold>
 
     }
-
 
     private void setEditAll(boolean editable, JPanel... panels) {
 
@@ -210,25 +218,29 @@ public class EditPart extends JFrame {
     }
     private void makePartRow() {
 
-        Integer partid = fldPartId.getInt();
-        String desc = fldPartDesc.getText();
-        Object plantID = cbPartPlantID.getSelectedItem();
-        String name = fldPartName.getText();
-        String phase = fldPhase.getText();
-        Character revision = fldRevision.getChar();
-        String procType = fldProcType.getText();
-        String refDes = fldRefDes.getText();
-        String notes = txtarPartNotes.getText();
-        Double tcost = fldTransCost.getDouble();
-        Double cost = fldPartCost.getDouble();
-        Double wast = fldWaste.getDouble();
-        String catid = (String) cbPartCategory.getSelectedItem();
-        String unit = (String) cbUnits.getSelectedItem();
+        if (!verifyPk()) {
+            JOptionPane.showMessageDialog(null, "PK " + fldPartId.getInt() + " is already taken.");
+            fldPartId.grabFocus();
+        } else {
+            Integer partid = fldPartId.getInt();
+            String desc = fldPartDesc.getText();
+            Object plantID = cbPartPlantID.getSelectedItem();
+            String name = fldPartName.getText();
+            String phase = fldPhase.getText();
+            Character revision = fldRevision.getChar();
+            String procType = fldProcType.getText();
+            String refDes = fldRefDes.getText();
+            String notes = txtarPartNotes.getText();
+            Double tcost = fldTransCost.getDouble();
+            Double cost = fldPartCost.getDouble();
+            Double wast = fldWaste.getDouble();
+            String catid = (String) cbPartCategory.getSelectedItem();
+            String unit = (String) cbUnits.getSelectedItem();
 
-        DBRow temp = new DBRow("PART", partid, desc, plantID, name, phase, revision, procType, refDes, notes, tcost,
-                cost, wast, catid, unit);
-        rowStack.push(temp);
-
+            DBRow temp = new DBRow("PART", partid, desc, plantID, name, phase, revision, procType, refDes, notes, tcost,
+                    cost, wast, catid, unit);
+            rowStack.push(temp);
+        }
     }
 
     private void makeStockRow() {
@@ -251,7 +263,7 @@ public class EditPart extends JFrame {
         rowStack.add(temp);
     }
 
-    public void fillFields() throws NullPointerException {
+    private void fillFields() throws NullPointerException {
         ArrayList<Object> partResults = DBIO.getMultiObResults(
                 "select * from part where partid = " + fldPartId.getInt()).get(0);
 
@@ -322,7 +334,6 @@ public class EditPart extends JFrame {
         }
     }
 
-
     private void fillSuppHash() {
         ArrayList<ArrayList<Object>> queryResults = DBIO.getMultiObResults("select * from supplier");
         for (ArrayList<Object> outerArr : queryResults) {
@@ -333,5 +344,15 @@ public class EditPart extends JFrame {
     public void setFldPartID(String newPartId) {
         this.fldPartId.setText(newPartId);
     }
+
+    /**
+     * Verifies that the PK is not already taken by checking against primary key values loaded from the PART table.
+     *
+     * @return True if PK is not taken, returns false if PK is already in table.
+     */
+    private boolean verifyPk() {
+        return !DBInfo.getTabToPkVals().get("PART").contains(fldPartId.getInt());
+    }
+
 
 }

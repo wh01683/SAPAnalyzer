@@ -370,6 +370,7 @@ public class DBIO {
                 rs.close();
 
             }
+
             return resultList;
         } catch (SQLException s) {
             s.printStackTrace();
@@ -379,7 +380,6 @@ public class DBIO {
 
     /**
      * Returns integer array of column types. Index will start at 0
-     *
      * @param query query to get column types for.
      * @return int[] of SQL types.
      */

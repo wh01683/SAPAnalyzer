@@ -135,7 +135,6 @@ public class SAPAnalyzer extends JFrame{
                             editPart.setFldPartID((tblShownInformation.getModel().
                                     getValueAt(tblShownInformation.getSelectedRow(),
                                             tblShownInformation.getSelectedColumn())).toString());
-                            editPart.fillFields();
                             editPart.setVisible(true);
                         }
                     });
