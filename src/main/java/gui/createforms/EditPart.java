@@ -150,6 +150,14 @@ public class EditPart extends JFrame {
 
     }
 
+    /**
+     * Cycles through a given array of panels and sets all JTextAreas and all JTextFields found in the panels to
+     * editable or non-editable, depending on whether the user is just viewing an item's information from the database
+     * or attempting to add a new item. Will disable combo boxes.
+     *
+     * @param editable true sets all fields to editable
+     * @param panels   panels containing fields to be altered.
+     */
     private void setEditAll(boolean editable, JPanel... panels) {
 
         for (int p = 0; p < panels.length; p++) {
@@ -177,6 +185,10 @@ public class EditPart extends JFrame {
         }
     }
 
+    /**
+     * Method fills all combo boxes in the form with information from the database. Clears all CB boxes first
+     * to avoid adding duplicates. Null exception will be caught if the information has not been loaded from the database yet.
+     */
     private void fillCbBoxes() {
         cbUnits.removeAllItems();
         cbSuppliers.removeAllItems();
@@ -206,16 +218,23 @@ public class EditPart extends JFrame {
         }
     }
 
+    /**
+     * Inserts all rows in the stack. Queries are pre-formatted using the DBRow object's getInsertQuery method.
+     */
     private void insertRows() {
         ArrayList<String> queries = new ArrayList<String>(rowStack.size());
         DBIO.alterConstraints(false, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
         for (DBRow row : rowStack) {
             queries.add(row.getInsertQuery());
         }
-        //DBIO.executeQuery(queries);
+        DBIO.executeWithoutReturn(queries.toArray(new String[queries.size()]));
         DBIO.alterConstraints(true, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
 
     }
+
+    /**
+     * Creates a new DBRow compatible with PART table.
+     */
     private void makePartRow() {
 
         if (!verifyPk()) {
@@ -243,6 +262,9 @@ public class EditPart extends JFrame {
         }
     }
 
+    /**
+     * Creates a new DBRow compatible with STOCKDETAIL table.
+     */
     private void makeStockRow() {
         Integer partId = fldPartId.getInt();
         Integer qtyonhand = fldQtyOnHand.getInt();
@@ -256,6 +278,9 @@ public class EditPart extends JFrame {
         rowStack.push(temp);
     }
 
+    /**
+     * Creates a new DBRow compatible with PART_SUPPLIER table.
+     */
     private void makePartSupplierRow() {
         Integer partId = fldPartId.getInt();
         Object supplierid = Integer.parseInt(suppNameToPk.get(cbSuppliers.getSelectedItem()).toString());
@@ -263,9 +288,14 @@ public class EditPart extends JFrame {
         rowStack.add(temp);
     }
 
-    private void fillFields() throws NullPointerException {
-        ArrayList<Object> partResults = DBIO.getMultiObResults(
-                "select * from part where partid = " + fldPartId.getInt()).get(0);
+    /**
+     * Fills all text fields in the form with data from the database.
+     */
+    private void fillFields() {
+
+        try {
+            ArrayList<Object> partResults = DBIO.getMultiObResults(
+                    "select * from part where partid = " + fldPartId.getInt()).get(0);
 
 
         fldPartName.setText(partResults.get(3).toString());
@@ -304,8 +334,17 @@ public class EditPart extends JFrame {
         cbSuppliers.removeAllItems();
         cbSuppliers.addItem(stockResults.get(6).toString());
         cbSuppliers.setEnabled(false);
+
+        } catch (NullPointerException n) {
+            JOptionPane.showMessageDialog(null, "Must supply the part's ID number.");
+            fldPartId.grabFocus();
+        }
+
     }
 
+    /**
+     * Brings up preview of insert queries used for the proposed row additions.
+     */
     private void displayInsertTextPreview() {
 
         JTextArea textArea = new JTextArea("INSERT PREVIEW\n=================================================\n");
@@ -321,6 +360,11 @@ public class EditPart extends JFrame {
         JOptionPane.showMessageDialog(null, scrollPane, "Insert Preview", JOptionPane.CLOSED_OPTION);
     }
 
+    /**
+     * Clears all JTextFields in an array of panels by setting text to ""
+     *
+     * @param panels
+     */
     private void clearAll(JPanel... panels) {
 
         for (int p = 0; p < panels.length; p++) {
@@ -334,6 +378,9 @@ public class EditPart extends JFrame {
         }
     }
 
+    /**
+     * Fills supplier hashtable with names mapped to their supplier ID primary key values
+     */
     private void fillSuppHash() {
         ArrayList<ArrayList<Object>> queryResults = DBIO.getMultiObResults("select * from supplier");
         for (ArrayList<Object> outerArr : queryResults) {
@@ -341,13 +388,16 @@ public class EditPart extends JFrame {
         }
     }
 
+    /**
+     * Sets value contained in the primary key text field to a new value.
+     * @param newPartId new PART primary key value
+     */
     public void setFldPartID(String newPartId) {
         this.fldPartId.setText(newPartId);
     }
 
     /**
      * Verifies that the PK is not already taken by checking against primary key values loaded from the PART table.
-     *
      * @return True if PK is not taken, returns false if PK is already in table.
      */
     private boolean verifyPk() {

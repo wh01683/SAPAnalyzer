@@ -1,6 +1,7 @@
 package gui.custom;
 
 import db.DBIO;
+import db.DBInfo;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -26,7 +27,7 @@ public class TableListener implements TableModelListener{
             System.out.println(data.toString());
 
             try {
-                DBIO.updateTable(column, pkdata, data);
+                DBIO.updateTable(DBIO.getCurrentTable(), model.getColumnName(column), DBInfo.getTabToPKHash().get(DBIO.getCurrentTable()), pkdata, data);
             } catch (SQLException s) {
                 s.printStackTrace();
             }

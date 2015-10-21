@@ -40,32 +40,57 @@ public class DatabaseTableModel extends AbstractTableModel  {
 
     /**
      * Uses an array of Strings to populate the table data. Can be 1 to inf.
-     * @param queries
+     * @param queries Queries used to populate the table model.
      */
     public DatabaseTableModel(String... queries){
         repopulateData(queries);
     }
 
 
+    /**
+     * Used for updating table via JTable alteration
+     *
+     * @param firstRow Highest (lowest index) row in selection.
+     * @param lastRow  Lowest (highest index) row in seleciton.
+     */
     @Override
     public void fireTableRowsUpdated(int firstRow, int lastRow) {
         super.fireTableRowsUpdated(firstRow, lastRow);
     }
 
+    /**
+     * Gets the class of the specified column.
+     *
+     * @param columnIndex Index of specified column.
+     * @return Returns class of the specified column.
+     */
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         return super.getColumnClass(columnIndex);
     }
 
+    /**
+     * Number of columns in Database model.
+     * @return Number of columns.
+     */
     public int getColumnCount() {
         return columnNames.length;
     }
 
+    /**
+     * Gets the column name using the column's index.
+     * @param column Index of column.
+     * @return Name of column.
+     */
     @Override
     public String getColumnName(int column) {
         return columnNames[column];
     }
 
+    /**
+     * Number of rows in the Database model.
+     * @return returns size of the rowList
+     */
     public int getRowCount() {
         return rowList.size();
     }

@@ -180,23 +180,24 @@ public class DBIO {
 
     /**
      * Updates a column in a given table with a new value.
-     *
-     * @param col     Column to update
+     *  @param tableName     Column to update
+     * @param columnName
+     * @param contrainingColumnName
      * @param pk      Primary key value to match with the row to be updated
-     * @param newData Object containing new PK value.
-     * @return returns int array of updates
-     */
-    public static int[] updateTable(int col, Object pk, Object newData) throws SQLException {
+     * @param newData Object containing new PK value.   @return returns int array of updates
+     * */
+    public static int[] updateTable(String tableName, String columnName, String contrainingColumnName, Object pk, Object newData) throws SQLException {
 
         Statement stmt = null;
 
         try {
 
-            Class<?> colType = getColClasses("select * from " + currentTable)[col];
-            boolean isStringType = (colType == String.class || colType == Character.class);
+            StringBuilder vals = new StringBuilder("UPDATE " + tableName + " SET " +
+                    columnName + " = " +
+                    handleStringInsert(newData) +
+                    " WHERE " + contrainingColumnName + " = " +
+                    pk);
 
-            StringBuilder vals = new StringBuilder("UPDATE " + currentTable + " SET " + DBInfo.getTabToColNames().get(currentTable).get(col) + " = " + (isStringType ? "'" : "")
-                    + colType.cast(newData) + (isStringType ? "'" : "") + " WHERE " + DBInfo.getTabToPKHash().get(currentTable) + " = " + pk);
 
             con.setAutoCommit(false);
 
