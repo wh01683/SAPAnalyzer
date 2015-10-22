@@ -160,6 +160,7 @@ public class EditPart extends JFrame {
      */
     private void setEditAll(boolean editable, JPanel... panels) {
 
+
         for (int p = 0; p < panels.length; p++) {
             Component[] components = panels[p].getComponents();
             for (int i = 0; i < components.length; i++) {
