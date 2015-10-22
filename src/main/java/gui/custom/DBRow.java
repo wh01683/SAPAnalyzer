@@ -31,7 +31,6 @@ public class DBRow {
                 System.out.printf("Could not cast %s to %s.\n", row.get(i).toString(), classList[i]);
             }
         }
-
     }
 
     /**
@@ -41,6 +40,9 @@ public class DBRow {
      * @param content
      */
     public DBRow(String tableName, Object... content){
+        if (content.length != DBInfo.getTabToColNames().get(tableName).size()) {
+
+        }
         this.rowArray = content;
         this.tableName = tableName;
         //TODO: Check that size of content array does not exceed table's column count
