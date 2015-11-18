@@ -30,6 +30,8 @@
         <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="top:18dlu:noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="top:15dlu:noGrow"/>
         <rowspec value="top:25dlu:grow"/>
         <rowspec value="top:4dlu:noGrow"/>
@@ -85,7 +87,7 @@
               <text value="Hour Est.:"/>
             </properties>
           </component>
-          <component id="d0fa5" class="javax.swing.JComboBox" binding="cbParentPartID">
+          <component id="d0fa5" class="javax.swing.JComboBox" binding="cbParentPartNames">
             <constraints>
               <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
               <forms/>
@@ -109,7 +111,7 @@
             <colspec value="left:5dlu:noGrow"/>
             <colspec value="fill:max(d;4px):noGrow"/>
             <constraints>
-              <grid row="0" column="6" row-span="24" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="6" row-span="26" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false" defaultalign-vert="false"/>
             </constraints>
             <properties/>
@@ -135,7 +137,7 @@
               <text value="Child Part: "/>
             </properties>
           </component>
-          <component id="706c" class="javax.swing.JComboBox" binding="cbChildPartID">
+          <component id="706c" class="javax.swing.JComboBox" binding="cbChildPartNames">
             <constraints>
               <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
               <forms/>
@@ -225,6 +227,15 @@
               <forms/>
             </constraints>
             <properties/>
+          </component>
+          <component id="ec5f4" class="javax.swing.JButton" binding="btnPreview">
+            <constraints>
+              <grid row="20" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Preview"/>
+            </properties>
           </component>
         </children>
       </grid>

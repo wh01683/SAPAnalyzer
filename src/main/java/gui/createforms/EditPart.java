@@ -73,7 +73,6 @@ public class EditPart extends JFrame {
     private Stack<DBRow> rowStack = new Stack<DBRow>();
     private Hashtable<String, Object> suppNameToPk = new Hashtable<String, Object>(10);
 
-    private DBIO dbio = new DBIO();
     boolean editable = false;
 
     public EditPart(boolean viewing) {
@@ -223,14 +222,14 @@ public class EditPart extends JFrame {
      * Inserts all rows in the stack. Queries are pre-formatted using the DBRow object's getInsertQuery method.
      */
     private void insertRows() {
-        ArrayList<String> queries = new ArrayList<String>(rowStack.size());
+
         DBIO.alterConstraints(false, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
         for (DBRow row : rowStack) {
-            queries.add(row.getInsertQuery());
+            DBIO.executeWithoutReturn(row.getInsertQuery());
         }
-        DBIO.executeWithoutReturn(queries.toArray(new String[queries.size()]));
         DBIO.alterConstraints(true, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
 
+        rowStack.clear();
     }
 
     /**
@@ -294,11 +293,18 @@ public class EditPart extends JFrame {
      */
     private void fillFields() {
 
+        ArrayList<Object> partResults = null;
+
         try {
-            ArrayList<Object> partResults = DBIO.getMultiObResults(
+            partResults = DBIO.getMultiObResults(
                     "select * from part where partid = " + fldPartId.getInt()).get(0);
+        } catch (IndexOutOfBoundsException i) {
+            JOptionPane.showMessageDialog(null, "Part ID " + fldPartId.getInt() + " not found.");
+            fldPartId.grabFocus();
+            fldPartId.setText("");
+        }
 
-
+        try {
         fldPartName.setText(partResults.get(3).toString());
         fldPartDesc.setText(partResults.get(1).toString());
         fldPhase.setText(partResults.get(4).toString());

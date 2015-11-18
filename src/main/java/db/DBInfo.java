@@ -21,6 +21,8 @@ public class DBInfo extends JPanel
     private static Hashtable<String, ArrayList<String>> tabToForeignKeyNames = new Hashtable<String, ArrayList<String>>(10);
     private static Hashtable<String, ArrayList<String>> tabToRefConstraint = new Hashtable<String, ArrayList<String>>(10);
     private static Hashtable<String, ArrayList<Object>> tabToPkVals = new Hashtable<String, ArrayList<Object>>(10);
+    private static Hashtable<Object, String> partPkToName = new Hashtable<Object, String>(10);
+    private static Hashtable<String, int[]> tabToColTypes = new Hashtable<String, int[]>(10);
     private static ArrayList<String> unitOfMeasure = new ArrayList<String>(10);
     private static ArrayList<String> partCategories = new ArrayList<String>(10);
     private static ArrayList<String> matCategories = new ArrayList<String>(10);
@@ -29,6 +31,8 @@ public class DBInfo extends JPanel
     private static JTextArea taskOutput = new JTextArea("Loading info from database.");
     private JProgressBar progressBar;
     private static LoadTask task;
+    private static int tabCount = 1;
+    private static int max;
 
     class LoadTask extends SwingWorker<Void, Void> {
 
@@ -38,9 +42,8 @@ public class DBInfo extends JPanel
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 DBIO.updateTableNames();
                 int progress = 0;
-                int tabCount = 1;
                 setProgress(0);
-                int max = DBIO.getTableNames().size();
+                max = DBIO.getTableNames().size();
                 taskOutput.append("Getting units of measure...\n");
                 unitOfMeasure = DBIO.getStringResults("select unitcode from units");
                 taskOutput.append("Getting part categories...\n");
@@ -50,46 +53,19 @@ public class DBInfo extends JPanel
 
                 //<editor-fold desc="Load Loop">
                 for (String table : DBIO.getTableNames()) {
+
                     taskOutput.append("\n===========================================================================\n");
                     taskOutput.append("Found table " + table + "\n");
                     taskOutput.append("Processing table: " + table + ". Number " + tabCount + " of " + max + "\n");
-                    String pkColName = DBIO.getKeys(table, "P").get(0);
-                    taskOutput.append("Found primary key column " + pkColName + " for " + table + ".\n");
-                    tabToPKHash.put(table, pkColName);
-                    taskOutput.append("Obtaining tables referring to " + table + ".\n");
-                    ArrayList<String> tempTabs = DBIO.getReferringTables(table);
-                    for (String s : tempTabs) {
-                        taskOutput.append("Found table " + s + " referencing " + table + ".\n");
-                    }
-                    tabToRefTabHash.put(table, tempTabs);
-                    taskOutput.append("Obtaining columns belonging to " + table + ".\n");
-                    ArrayList<String> colNames = DBIO.getColNames("select * from " + table);
-                    for (String s : colNames) {
-                        taskOutput.append("Found column " + s + " in " + table + ".\n");
-                    }
-                    tabToColNames.put(table, colNames);
-                    ArrayList<String> fkNames = DBIO.getKeys(table, "R");
-                    for (String s : colNames) {
-                        taskOutput.append("Found foreign key " + s + " in " + table + ".\n");
-                    }
-                    tabToForeignKeyNames.put(table, fkNames);
 
-                    ArrayList<String> refCon = DBIO.getRefConstraints(table);
-                    for (String s : refCon) {
-                        taskOutput.append("Found reference constraint " + s + " in " + table + ".\n");
-                    }
-                    tabToRefConstraint.put(table, refCon);
+                    loadPks(table);
+                    loadRefTables(table);
+                    loadCols(table);
+                    loadFks(table);
+                    loadConstraints(table);
+                    loadPkVals(table);
+                    loadColTypes(table);
 
-
-                    ArrayList<Object> pkVals = DBIO.getPrimaryKeyValues(table);
-
-                    for (Object i : pkVals) {
-                        if (i != null) {
-                            taskOutput.append("Found primary key " + i + " in " + table + ".\n");
-                        }
-                    }
-
-                    tabToPkVals.put(table, DBIO.getPrimaryKeyValues(table));
                     progress += (Math.ceil(100 / (max)));
                     tabCount++;
                     setProgress(Math.min(progress, 100));
@@ -103,6 +79,88 @@ public class DBInfo extends JPanel
             }
             return null;
         }
+
+        //<editor-fold desc="Load Methods">
+        public void loadPks(String table) {
+
+            String pkColName = DBIO.getKeys(table, "P").get(0);
+            taskOutput.append("Found primary key column " + pkColName + " for " + table + ".\n");
+            tabToPKHash.put(table, pkColName);
+        }
+
+        public void loadRefTables(String table) {
+            taskOutput.append("Obtaining tables referring to " + table + ".\n");
+            ArrayList<String> tempTabs = DBIO.getReferringTables(table);
+            for (String s : tempTabs) {
+                taskOutput.append("Found table " + s + " referencing " + table + ".\n");
+            }
+            tabToRefTabHash.put(table, tempTabs);
+        }
+
+        public void loadCols(String table) {
+            taskOutput.append("Obtaining columns belonging to " + table + ".\n");
+            ArrayList<String> colNames = DBIO.getColNames("select * from " + table);
+            for (String s : colNames) {
+                taskOutput.append("Found column " + s + " in " + table + ".\n");
+            }
+            tabToColNames.put(table, colNames);
+        }
+
+        public void loadFks(String table) {
+            ArrayList<String> fkNames = DBIO.getKeys(table, "R");
+            for (String s : fkNames) {
+                taskOutput.append("Found foreign key " + s + " in " + table + ".\n");
+            }
+            tabToForeignKeyNames.put(table, fkNames);
+        }
+
+        public void loadConstraints(String table) {
+            ArrayList<String> refCon = DBIO.getRefConstraints(table);
+            for (String s : refCon) {
+                taskOutput.append("Found reference constraint " + s + " in " + table + ".\n");
+            }
+            tabToRefConstraint.put(table, refCon);
+        }
+
+        public void loadPkVals(String table) {
+            ArrayList<Object> pkVals = DBIO.getPrimaryKeyValues(table);
+
+            //also loads part pk to names
+
+            if (table.equalsIgnoreCase("PART")) {
+                ArrayList<ArrayList<Object>> partNames = DBIO.getMultiObResults("select name from part");
+                int rowCount = 0;
+                for (Object i : pkVals) {
+                    if (i != null) {
+                        taskOutput.append("Found primary key " + i + " in " + table + ".\n");
+                        partPkToName.put(i, partNames.get(rowCount).get(0).toString());
+                    }
+                    rowCount++;
+                }
+            }
+
+            for (Object i : pkVals) {
+                if (i != null) {
+                    taskOutput.append("Found primary key " + i + " in " + table + ".\n");
+                }
+            }
+
+            tabToPkVals.put(table, pkVals);
+        }
+
+        public void loadColTypes(String table) {
+            int[] colTypes = DBIO.getColumnTypes("select * from " + table);
+            int colCount = 0;
+            for (int i : colTypes) {
+                if (i != 0) {
+                    taskOutput.append("Found column type " + i + " for column " + tabToColNames.get(table).get(colCount) + " in " + table + ".\n");
+                    colCount++;
+                }
+            }
+            tabToColTypes.put(table, colTypes);
+        }
+        //</editor-fold>
+
 
         public void done() {
             Toolkit.getDefaultToolkit().beep();
@@ -168,8 +226,17 @@ public class DBInfo extends JPanel
 
     }
 
+    //<editor-fold desc="Getters">
     public static Hashtable<String, String> getTabToPKHash() {
         return tabToPKHash;
+    }
+
+    public static Hashtable<String, int[]> getTabToColTypes() {
+        return tabToColTypes;
+    }
+
+    public static Hashtable<Object, String> getPartPkToName() {
+        return partPkToName;
     }
 
     public static Hashtable<String, ArrayList<String>> getTabToRefTabHash() {
@@ -189,7 +256,7 @@ public class DBInfo extends JPanel
     }
 
     public static int[] getColTypes(String tableName) {
-        return DBIO.getColumnTypes(tableName);
+        return tabToColTypes.get(tableName);
     }
 
     public static ArrayList<String> getUnitOfMeasure() {
@@ -208,9 +275,11 @@ public class DBInfo extends JPanel
         return suppliers;
     }
 
+
     public static Hashtable<String, ArrayList<String>> getTabToRefConstraint() {
         return tabToRefConstraint;
     }
+    //</editor-fold>
 
     public static String dbToString() {
         StringBuilder db = new StringBuilder("DB\n===================================\n");

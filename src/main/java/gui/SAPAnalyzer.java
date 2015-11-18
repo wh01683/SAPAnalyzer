@@ -155,7 +155,14 @@ public class SAPAnalyzer extends JFrame{
         frame = new SAPAnalyzer();
         frame.setContentPane(frame.getContentPane());
         frame.setJMenuBar(menuBar);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                frame.dispose();
+                DBIO.terminate(); // closes connection
+                System.exit(0);
+            }
+        });
         frame.setVisible(true);
         frame.pack();
     }

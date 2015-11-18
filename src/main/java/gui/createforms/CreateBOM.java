@@ -1,5 +1,6 @@
 package gui.createforms;
 
+import db.DBIO;
 import db.DBInfo;
 import gui.custom.DBRow;
 import gui.custom.InsertTextField;
@@ -9,7 +10,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Stack;
 
 /**
@@ -19,9 +21,9 @@ import java.util.Stack;
 public class CreateBOM extends JFrame {
     private JPanel pnlMain;
     private JPanel pnlEditBOM;
-    private JComboBox cbChildPartID;
+    private JComboBox cbChildPartNames;
     private JTree treeBOMHierarchy;
-    private JComboBox cbParentPartID;
+    private JComboBox cbParentPartNames;
     private JButton btnAdd;
     private JButton undoButton;
     private JButton btnCommit;
@@ -31,8 +33,11 @@ public class CreateBOM extends JFrame {
     private InsertTextField fldHrlyCost;
     private InsertTextField fldHrEst;
     private InsertTextField fldEmpAssigned;
+    private JButton btnPreview;
     private Stack<DBRow> rowStack = new Stack<DBRow>();
     private Stack<DefaultMutableTreeNode> nodeStack = new Stack<DefaultMutableTreeNode>();
+    private Hashtable<Object, String> partPkToName = new Hashtable<Object, String>(10);
+    private Hashtable<String, Object> partNameToPk = new Hashtable<String, Object>(10);
 
     public CreateBOM() {
 
@@ -53,9 +58,26 @@ public class CreateBOM extends JFrame {
             }
         });
 
+        partPkToName = DBInfo.getPartPkToName();
+        Enumeration e = partPkToName.keys();
+
+        while (e.hasMoreElements()) {
+            Object next = e.nextElement();
+            partNameToPk.put(partPkToName.get(next), next);
+        }
         btnAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 makeRowFromFields();
+            }
+        });
+        btnCommit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                insertAllFromStack();
+            }
+        });
+        btnPreview.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                buildPreview();
             }
         });
         fillCbBoxes();
@@ -65,23 +87,27 @@ public class CreateBOM extends JFrame {
 
     private void fillCbBoxes() {
 
-        ArrayList<Object> itemIDs = DBInfo.getTabToPkVals().get("PART");
-        if (itemIDs == null) {
-            cbChildPartID.addItem("");
-            cbParentPartID.addItem("");
+        if (partPkToName == null) {
+            cbChildPartNames.addItem("");
+            cbParentPartNames.addItem("");
         } else {
-            for (Object i : itemIDs) {
-                cbChildPartID.addItem(i);
-                cbParentPartID.addItem(i);
+            Enumeration e = partPkToName.keys();
+
+            while (e.hasMoreElements()) {
+                String partName = partPkToName.get(e.nextElement());
+                cbChildPartNames.addItem(partName);
+                cbParentPartNames.addItem(partName);
             }
+
         }
     }
 
     private void makeRowFromFields() {
 
         StringBuilder nodeString = new StringBuilder();
-        Integer childKey = (Integer) cbChildPartID.getSelectedItem();
-        Integer parentKey = (Integer) cbParentPartID.getSelectedItem();
+
+        Object childKey = partNameToPk.get(cbChildPartNames.getSelectedItem().toString());
+        Object parentKey = partNameToPk.get(cbParentPartNames.getSelectedItem().toString());
         Integer step = fldStep.getInt();
         Integer qty = fldQty.getInt();
         Double hrlyCost = fldHrlyCost.getDouble();
@@ -108,5 +134,28 @@ public class CreateBOM extends JFrame {
                 temp.setText("");
             }
         }
+    }
+
+    private void insertAllFromStack() {
+        for (DBRow row : rowStack) {
+            DBIO.executeWithoutReturn(row.getInsertQuery());
+        }
+        rowStack.clear();
+    }
+
+    private void buildPreview() {
+
+        JTextArea textArea = new JTextArea("INSERT PREVIEW\n=================================================\n");
+
+        for (DBRow row : rowStack) {
+            textArea.append(row.getInsertQuery().concat("\n"));
+        }
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        scrollPane.setPreferredSize(new Dimension(500, 500));
+        JOptionPane.showMessageDialog(null, scrollPane, "Insert Preview", JOptionPane.CLOSED_OPTION);
+
     }
 }

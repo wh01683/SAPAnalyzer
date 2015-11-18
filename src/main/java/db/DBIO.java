@@ -29,7 +29,7 @@ public class DBIO {
         MakeConnection();
     }
 
-    public static void MakeConnection() {
+    private static void MakeConnection() {
         try {
             con = new ConnectionDelegator(DriverManager.getConnection(
                     "jdbc:oracle:thin:@localhost:1521:" + DATABASE_NAME, USER_NAME, PASSWORD));
@@ -37,6 +37,14 @@ public class DBIO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void terminate() {
+        try {
+            con.close();
+        } catch (SQLException s) {
+            s.printStackTrace();
         }
     }
 
@@ -163,16 +171,26 @@ public class DBIO {
     }
 
 
+    /**
+     * Updates the current table names by querying the database.
+     *
+     * @throws SQLException
+     */
     public static void updateTableNames() throws SQLException {
 
         tableNames = new ArrayList<String>(10);
-        ResultSet rs = con.getMetaData().getTables(null, USER_NAME, "%", null);
+        ResultSet rs = con.getMetaData().getTables(null, USER_NAME, "%", new String[]{"TABLE"});
         while (rs.next()) {
             tableNames.add(rs.getString(3));
         }
         rs.close();
     }
 
+    /**
+     * Gets the list of all tables in the schema.
+     *
+     * @return ArrayList of table names.
+     */
     public static ArrayList<String> getTableNames() {
         return tableNames;
     }
@@ -252,10 +270,14 @@ public class DBIO {
         return currentTable;
     }
 
+    /**
+     * Sets currentTable, used to keep DBIO current.
+     *
+     * @param currentTable new currentTable shown in the GUI.
+     */
     public static void setCurrentTable(String currentTable) {
         DBIO.currentTable = currentTable;
     }
-
 
     /**
      * Gets all primary keys associated with the given table's primary key column.
@@ -372,6 +394,12 @@ public class DBIO {
         return null;
     }
 
+    /**
+     * Gets a two-dimensional Object ArrayList representation of the query results.
+     *
+     * @param queries Queries to execute
+     * @return Two dimensional Object array where inner ArrayList represents cell contents and outer ArrayList represents rows.
+     */
     public static ArrayList<ArrayList<Object>> getMultiObResults(String... queries) {
         try {
             ArrayList<ArrayList<Object>> resultList = new ArrayList<ArrayList<Object>>(10);
@@ -404,7 +432,6 @@ public class DBIO {
      * @param query query to get column types for.
      * @return int[] of SQL types.
      */
-
     public static int[] getColumnTypes(String query) {
         try {
 
