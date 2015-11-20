@@ -173,8 +173,6 @@ public class DBInfo extends JPanel
     public DBInfo() {
         super(new BorderLayout());
 
-        //Create the demo's UI.
-
         progressBar = new JProgressBar(0, 100);
         progressBar.setValue(0);
         progressBar.setStringPainted(true);

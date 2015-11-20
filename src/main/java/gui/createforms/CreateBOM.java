@@ -138,7 +138,11 @@ public class CreateBOM extends JFrame {
 
     private void insertAllFromStack() {
         for (DBRow row : rowStack) {
-            DBIO.executeWithoutReturn(row.getInsertQuery());
+            try {
+                DBIO.executeWithoutReturn(row.getInsertQuery());
+            } catch (java.sql.SQLException e) {
+                e.printStackTrace();
+            }
         }
         rowStack.clear();
     }

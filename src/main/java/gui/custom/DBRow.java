@@ -64,8 +64,14 @@ public class DBRow {
      * @param newVal Object value to replace old contents.
      */
     public void setValueAtColumn(int col, Object newVal) {
-        //TODO: check new value for class compatibility
-        rowArray[col] = newVal;
+
+        try {
+            rowArray[col] = ((classList[col]).cast(newVal));
+        } catch (ClassCastException c) {
+            System.out.printf("Class cast exception when setting value at column %d.\nCannot cast %s as %s.\n",
+                    col, newVal.toString(), classList[col].toString());
+            c.printStackTrace();
+        }
     }
 
     /**

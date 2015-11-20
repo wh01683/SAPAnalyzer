@@ -68,6 +68,7 @@ public class EditPart extends JFrame {
     private InsertTextField fldRevision;
     private InsertTextField fldProcType;
     private InsertTextField fldRefDes;
+    private JCheckBox chkStockDetail;
     //</editor-fold>
 
     private Stack<DBRow> rowStack = new Stack<DBRow>();
@@ -117,7 +118,9 @@ public class EditPart extends JFrame {
         btnAddNew.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 makePartRow();
+                if (chkStockDetail.isSelected()) {
                 makeStockRow();
+                }
                 makePartSupplierRow();
             }
         });
@@ -225,7 +228,13 @@ public class EditPart extends JFrame {
 
         DBIO.alterConstraints(false, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
         for (DBRow row : rowStack) {
-            DBIO.executeWithoutReturn(row.getInsertQuery());
+            try {
+                DBIO.executeWithoutReturn(row.getInsertQuery());
+            } catch (java.sql.SQLException e) {
+                JOptionPane.showMessageDialog(null, "Error encountered when inserting row \n" + row.toString() + "\n\n" +
+                        "It is likely due to a duplicate key in the table.");
+                e.printStackTrace();
+            }
         }
         DBIO.alterConstraints(true, "PART", "BOM", "STOCKDETAIL", "PART_SUPPLIER");
 

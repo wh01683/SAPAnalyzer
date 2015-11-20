@@ -372,11 +372,10 @@ public class DBIO {
         return null;
     }
 
-    public static ArrayList<String> getStringResults(String... queries) {
+    public static ArrayList<String> getStringResults(String query) {
         try {
             ArrayList<String> resultList = new ArrayList<String>(10);
-            for (String s : queries) {
-                ResultSet rs = con.createStatement().executeQuery(s);
+            ResultSet rs = con.createStatement().executeQuery(query);
                 if (!rs.next()) {
                 } else {
                     do {
@@ -385,8 +384,8 @@ public class DBIO {
                         }
                     } while (rs.next());
                     rs.close();
+
                 }
-            }
             return resultList;
         } catch (SQLException s) {
             s.printStackTrace();
@@ -476,8 +475,8 @@ public class DBIO {
      * @param queries Queries to execute.
      * @return Number of rows updated feedback.
      */
-    public static int[] executeWithoutReturn(String... queries) {
-        try {
+    public static int[] executeWithoutReturn(String... queries) throws SQLException {
+
 
             Statement statement = con.createStatement();
             for (String s : queries) {
@@ -487,11 +486,7 @@ public class DBIO {
             statement.close();
 
             return results;
-        } catch (SQLException s) {
-            s.printStackTrace();
-        }
 
-        return null;
     }
     //</editor-fold>
 
