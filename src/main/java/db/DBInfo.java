@@ -22,6 +22,7 @@ public class DBInfo extends JPanel
     private static Hashtable<String, ArrayList<String>> tabToRefConstraint = new Hashtable<String, ArrayList<String>>(10);
     private static Hashtable<String, ArrayList<Object>> tabToPkVals = new Hashtable<String, ArrayList<Object>>(10);
     private static Hashtable<Object, String> partPkToName = new Hashtable<Object, String>(10);
+    private static Hashtable<Object, String> empPkToName = new Hashtable<Object, String>(10);
     private static Hashtable<String, int[]> tabToColTypes = new Hashtable<String, int[]>(10);
     private static ArrayList<String> unitOfMeasure = new ArrayList<String>(10);
     private static ArrayList<String> partCategories = new ArrayList<String>(10);
@@ -134,6 +135,19 @@ public class DBInfo extends JPanel
                     if (i != null) {
                         taskOutput.append("Found primary key " + i + " in " + table + ".\n");
                         partPkToName.put(i, partNames.get(rowCount).get(0).toString());
+                    }
+                    rowCount++;
+                }
+            } else if (table.equalsIgnoreCase("EMPLOYEES")) {
+                ArrayList<ArrayList<Object>> lastNames = DBIO.getMultiObResults("select lastname from employees");
+                ArrayList<ArrayList<Object>> firstNames = DBIO.getMultiObResults("select firstname from employees");
+                int rowCount = 0;
+                for (Object i : pkVals) {
+                    if (i != null) {
+                        taskOutput.append("Found primary key " + i + " in " + table + ".\n");
+                        //puts names in hash table in Lastname, Firstname format.
+                        empPkToName.put(i, lastNames.get(rowCount).get(0).toString().concat(",")
+                                .concat(firstNames.get(rowCount).get(0).toString()));
                     }
                     rowCount++;
                 }
@@ -273,10 +287,14 @@ public class DBInfo extends JPanel
         return suppliers;
     }
 
-
     public static Hashtable<String, ArrayList<String>> getTabToRefConstraint() {
         return tabToRefConstraint;
     }
+
+    public static Hashtable<Object, String> getEmpPkToName() {
+        return empPkToName;
+    }
+
     //</editor-fold>
 
     public static String dbToString() {

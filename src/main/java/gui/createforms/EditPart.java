@@ -74,6 +74,7 @@ public class EditPart extends JFrame {
     private Stack<DBRow> rowStack = new Stack<DBRow>();
     private Hashtable<String, Object> suppNameToPk = new Hashtable<String, Object>(10);
 
+
     boolean editable = false;
 
     public EditPart(boolean viewing) {
@@ -145,6 +146,7 @@ public class EditPart extends JFrame {
                 insertRows();
             }
         });
+
 
         fillCbBoxes();
         this.pack();

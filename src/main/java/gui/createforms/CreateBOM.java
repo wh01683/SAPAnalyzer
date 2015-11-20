@@ -34,10 +34,13 @@ public class CreateBOM extends JFrame {
     private InsertTextField fldHrEst;
     private InsertTextField fldEmpAssigned;
     private JButton btnPreview;
+    private JComboBox cbEmployeeNames;
     private Stack<DBRow> rowStack = new Stack<DBRow>();
     private Stack<DefaultMutableTreeNode> nodeStack = new Stack<DefaultMutableTreeNode>();
-    private Hashtable<Object, String> partPkToName = new Hashtable<Object, String>(10);
+    private Hashtable<Object, String> partPkToName;
     private Hashtable<String, Object> partNameToPk = new Hashtable<String, Object>(10);
+    private Hashtable<String, Object> empNameToPk = new Hashtable<String, Object>(10);
+    private Hashtable<Object, String> empPkToName;
 
     public CreateBOM() {
 
@@ -64,6 +67,13 @@ public class CreateBOM extends JFrame {
         while (e.hasMoreElements()) {
             Object next = e.nextElement();
             partNameToPk.put(partPkToName.get(next), next);
+        }
+        empPkToName = DBInfo.getEmpPkToName();
+        Enumeration p = empPkToName.keys();
+
+        while (p.hasMoreElements()) {
+            Object next = p.nextElement();
+            empNameToPk.put(empPkToName.get(next), next);
         }
         btnAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -97,8 +107,19 @@ public class CreateBOM extends JFrame {
                 String partName = partPkToName.get(e.nextElement());
                 cbChildPartNames.addItem(partName);
                 cbParentPartNames.addItem(partName);
+                //TODO: Sort alphabetically
             }
 
+        }
+        if (empPkToName == null) {
+            cbEmployeeNames.addItem("");
+        } else {
+            Enumeration e = empPkToName.keys();
+            while (e.hasMoreElements()) {
+                String empName = empPkToName.get(e.nextElement());
+                cbEmployeeNames.addItem(empName);
+
+            }
         }
     }
 
@@ -112,7 +133,7 @@ public class CreateBOM extends JFrame {
         Integer qty = fldQty.getInt();
         Double hrlyCost = fldHrlyCost.getDouble();
         Double hrEst = fldHrEst.getDouble();
-        Integer empID = fldEmpAssigned.getInt();
+        Object empID = empNameToPk.get(cbEmployeeNames.getSelectedItem().toString());
 
         nodeString.append("Parent: ").append(parentKey).append("| Child: ").append(childKey).append("| step: ").append(step)
                 .append("| qty: ").append(qty).append("| hrly cost: ").append(hrlyCost).append("| hr est: ").append(hrEst).append("| emp: ").append(empID)
