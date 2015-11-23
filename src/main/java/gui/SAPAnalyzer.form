@@ -177,7 +177,7 @@
         <border type="none"/>
         <children>
           <grid id="16668" binding="pnlDetail" layout-manager="FormLayout">
-            <rowspec value="center:d:noGrow"/>
+            <rowspec value="center:p:noGrow"/>
             <colspec value="fill:354px:noGrow"/>
             <constraints>
               <tabbedpane title="Selection Details"/>

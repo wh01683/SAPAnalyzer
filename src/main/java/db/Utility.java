@@ -1,6 +1,8 @@
 package db;
 
 import java.lang.reflect.Array;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * Created by robert on 10/6/2015.
@@ -34,6 +36,23 @@ public class Utility {
             default:
                 return Object.class;
         }
+    }
+
+    /**
+     * Flips a hashtable mapping Objects (primary keys) to Strings (names or otherwise) and returns a resultant hashtable
+     * mapping the Strings to Objects.
+     *
+     * @param pkToName Hashtable to flip (Object, String)
+     * @return Flipped hashtable (String, Object)
+     */
+    public static Hashtable<String, Object> flipPkHash(Hashtable<Object, String> pkToName) {
+        Enumeration e = pkToName.keys();
+        Hashtable<String, Object> resultHash = new Hashtable<String, Object>(pkToName.size());
+        while (e.hasMoreElements()) {
+            Object next = e.nextElement();
+            resultHash.put(pkToName.get(next), next);
+        }
+        return resultHash;
     }
 
 }

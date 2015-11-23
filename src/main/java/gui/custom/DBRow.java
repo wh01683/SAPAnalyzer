@@ -23,7 +23,6 @@ public class DBRow {
     public DBRow(ArrayList<Object> row, Class[] classes) {
         rowArray = new Object[row.size()];
         classList = classes;
-        //TODO: set table name for DBRows instantiated using this process.
         for (int i = 0; i < row.size(); i++) {
             try {
                 rowArray[i] = classList[i].cast(row.get(i));
@@ -41,11 +40,10 @@ public class DBRow {
      */
     public DBRow(String tableName, Object... content){
         if (content.length != DBInfo.getTabToColNames().get(tableName).size()) {
-
+            //TODO: Check that size of content array does not exceed table's column count
         }
         this.rowArray = content;
         this.tableName = tableName;
-        //TODO: Check that size of content array does not exceed table's column count
     }
 
     /**

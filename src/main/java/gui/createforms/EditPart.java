@@ -2,6 +2,7 @@ package gui.createforms;
 
 import db.DBIO;
 import db.DBInfo;
+import db.Utility;
 import gui.custom.DBRow;
 import gui.custom.InsertTextField;
 
@@ -152,6 +153,7 @@ public class EditPart extends JFrame {
         this.pack();
         //</editor-fold>
 
+        suppNameToPk = Utility.flipPkHash(DBInfo.getSuppPkToName());
     }
 
     /**
@@ -203,7 +205,6 @@ public class EditPart extends JFrame {
         ArrayList<String> units = DBInfo.getUnitOfMeasure();
         ArrayList<String> cats = DBInfo.getPartCategories();
         ArrayList<Object> plantId = DBInfo.getTabToPkVals().get("PLANTS");
-        fillSuppHash();
         try {
             for (String s : units) {
                 cbUnits.addItem(s);
@@ -396,15 +397,6 @@ public class EditPart extends JFrame {
         }
     }
 
-    /**
-     * Fills supplier hashtable with names mapped to their supplier ID primary key values
-     */
-    private void fillSuppHash() {
-        ArrayList<ArrayList<Object>> queryResults = DBIO.getMultiObResults("select * from supplier");
-        for (ArrayList<Object> outerArr : queryResults) {
-            suppNameToPk.put(outerArr.get(1).toString(), outerArr.get(0));
-        }
-    }
 
     /**
      * Sets value contained in the primary key text field to a new value.

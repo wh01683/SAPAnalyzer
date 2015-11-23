@@ -3,6 +3,7 @@ package gui.custom;
 import db.DBIO;
 import db.DBInfo;
 
+import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.sql.SQLException;
@@ -29,6 +30,8 @@ public class TableListener implements TableModelListener{
             try {
                 DBIO.updateTable(DBIO.getCurrentTable(), model.getColumnName(column), DBInfo.getTabToPKHash().get(DBIO.getCurrentTable()), pkdata, data);
             } catch (SQLException s) {
+                JOptionPane.showMessageDialog(null, "Could not update " + DBIO.getCurrentTable() +
+                        ". Column: " + model.getColumnName(column) + ". Row: " + row + ". Attempted to insert " + data.toString());
                 s.printStackTrace();
             }
         }

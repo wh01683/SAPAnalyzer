@@ -95,7 +95,7 @@ public class SAPAnalyzer extends JFrame{
                 int row = tblShownInformation.getSelectedRow();
                 int col = tblShownInformation.getSelectedColumn();
                 if (row > -1 && col > -1) {
-                    fillDetailsTable(DBIO.getCurrentTable(), row, col);
+
                 }
             }
         });

@@ -2,6 +2,7 @@ package gui.createforms;
 
 import db.DBIO;
 import db.DBInfo;
+import db.Utility;
 import gui.custom.DBRow;
 import gui.custom.InsertTextField;
 
@@ -32,7 +33,6 @@ public class CreateBOM extends JFrame {
     private InsertTextField fldQty;
     private InsertTextField fldHrlyCost;
     private InsertTextField fldHrEst;
-    private InsertTextField fldEmpAssigned;
     private JButton btnPreview;
     private JComboBox cbEmployeeNames;
     private Stack<DBRow> rowStack = new Stack<DBRow>();
@@ -62,19 +62,12 @@ public class CreateBOM extends JFrame {
         });
 
         partPkToName = DBInfo.getPartPkToName();
-        Enumeration e = partPkToName.keys();
+        partNameToPk = Utility.flipPkHash(partPkToName);
 
-        while (e.hasMoreElements()) {
-            Object next = e.nextElement();
-            partNameToPk.put(partPkToName.get(next), next);
-        }
         empPkToName = DBInfo.getEmpPkToName();
-        Enumeration p = empPkToName.keys();
+        empNameToPk = Utility.flipPkHash(empPkToName);
 
-        while (p.hasMoreElements()) {
-            Object next = p.nextElement();
-            empNameToPk.put(empPkToName.get(next), next);
-        }
+
         btnAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 makeRowFromFields();
@@ -95,6 +88,10 @@ public class CreateBOM extends JFrame {
 
     }
 
+    /**
+     * Fills combo boxes in the form with information from hashtables in DBInfo.
+     * Hashtables used to associate non-key entities with primary keys during insertion process
+     */
     private void fillCbBoxes() {
 
         if (partPkToName == null) {
@@ -122,6 +119,7 @@ public class CreateBOM extends JFrame {
             }
         }
     }
+
 
     private void makeRowFromFields() {
 
