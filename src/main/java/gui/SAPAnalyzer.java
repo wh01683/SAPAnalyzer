@@ -51,6 +51,7 @@ public class SAPAnalyzer extends JFrame{
         for (String s : DBIO.getTableNames()) {
             cbTableSelect.addItem(s);
         }
+        DBIO.setCurrentTable(cbTableSelect.getSelectedItem().toString());
         createMenu();
         this.setContentPane(pnlMain);
         this.setVisible(true);
@@ -179,7 +180,6 @@ public class SAPAnalyzer extends JFrame{
     }
 
     public void setDatabaseTableModel(DatabaseTableModel databaseTableModel) {
-        databaseTableModel.addTableModelListener(new TableListener());
         this.databaseTableModel = databaseTableModel;
         DBIO.setCurrentTable((String) cbTableSelect.getSelectedItem());
         tblShownInformation.setModel(databaseTableModel);
@@ -273,8 +273,6 @@ public class SAPAnalyzer extends JFrame{
             parent.add(temp);
         }
     }
-
-
 }
 
 

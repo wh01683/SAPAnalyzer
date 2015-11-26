@@ -75,15 +75,6 @@ public class TestMain {
         return Math.round(randWaste * 100d) / 100d;
     }
 
-    private static void testUpdate(String tableName, String columnName, String constrainCol, Object primaryKey, Object newData) {
-
-        try {
-            int[] results = DBIO.updateTable(tableName, columnName, constrainCol, primaryKey, newData);
-            printResults(results);
-        } catch (SQLException s) {
-            s.printStackTrace();
-        }
-    }
 
     private static void printResults(int[] results) {
         for (int i = 0; i < results.length; i++) {

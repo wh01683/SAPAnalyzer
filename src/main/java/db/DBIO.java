@@ -198,45 +198,24 @@ public class DBIO {
 
     /**
      * Updates a column in a given table with a new value.
-     *  @param tableName     Column to update
+     * @param tableName     Column to update
      * @param columnName
-     * @param contrainingColumnName
-     * @param pk      Primary key value to match with the row to be updated
      * @param newData Object containing new PK value.   @return returns int array of updates
-     * */
-    public static int[] updateTable(String tableName, String columnName, String contrainingColumnName, Object pk, Object newData) throws SQLException {
+     * @param pkVals */
+    public static int[] updateTable(String tableName, String columnName, Object newData, String[] pkColNames, Object[] pkVals) throws SQLException {
 
-        Statement stmt = null;
-
-        try {
-
-            StringBuilder vals = new StringBuilder("UPDATE " + tableName + " SET " +
+        StringBuilder updateQuery = new StringBuilder("UPDATE " + tableName + " SET " +
                     columnName + " = " +
                     handleStringInsert(newData) +
-                    " WHERE " + contrainingColumnName + " = " +
-                    pk);
+                " WHERE " + pkColNames[0] + " = " + pkVals[0]);
 
-
-            con.setAutoCommit(false);
-
-            stmt = con.createStatement();
-            stmt.addBatch(vals.toString());
-
-            int[] updateCount = stmt.executeBatch();
-
-            con.commit();
-            stmt.close();
-
-            return updateCount;
-        } catch (SQLException s) {
-            s.printStackTrace();
-        } finally {
-            if (stmt != null) {
-                stmt.close();
+        for (int i = 1; i < pkColNames.length; i++) {
+            updateQuery.append(" AND " + pkColNames[i] + " = " + pkVals[i]);
             }
-            con.setAutoCommit(true);
-        }
-        return null;
+
+        int[] results = executeWithoutReturn(updateQuery.toString());
+
+        return results;
     }
 
     /**
@@ -483,7 +462,8 @@ public class DBIO {
                 statement.addBatch(s);
             }
             int[] results = statement.executeBatch();
-            statement.close();
+
+        statement.close();
 
             return results;
 
