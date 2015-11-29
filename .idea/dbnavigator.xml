@@ -16,6 +16,7 @@
       <scope value="GLOBAL" />
       <destination value="FILE" />
       <format value="EXCEL" />
+      <charset value="windows-1252" />
     </export-instructions>
   </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
@@ -73,6 +74,7 @@
           <database value="SAP" />
           <url-type value="SID" />
           <os-authentication value="false" />
+          <empty-password value="false" />
           <user value="system" />
           <password value="ZGF0YWJhc2UwMTU=" />
         </database>
@@ -146,6 +148,7 @@
           <database value="XE" />
           <url-type value="SID" />
           <os-authentication value="false" />
+          <empty-password value="false" />
           <user value="" />
           <password value="" />
         </database>
@@ -219,6 +222,7 @@
           <database value="sap" />
           <url-type value="SID" />
           <os-authentication value="false" />
+          <empty-password value="false" />
           <user value="HOWERTONSAP" />
           <password value="ZGF0YWJhc2UwMTU=" />
         </database>

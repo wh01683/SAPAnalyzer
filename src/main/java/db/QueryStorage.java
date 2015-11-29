@@ -35,6 +35,26 @@ public class QueryStorage {
         return query;
     }
 
+    public static String getPartList(Object partID) {
+        String query = "\n" +
+                "  WITH RPL (ParentPartID, ChildPartID, QTY) AS\n" +
+                "   (\n" +
+                "      SELECT ROOT.ParentPartID, ROOT.ChildPartID, ROOT.QTY\n" +
+                "       FROM BOM ROOT\n" +
+                "       WHERE ROOT.ParentPartID = " + partID.toString() + "\n" +
+                "    UNION ALL\n" +
+                "      SELECT PARENT.ParentPartID, CHILD.ChildPartID, PARENT.QTY*CHILD.QTY\n" +
+                "       FROM RPL PARENT, BOM CHILD\n" +
+                "       WHERE PARENT.ChildPartID = CHILD.ParentPartID\n" +
+                "   )\n" +
+                "SELECT temp.ParentPartID AS \"Parent Part ID\", p.NAME AS \"Child Part Name\", temp.ChildPartID AS \"Child Part ID\", SUM(temp.QTY) AS \"Total QTY Used\"\n" +
+                " FROM RPL temp JOIN PART p ON temp.ChildPartID = p.partid\n" +
+                "  GROUP BY temp.ParentPartID, p.NAME, temp.ChildPartID\n" +
+                "  ORDER BY temp.ParentPartID, p.name, temp.ChildPartID";
+
+        return query;
+    }
+
     public static String getPkAndFkNames(String tableName) {
         String query = "SELECT cols.column_name\n" +
                 "FROM all_constraints cons, all_cons_columns cols\n" +

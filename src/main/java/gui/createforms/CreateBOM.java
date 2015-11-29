@@ -11,6 +11,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Stack;
@@ -42,14 +43,17 @@ public class CreateBOM extends JFrame {
     private Hashtable<String, Object> empNameToPk = new Hashtable<String, Object>(10);
     private Hashtable<Object, String> empPkToName;
 
+    public CreateBOM(Object parentKey) {
+        this();
+        cbParentPartNames.setSelectedItem(partPkToName.get(parentKey));
+    }
     public CreateBOM() {
 
         this.setContentPane(pnlMain);
         undoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if ((rowStack != null) && (nodeStack != null)) {
+                if ((rowStack != null)) {
                     rowStack.pop();
-                    nodeStack.pop();
                 } else {
                     JOptionPane.showMessageDialog(null, "No more nodes to delete.");
                 }
@@ -60,7 +64,7 @@ public class CreateBOM extends JFrame {
                 clearFields();
             }
         });
-
+        fldHrlyCost.setEditable(false);
         partPkToName = DBInfo.getPartPkToName();
         partNameToPk = Utility.flipPkHash(partPkToName);
 
@@ -99,14 +103,16 @@ public class CreateBOM extends JFrame {
             cbParentPartNames.addItem("");
         } else {
             Enumeration e = partPkToName.keys();
-
+            ArrayList<String> partNames = new ArrayList<String>(10);
             while (e.hasMoreElements()) {
                 String partName = partPkToName.get(e.nextElement());
-                cbChildPartNames.addItem(partName);
-                cbParentPartNames.addItem(partName);
-                //TODO: Sort alphabetically
+                partNames.add(partName);
             }
 
+            for (String s : partNames) {
+                cbChildPartNames.addItem(s);
+                cbParentPartNames.addItem(s);
+            }
         }
         if (empPkToName == null) {
             cbEmployeeNames.addItem("");
@@ -125,21 +131,29 @@ public class CreateBOM extends JFrame {
 
         StringBuilder nodeString = new StringBuilder();
 
+        Object empID = empNameToPk.get(cbEmployeeNames.getSelectedItem().toString());
+        Double assignedStaffWage = Double.parseDouble(
+                DBIO.getMultiObResults("select wage from staff where employeeid = " + empID.toString())
+                        .get(0).get(0).toString());
+        Object plantId = DBIO.getMultiObResults("select e.plantid from employees e join staff s on s.employeeid = e.employeeid where s.employeeid = "
+                + empID.toString()).get(0).get(0);
         Object childKey = partNameToPk.get(cbChildPartNames.getSelectedItem().toString());
         Object parentKey = partNameToPk.get(cbParentPartNames.getSelectedItem().toString());
         Integer step = fldStep.getInt();
         Integer qty = fldQty.getInt();
-        Double hrlyCost = fldHrlyCost.getDouble();
         Double hrEst = fldHrEst.getDouble();
-        Object empID = empNameToPk.get(cbEmployeeNames.getSelectedItem().toString());
+        Double hrlyCost = assignedStaffWage * hrEst;
+
 
         nodeString.append("Parent: ").append(parentKey).append("| Child: ").append(childKey).append("| step: ").append(step)
                 .append("| qty: ").append(qty).append("| hrly cost: ").append(hrlyCost).append("| hr est: ").append(hrEst).append("| emp: ").append(empID)
                 .append("\n");
-        DBRow temp = new DBRow("BOM", step, qty, parentKey, childKey, hrlyCost, hrEst, empID);
-        DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode(nodeString.toString());
-        rowStack.push(temp);
-        nodeStack.push(tempNode);
+        DBRow bomRow = new DBRow("BOM", step, qty, parentKey, childKey);
+        DBRow plant_bomRow = new DBRow("PLANT_BOM", plantId, parentKey, childKey, hrlyCost, hrEst, empID);
+        //DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode(nodeString.toString());
+        rowStack.push(bomRow);
+        rowStack.push(plant_bomRow);
+        //nodeStack.push(tempNode);
 
         //TODO: add temp node to tree
     }

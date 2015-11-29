@@ -1,17 +1,22 @@
+/*
 package db;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+*/
 /**
  * Created by robert on 10/11/2015.
- */
+ *//*
+
 public class DBIOTest {
 
-    /**
+    */
+/**
      * @verifies getKeys
      * @see DBIO#getKeys(String, String...)
-     */
+ *//*
+
     @Test
     public void getKeys_shouldGetKeys() throws Exception {
 
@@ -33,3 +38,4 @@ public class DBIOTest {
 
     }
 }
+*/

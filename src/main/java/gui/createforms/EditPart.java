@@ -7,8 +7,6 @@ import gui.custom.DBRow;
 import gui.custom.InsertTextField;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,10 +36,6 @@ public class EditPart extends JFrame {
     private JComboBox cbUnits;
     private JComboBox cbPartCategory;
     private JTextArea txtarPartNotes;
-    private JComboBox cbBOMSelect;
-    private JTree treeBOMHierarchy;
-    private JCheckBox chkAddPart;
-    private JComboBox cbLevelsFilter;
     private JComboBox cbPartPlantID;
     private JButton btnAddNew;
     private JButton btnClear;
@@ -61,15 +55,13 @@ public class EditPart extends JFrame {
     private InsertTextField fldWaste;
     private InsertTextField fldTransCost;
     private InsertTextField fldReorderLvl;
-    private InsertTextField fldBomStep;
-    private InsertTextField fldBomQty;
-    private InsertTextField fldBomHrlyCost;
-    private InsertTextField fldHrEst;
     private InsertTextField fldPhase;
     private InsertTextField fldRevision;
     private InsertTextField fldProcType;
     private InsertTextField fldRefDes;
     private JCheckBox chkStockDetail;
+    private JButton btnShowPartList;
+    private JMenuBar menuBar;
     //</editor-fold>
 
     private Stack<DBRow> rowStack = new Stack<DBRow>();
@@ -81,21 +73,10 @@ public class EditPart extends JFrame {
     public EditPart(boolean viewing) {
 
         //<editor-fold desc="Constructor">
-        if (viewing) {
-            fillFields();
-        }
-        setEditAll(!viewing, pnlGeneral, pnlAdvanced, pnlStock, pnlEditBOM, pnlEditPart);
+
+        setEditAll(!viewing, pnlGeneral, pnlAdvanced, pnlStock, pnlEditPart);
         editable = !viewing;
 
-        chkAddPart.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if (chkAddPart.isSelected()) {
-                    btnFindPart.setEnabled(false);
-                } else {
-                    btnFindPart.setEnabled(true);
-                }
-            }
-        });
         this.setVisible(true);
         pnlMain.setVisible(true);
         this.setContentPane(pnlMain);
@@ -121,7 +102,7 @@ public class EditPart extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 makePartRow();
                 if (chkStockDetail.isSelected()) {
-                makeStockRow();
+                    makeStockRow();
                 }
                 makePartSupplierRow();
             }
@@ -137,6 +118,12 @@ public class EditPart extends JFrame {
                 }
             }
         });
+
+        btnShowPartList.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Parts(fldPartId.getText()).setVisible(true);
+            }
+        });
         btnPreview.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 displayInsertTextPreview();
@@ -148,12 +135,17 @@ public class EditPart extends JFrame {
             }
         });
 
-
+        suppNameToPk = Utility.flipPkHash(DBInfo.getSuppPkToName());
+        createMenu();
+        this.setJMenuBar(menuBar);
         fillCbBoxes();
+        if (viewing) {
+            fillFields();
+        }
         this.pack();
+
         //</editor-fold>
 
-        suppNameToPk = Utility.flipPkHash(DBInfo.getSuppPkToName());
     }
 
     /**
@@ -204,7 +196,6 @@ public class EditPart extends JFrame {
 
         ArrayList<String> units = DBInfo.getUnitOfMeasure();
         ArrayList<String> cats = DBInfo.getPartCategories();
-        ArrayList<Object> plantId = DBInfo.getTabToPkVals().get("PLANTS");
         try {
             for (String s : units) {
                 cbUnits.addItem(s);
@@ -212,9 +203,7 @@ public class EditPart extends JFrame {
             for (String s : cats) {
                 cbPartCategory.addItem(s);
             }
-            for (Object o : plantId) {
-                cbPartPlantID.addItem(o);
-            }
+
             for (String s : suppNameToPk.keySet()) {
                 cbSuppliers.addItem(s);
             }
@@ -255,7 +244,6 @@ public class EditPart extends JFrame {
         } else {
             Integer partid = fldPartId.getInt();
             String desc = fldPartDesc.getText();
-            Object plantID = cbPartPlantID.getSelectedItem();
             String name = fldPartName.getText();
             String phase = fldPhase.getText();
             Character revision = fldRevision.getChar();
@@ -268,8 +256,8 @@ public class EditPart extends JFrame {
             String catid = (String) cbPartCategory.getSelectedItem();
             String unit = (String) cbUnits.getSelectedItem();
 
-            DBRow temp = new DBRow("PART", partid, desc, plantID, name, phase, revision, procType, refDes, notes, tcost,
-                    cost, wast, catid, unit);
+            DBRow temp = new DBRow("PART", partid, name, desc, phase, revision, procType,
+                    cost, tcost, refDes, wast, notes, unit, catid);
             rowStack.push(temp);
         }
     }
@@ -284,9 +272,8 @@ public class EditPart extends JFrame {
         Integer availQty = fldAvailQty.getInt();
         Integer reorder = fldReorderLvl.getInt();
         Integer leadTime = fldLeadTime.getInt();
-        Integer supplierid = Integer.parseInt(suppNameToPk.get(cbSuppliers.getSelectedItem()).toString());
 
-        DBRow temp = new DBRow("STOCKDETAIL", partId, qtyonhand, allocQty, availQty, reorder, leadTime, supplierid);
+        DBRow temp = new DBRow("STOCKDETAIL", qtyonhand, allocQty, availQty, reorder, leadTime, partId);
         rowStack.push(temp);
     }
 
@@ -295,8 +282,10 @@ public class EditPart extends JFrame {
      */
     private void makePartSupplierRow() {
         Integer partId = fldPartId.getInt();
+        Double delivCost = fldTransCost.getDouble();
+        Double suppCost = fldPartCost.getDouble();
         Object supplierid = Integer.parseInt(suppNameToPk.get(cbSuppliers.getSelectedItem()).toString());
-        DBRow temp = new DBRow("PART_SUPPLIER", partId, supplierid);
+        DBRow temp = new DBRow("PART_SUPPLIER", supplierid, partId, delivCost, suppCost);
         rowStack.add(temp);
     }
 
@@ -317,24 +306,23 @@ public class EditPart extends JFrame {
         }
 
         try {
-        fldPartName.setText(partResults.get(3).toString());
-        fldPartDesc.setText(partResults.get(1).toString());
-        fldPhase.setText(partResults.get(4).toString());
-        fldRevision.setText(partResults.get(5).toString());
-        fldProcType.setText(partResults.get(6).toString());
-        fldRefDes.setText(partResults.get(7).toString());
-        txtarPartNotes.setText(partResults.get(8).toString());
-        fldTransCost.setText(partResults.get(9).toString());
-        fldPartCost.setText(partResults.get(10).toString());
-        fldWaste.setText(partResults.get(11).toString());
+            fldPartName.setText(partResults.get(1).toString());
+            fldPartDesc.setText(partResults.get(2).toString());
+            fldPhase.setText(partResults.get(3).toString());
+            fldRevision.setText(partResults.get(4).toString());
+            fldProcType.setText(partResults.get(5).toString());
+            fldRefDes.setText(partResults.get(8).toString());
+            txtarPartNotes.setText(partResults.get(10).toString());
+            fldTransCost.setText(partResults.get(8).toString());
+            fldPartCost.setText(partResults.get(6).toString());
+            fldWaste.setText(partResults.get(9).toString());
 
 
         cbUnits.removeAllItems();
         cbPartCategory.removeAllItems();
         cbPartPlantID.removeAllItems();
 
-        cbUnits.addItem(partResults.get(13));
-        cbPartPlantID.addItem(partResults.get(2));
+            cbUnits.addItem(partResults.get(11));
         cbPartCategory.addItem(partResults.get(12));
 
         cbUnits.setEnabled(false);
@@ -345,15 +333,19 @@ public class EditPart extends JFrame {
         ArrayList<Object> stockResults = DBIO.getMultiObResults(
                 "select * from stockdetail where partid = " + fldPartId.getInt()).get(0);
 
-        fldQtyOnHand.setText(stockResults.get(1).toString());
-        fldAllocQty.setText(stockResults.get(2).toString());
-        fldAvailQty.setText(stockResults.get(3).toString());
-        fldReorderLvl.setText(stockResults.get(4).toString());
-        fldLeadTime.setText(stockResults.get(5).toString());
-        cbSuppliers.removeAllItems();
-        cbSuppliers.addItem(stockResults.get(6).toString());
-        cbSuppliers.setEnabled(false);
-
+            try {
+                fldQtyOnHand.setText(stockResults.get(0).toString());
+                fldAllocQty.setText(stockResults.get(1).toString());
+                fldAvailQty.setText(stockResults.get(2).toString());
+                fldReorderLvl.setText(stockResults.get(3).toString());
+                fldLeadTime.setText(stockResults.get(4).toString());
+            } catch (IndexOutOfBoundsException noStockInfo) {
+                fldQtyOnHand.setText("");
+                fldAllocQty.setText("");
+                fldAvailQty.setText("");
+                fldReorderLvl.setText("");
+                fldLeadTime.setText("");
+            }
         } catch (NullPointerException n) {
             JOptionPane.showMessageDialog(null, "Must supply the part's ID number.");
             fldPartId.grabFocus();
@@ -377,6 +369,58 @@ public class EditPart extends JFrame {
         textArea.setWrapStyleWord(true);
         scrollPane.setPreferredSize(new Dimension(500, 500));
         JOptionPane.showMessageDialog(null, scrollPane, "Insert Preview", JOptionPane.CLOSED_OPTION);
+    }
+
+    private void createMenu() {
+
+
+        menuBar = new JMenuBar();
+        JMenu mnuFile = new JMenu("File");
+        JMenu mnuHelp = new JMenu("Help");
+        JMenuItem mnuItemUnitsNCats = new JMenuItem("Units & Categories");
+        JMenuItem mnuLoad = new JMenu("Load");
+        JMenuItem mnuItemNew = new JMenu("New");
+        JMenuItem mnuItemBOM = new JMenuItem("BOM");
+        JMenuItem mnuItemPart = new JMenuItem("Part");
+
+        JMenuItem mnuItemLoadAll = new JMenuItem("All");
+        mnuItemLoadAll.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        DBInfo.showLoadScreen();
+                    }
+                });
+            }
+        });
+
+        mnuItemPart.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new EditPart(false).setVisible(true);
+
+            }
+        });
+
+        mnuItemBOM.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new CreateBOM().setVisible(true);
+            }
+        });
+
+        mnuItemUnitsNCats.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Help().setVisible(true);
+            }
+        });
+
+        mnuItemNew.add(mnuItemBOM);
+        mnuItemNew.add(mnuItemPart);
+        mnuFile.add(mnuItemNew);
+        mnuHelp.add(mnuItemUnitsNCats);
+        mnuLoad.add(mnuItemLoadAll);
+        mnuFile.add(mnuLoad);
+        menuBar.add(mnuFile);
+        menuBar.add(mnuHelp);
     }
 
     /**

@@ -130,16 +130,30 @@ public class SAPAnalyzer extends JFrame{
                     JPopupMenu popup = new PopupMenu();
                     JMenu mnuView = new JMenu("View");
                     JMenuItem mnuItemShowDetail = new JMenuItem("Details");
+
+                    JMenu mnuNew = new JMenu("New");
+                    JMenuItem mnuItemBOM = new JMenuItem("BOM");
+
+                    mnuItemBOM.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            CreateBOM createBOM = new CreateBOM((tblShownInformation.getModel().
+                                    getValueAt(tblShownInformation.getSelectedRow(),
+                                            tblShownInformation.getSelectedColumn())));
+                            createBOM.setVisible(true);
+                        }
+                    });
+
                     mnuItemShowDetail.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             EditPart editPart = new EditPart(true);
                             editPart.setFldPartID((tblShownInformation.getModel().
                                     getValueAt(tblShownInformation.getSelectedRow(),
                                             tblShownInformation.getSelectedColumn())).toString());
-                            editPart.setVisible(true);
                         }
                     });
                     mnuView.add(mnuItemShowDetail);
+                    mnuNew.add(mnuItemBOM);
+                    popup.add(mnuNew);
                     popup.add(mnuView);
                     //popup.add(new JLabel(String.format("Pk: %s, Column Name: %s, Table Name: %s", temp.toString(), colName, tableName)));
                     popup.pack();

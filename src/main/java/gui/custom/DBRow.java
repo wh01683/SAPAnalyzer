@@ -3,6 +3,7 @@ package gui.custom;
 import db.DBInfo;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  * Created by robert on 10/8/2015.
@@ -39,9 +40,11 @@ public class DBRow {
      * @param content
      */
     public DBRow(String tableName, Object... content){
-        if (content.length != DBInfo.getTabToColNames().get(tableName).size()) {
-            //TODO: Check that size of content array does not exceed table's column count
-        }
+        Hashtable<String, ArrayList<String>> tableToColNames = DBInfo.getTabToColNames();
+        int size = tableToColNames.get(tableName).size();
+//        if (content.length != DBInfo.getTabToColNames().get(tableName).size()) {
+//            //TODO: Check that size of content array does not exceed table's column count
+//        }
         this.rowArray = content;
         this.tableName = tableName;
     }
