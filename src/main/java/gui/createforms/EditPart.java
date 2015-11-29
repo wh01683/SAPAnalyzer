@@ -70,6 +70,11 @@ public class EditPart extends JFrame {
 
     boolean editable = false;
 
+    public EditPart(Object partID) {
+        this(true);
+        fldPartId.setText(partID.toString());
+        fillFields();
+    }
     public EditPart(boolean viewing) {
 
         //<editor-fold desc="Constructor">
@@ -139,9 +144,7 @@ public class EditPart extends JFrame {
         createMenu();
         this.setJMenuBar(menuBar);
         fillCbBoxes();
-        if (viewing) {
-            fillFields();
-        }
+
         this.pack();
 
         //</editor-fold>

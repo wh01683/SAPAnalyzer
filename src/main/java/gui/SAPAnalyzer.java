@@ -145,10 +145,10 @@ public class SAPAnalyzer extends JFrame{
 
                     mnuItemShowDetail.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            EditPart editPart = new EditPart(true);
-                            editPart.setFldPartID((tblShownInformation.getModel().
+                            EditPart editPart = new EditPart((tblShownInformation.getModel().
                                     getValueAt(tblShownInformation.getSelectedRow(),
                                             tblShownInformation.getSelectedColumn())).toString());
+                            editPart.setVisible(true);
                         }
                     });
                     mnuView.add(mnuItemShowDetail);
