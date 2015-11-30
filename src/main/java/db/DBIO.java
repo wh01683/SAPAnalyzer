@@ -29,6 +29,9 @@ public class DBIO {
         MakeConnection();
     }
 
+    /**
+     * Makes a connection to the database using the database name, username, and password attributes.
+     */
     private static void MakeConnection() {
         try {
             con = new ConnectionDelegator(DriverManager.getConnection(
@@ -40,6 +43,9 @@ public class DBIO {
         }
     }
 
+    /**
+     * Terminates the connection.
+     */
     public static void terminate() {
         try {
             con.close();
@@ -288,9 +294,8 @@ public class DBIO {
 
     /**
      * @param tableName Table name to obtain keys for.
-     * @param types
-     * @return
-     * @should getKeys
+     * @param types Provide "R" for foreign keys, or "P" for primary keys
+     * @return Returns an array list of key column names for the given table
      */
     public static ArrayList<String> getKeys(String tableName, String... types) {
         ArrayList<String> results = new ArrayList<String>(10);
@@ -328,6 +333,12 @@ public class DBIO {
 
     }
 
+    /**
+     * Obtains all constraint names which refer to the given table. This can be used to disable constraints
+     * to enable easier insertions.
+     * @param tableName Table name to get Constraints referring TO
+     * @return Returns an array list containing all referring constraint names.
+     */
     public static ArrayList<String> getRefConstraints(String tableName) {
 
         ArrayList<String> refList = new ArrayList<String>(10);
@@ -351,6 +362,12 @@ public class DBIO {
         return null;
     }
 
+    /**
+     * Obtains a simple array list containing strings for the result list. This method should only be used for result
+     * sets guaranteed to have one column.
+     * @param query Query to execute.
+     * @return Returns an arraylist of results as Strings.
+     */
     public static ArrayList<String> getStringResults(String query) {
         try {
             ArrayList<String> resultList = new ArrayList<String>(10);

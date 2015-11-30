@@ -56,6 +56,10 @@ public class DBInfo extends JPanel
                 suppliers = DBIO.getStringResults("select name from supplier");
 
                 //<editor-fold desc="Load Loop">
+                /**
+                 * Calls special load methods. In general, methods will fill local array lists and hashtables with information
+                 * from the table. This process cycles for all tables.
+                 */
                 for (String table : DBIO.getTableNames()) {
 
                     taskOutput.append("\n===========================================================================\n");
@@ -85,6 +89,11 @@ public class DBInfo extends JPanel
         }
 
         //<editor-fold desc="Load Methods">
+
+        /**
+         * Loads all primary keys
+         * @param table
+         */
         public void loadPks(String table) {
 
             String pkColName = DBIO.getKeys(table, "P").get(0);
