@@ -2,9 +2,13 @@ package db;
 
 /**
  * Created by robert on 10/9/2015.
+ *
+ * This class is used to store SQL query snippets which may be used across the application but may
+ * only vary by a key or by a table name.
  */
 public class QueryStorage {
 
+    // Used when filtering results based on user.
     private final static String USERNAME = "HOWERTONSAP";
 
     private final static String REFERENCING_TABLES_QUERY = "select ac1.table_name ref_table \n" +
@@ -15,12 +19,23 @@ public class QueryStorage {
             "and ac2.table_name = ";
 
 
+    /**
+     * Obtains query used to obtain all tables referencing the given table.
+     * @param primaryTableName Table being referred to.
+     * @return Returns the completed query.
+     */
     public static String getRefTableQuery(String primaryTableName) {
         String query = REFERENCING_TABLES_QUERY + "'" + primaryTableName + "'";
         return query;
     }
 
 
+    /**
+     * Query used to get key column names (depending on type) for a given table.
+     * @param tableName Table to get key column names for.
+     * @param type Type of key. For foreign keys, use type = "R". For primary keys, use type = "P"
+     * @return Returns the completed query.
+     */
     public static String getPkOrFkNames(String tableName, String type) {
         String query = "SELECT cols.column_name\n" +
                 "FROM all_constraints cons, all_cons_columns cols\n" +
@@ -35,6 +50,11 @@ public class QueryStorage {
         return query;
     }
 
+    /**
+     * Uses a recursive query to obtain all parts with associated quantities used to produce a given part.
+     * @param partID Part ID primary key of the part to check.
+     * @return Returns the completed query.
+     */
     public static String getPartList(Object partID) {
         String query = "\n" +
                 "  WITH RPL (ParentPartID, ChildPartID, QTY) AS\n" +
@@ -55,6 +75,11 @@ public class QueryStorage {
         return query;
     }
 
+    /**
+     * Query used to obtain both primary key columns and foreign key columns for a given table.
+     * @param tableName Table to obtain column names for.
+     * @return Returns the completed query.
+     */
     public static String getPkAndFkNames(String tableName) {
         String query = "SELECT cols.column_name\n" +
                 "FROM all_constraints cons, all_cons_columns cols\n" +
@@ -69,11 +94,21 @@ public class QueryStorage {
         return query;
     }
 
+    /**
+     * Used to obtain all column names for a given table.
+     * @param tableName Table name to get column names for.
+     * @return Returns the completed query.
+     */
     public static String getColNamesQuery(String tableName) {
         String query = "select COLUMN_NAME from ALL_TAB_COLUMNS where TABLE_NAME='"+ tableName+"' AND owner = '"+ USERNAME+"'";
         return query;
     }
 
+    /**
+     * Used to obtain all referrential constraints for a given table.
+     * @param tableName Table with the constraints.
+     * @return Returns the completed query.
+     */
     public static String getFkConstraintsQuery(String tableName) {
         String query = "select constraint_name \n" +
                 "from all_constraints \n" +

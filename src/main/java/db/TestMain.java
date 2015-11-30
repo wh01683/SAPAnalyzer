@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 /**
  * Created by robert on 10/10/2015.
+ *
+ * This class was created to test certain parts of the application when the GUI was not working properly.
  */
 public class TestMain {
 
@@ -41,12 +43,23 @@ public class TestMain {
 
     }
 
+    /**
+     * Runs a test of specified iterations by simply querying a table over and over again and printing the results.
+     * Used for stress testing to ensure connections were closing correctly.
+     * @param table Table to query.
+     * @param iterations Number of times to query the table.
+     */
     private static void test(String table, int iterations) {
         for (int i = 0; i < iterations; i++) {
             printAllFromTable(table, i);
         }
     }
 
+    /**
+     * Used to print all contents of a table. This method was primarily used to text the DBIO.getMultiObResults() method.
+     * @param table Table to query.
+     * @param testIteration Number of the test iteration. Used to track bulk executions.
+     */
     private static void printAllFromTable(String table, int testIteration) {
         ArrayList<ArrayList<Object>> objects = DBIO.getMultiObResults("select * from " + table);
 
@@ -60,6 +73,11 @@ public class TestMain {
         }
     }
 
+    /**
+     * Used to text insertions into a given table.
+     * @param tableName Table inserting into.
+     * @param values Objects to insert.
+     */
     private static void testInsert(String tableName, Object... values) {
         try {
             int[] results = DBIO.insertIntoTable(tableName, values);

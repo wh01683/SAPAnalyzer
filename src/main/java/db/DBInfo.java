@@ -91,8 +91,10 @@ public class DBInfo extends JPanel
         //<editor-fold desc="Load Methods">
 
         /**
-         * Loads all primary keys
-         * @param table
+         * TODO: Refactor to handle more than one primary key.
+         *
+         * Loads primary key column name for the given table.
+         * @param table Table to obtain primary key of.
          */
         public void loadPks(String table) {
 
@@ -101,6 +103,10 @@ public class DBInfo extends JPanel
             tabToPKHash.put(table, pkColName);
         }
 
+        /**
+         * Obtains all tables referring to another using foreign keys.
+         * @param table Table referred to.
+         */
         public void loadRefTables(String table) {
             taskOutput.append("Obtaining tables referring to " + table + ".\n");
             ArrayList<String> tempTabs = DBIO.getReferringTables(table);
@@ -110,6 +116,10 @@ public class DBInfo extends JPanel
             tabToRefTabHash.put(table, tempTabs);
         }
 
+        /**
+         * Loads all column names for the given table.
+         * @param table Table to obtain column names for.
+         */
         public void loadCols(String table) {
             taskOutput.append("Obtaining columns belonging to " + table + ".\n");
             ArrayList<String> colNames = DBIO.getColNames("select * from " + table);
@@ -119,6 +129,10 @@ public class DBInfo extends JPanel
             tabToColNames.put(table, colNames);
         }
 
+        /**
+         * Loads all foreign key column names for a given table.
+         * @param table Table to load foreign keys for.
+         */
         public void loadFks(String table) {
             ArrayList<String> fkNames = DBIO.getKeys(table, "R");
             for (String s : fkNames) {
@@ -127,6 +141,10 @@ public class DBInfo extends JPanel
             tabToForeignKeyNames.put(table, fkNames);
         }
 
+        /**
+         * Load reference constraints for the given table.
+         * @param table Owner of the constraints.
+         */
         public void loadConstraints(String table) {
             ArrayList<String> refCon = DBIO.getRefConstraints(table);
             for (String s : refCon) {
@@ -135,6 +153,10 @@ public class DBInfo extends JPanel
             tabToRefConstraint.put(table, refCon);
         }
 
+        /**
+         * Loads all primary key values for a given table. This method also contains some table specific code snippets.
+         * @param table Table to load key values for.
+         */
         public void loadPkVals(String table) {
             ArrayList<Object> pkVals = DBIO.getPrimaryKeyValues(table);
 
@@ -184,6 +206,10 @@ public class DBInfo extends JPanel
             tabToPkVals.put(table, pkVals);
         }
 
+        /**
+         * Loads SQL integer column types for each column in the table.
+         * @param table Table to load column types for.
+         */
         public void loadColTypes(String table) {
             int[] colTypes = DBIO.getColumnTypes("select * from " + table);
             int colCount = 0;
@@ -198,6 +224,9 @@ public class DBInfo extends JPanel
         //</editor-fold>
 
 
+        /**
+         * When done, jump here.
+         */
         public void done() {
             Toolkit.getDefaultToolkit().beep();
             taskOutput.append("Done!\n");
@@ -206,6 +235,9 @@ public class DBInfo extends JPanel
         }
     }
 
+    /**
+     * Constructor for DBInfo class. On construction, load will commence.
+     */
     public DBInfo() {
         super(new BorderLayout());
 
@@ -235,6 +267,10 @@ public class DBInfo extends JPanel
     }
 
 
+    /**
+     * Function for updating progress bar.
+     * @param evt PropertyChangeEvent of event being watched.
+     */
     public void propertyChange(PropertyChangeEvent evt) {
         if ("progress" == evt.getPropertyName()) {
             int progress = (Integer) evt.getNewValue();
@@ -245,6 +281,9 @@ public class DBInfo extends JPanel
 
     }
 
+    /**
+     * Method to show loading screen to the user.
+     */
     public static void showLoadScreen() {
 
         JFrame frame = new JFrame("DB Info Loading");
@@ -323,6 +362,10 @@ public class DBInfo extends JPanel
 
     //</editor-fold>
 
+    /**
+     * Deprecated function used to print the entire database to string.
+     * @return A single String containing the entire database.
+     */
     public static String dbToString() {
         StringBuilder db = new StringBuilder("DB\n===================================\n");
 

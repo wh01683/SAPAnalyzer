@@ -9,6 +9,11 @@ import java.util.Hashtable;
  */
 public class Utility {
 
+    /**
+     * Used to convert the SQL Integer type codes into Java classes.
+     * @param sqlType SQL Column type code.
+     * @return Returns closely related Java class.
+     */
     public static Class<?> ConvertType(int sqlType) {
         switch (sqlType) {
             case -8:
