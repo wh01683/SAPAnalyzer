@@ -196,8 +196,7 @@ public class SAPAnalyzer extends JFrame{
 
     /**
      * Takes care of all related processes associated with changing the table's content.
-     *
-     * @param databaseTableModel
+     * @param databaseTableModel new table model for the table.
      */
     public void setDatabaseTableModel(DatabaseTableModel databaseTableModel) {
         this.databaseTableModel = databaseTableModel;

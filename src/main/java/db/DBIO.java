@@ -62,6 +62,7 @@ public class DBIO {
      *
      * @param enable True: enable all triggers and reference constraints. False: Disable all.
      * @param tables Array of table names to alter.
+     * @return Returns an int array containing information on how many rows were updated.
      */
     public static int[] alterConstraints(boolean enable, String... tables) {
 
@@ -180,7 +181,7 @@ public class DBIO {
     /**
      * Updates the current table names by querying the database.
      *
-     * @throws SQLException
+     * @throws SQLException Passes the exception higher up where the application may be able to handle it correctly.
      */
     public static void updateTableNames() throws SQLException {
 
@@ -204,10 +205,14 @@ public class DBIO {
 
     /**
      * Updates a column in a given table with a new value.
-     * @param tableName     Column to update
-     * @param columnName
-     * @param newData Object containing new PK value.   @return returns int array of updates
-     * @param pkVals */
+     * @param tableName Table name to update
+     * @param columnName Column to update
+     * @param newData New value of the updated cell.
+     * @param pkColNames String array containing all primary key column names you wish to constrain the update with.
+     * @param pkVals Constraining primary key values directly associated with the pk column names. They must be
+     * related through index.
+     * @return Returns the int array results containing information on how many rows were updated.
+     * @throws SQLException to a higher level where the application may be able to get specific details from the error.*/
     public static int[] updateTable(String tableName, String columnName, Object newData, String[] pkColNames, Object[] pkVals) throws SQLException {
 
         StringBuilder updateQuery = new StringBuilder("UPDATE " + tableName + " SET " +
@@ -470,6 +475,8 @@ public class DBIO {
      *
      * @param queries Queries to execute.
      * @return Number of rows updated feedback.
+     *
+     * @throws SQLException Passes the exception along to the point where the application can handle it gracefully.
      */
     public static int[] executeWithoutReturn(String... queries) throws SQLException {
 

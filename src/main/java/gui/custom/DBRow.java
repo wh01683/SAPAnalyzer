@@ -36,8 +36,8 @@ public class DBRow {
     /**
      * Creates a new DBRow object associated with a specific table. Can take in any number of Object values as contents.
      *
-     * @param tableName
-     * @param content
+     * @param tableName Table name to be associated with this row.
+     * @param content Object array of the content the row will contain.
      */
     public DBRow(String tableName, Object... content){
         Hashtable<String, ArrayList<String>> tableToColNames = DBInfo.getTabToColNames();

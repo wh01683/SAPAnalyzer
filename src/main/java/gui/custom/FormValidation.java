@@ -75,7 +75,7 @@ public class FormValidation {
     /**
      * Helper method to add a default error border of red.
      *
-     * @param component
+     * @param component component to border in red.
      */
     public static void setFieldError(JComponent component) {
         setFieldError(component, Color.RED);
