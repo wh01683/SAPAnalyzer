@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Class used for the popup menu seen in the SAP Analyzer main gui form.
+ */
 public class PopupMenu extends JPopupMenu {
     JPopupMenu menu = new JPopupMenu("Popup");
 

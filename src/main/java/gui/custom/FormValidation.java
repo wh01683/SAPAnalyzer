@@ -8,10 +8,7 @@ import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-/**
- * William Trent Holliday
- * 4/15/15
- */
+
 public class FormValidation {
 
     private static Border originalBorder;

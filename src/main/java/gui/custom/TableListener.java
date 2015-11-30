@@ -13,6 +13,10 @@ import java.sql.SQLException;
 public class TableListener implements TableModelListener{
 
 
+    /**
+     * Table listener used to update the database through JTable updates. Use with caution!
+     * @param e TableModelEvent to handle.
+     */
     public void tableChanged(TableModelEvent e) {
         if (e.getType() == TableModelEvent.UPDATE) {
             int row = e.getFirstRow();

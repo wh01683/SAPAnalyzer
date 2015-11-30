@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 /**
  * Created by robert on 10/8/2015.
+ *
  */
 public class DatabaseTableModel extends AbstractTableModel  {
 
@@ -202,6 +203,10 @@ public class DatabaseTableModel extends AbstractTableModel  {
         }
     }
 
+    /**
+     * Gets all column names associated with this table model.
+     * @return Returns a string array of column names for the model.
+     */
     public String[] getColumnNames() {
         return columnNames;
     }
