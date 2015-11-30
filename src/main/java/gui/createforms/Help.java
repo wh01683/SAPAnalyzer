@@ -7,6 +7,8 @@ import javax.swing.*;
 /**
  * Author: William Robert Howerton III
  * Created: 10/18/2015
+ *
+ * Brings up the help menu.
  */
 public class Help extends JFrame {
     private JPanel pnlMain;

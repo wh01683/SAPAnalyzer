@@ -127,6 +127,9 @@ public class CreateBOM extends JFrame {
     }
 
 
+    /**
+     * Creates BOM and Plant_BOM rows from the GUI fields.
+     */
     private void makeRowFromFields() {
 
         StringBuilder nodeString = new StringBuilder();
@@ -144,20 +147,15 @@ public class CreateBOM extends JFrame {
         Double hrEst = fldHrEst.getDouble();
         Double hrlyCost = assignedStaffWage * hrEst;
 
-
-        nodeString.append("Parent: ").append(parentKey).append("| Child: ").append(childKey).append("| step: ").append(step)
-                .append("| qty: ").append(qty).append("| hrly cost: ").append(hrlyCost).append("| hr est: ").append(hrEst).append("| emp: ").append(empID)
-                .append("\n");
         DBRow bomRow = new DBRow("BOM", step, qty, parentKey, childKey);
         DBRow plant_bomRow = new DBRow("PLANT_BOM", plantId, parentKey, childKey, hrlyCost, hrEst, empID);
-        //DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode(nodeString.toString());
         rowStack.push(bomRow);
         rowStack.push(plant_bomRow);
-        //nodeStack.push(tempNode);
-
-        //TODO: add temp node to tree
     }
 
+    /**
+     * Clears all fields in pnlEditBOM
+     */
     private void clearFields() {
 
         Component[] components = pnlEditBOM.getComponents();
@@ -169,6 +167,9 @@ public class CreateBOM extends JFrame {
         }
     }
 
+    /**
+     * INSERTS and COMMITS all BOMs and Plant_BOM rows from the row stack and clears the stack.
+     */
     private void insertAllFromStack() {
         for (DBRow row : rowStack) {
             try {
@@ -180,6 +181,9 @@ public class CreateBOM extends JFrame {
         rowStack.clear();
     }
 
+    /**
+     * Shows the current stack insert preview.
+     */
     private void buildPreview() {
 
         JTextArea textArea = new JTextArea("INSERT PREVIEW\n=================================================\n");
