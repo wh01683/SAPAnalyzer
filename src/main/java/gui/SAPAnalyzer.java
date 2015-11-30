@@ -13,8 +13,6 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
-import java.util.Enumeration;
-import java.util.Hashtable;
 
 
 /**
@@ -182,6 +180,9 @@ public class SAPAnalyzer extends JFrame{
         frame.pack();
     }
 
+    /**
+     * Updates combo boxes. Used when model changes.
+     */
     public void updateCbBoxes(){
         cbSortCategory.removeAllItems();
         cbSelection.removeAllItems();
@@ -193,6 +194,11 @@ public class SAPAnalyzer extends JFrame{
         }
     }
 
+    /**
+     * Takes care of all related processes associated with changing the table's content.
+     *
+     * @param databaseTableModel
+     */
     public void setDatabaseTableModel(DatabaseTableModel databaseTableModel) {
         this.databaseTableModel = databaseTableModel;
         DBIO.setCurrentTable((String) cbTableSelect.getSelectedItem());
@@ -200,6 +206,10 @@ public class SAPAnalyzer extends JFrame{
         updateCbBoxes();
     }
 
+    /**
+     * Method creates the query used to sort the current table's contents.
+     * @return Returns the string query.
+     */
     private String getSortQuery(){
         String sortQuery = "select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
                 " from " + cbTableSelect.getSelectedItem() + ((cbSortCategory.getSelectedIndex() == 0) ? "" : " order by ") +
@@ -209,23 +219,27 @@ public class SAPAnalyzer extends JFrame{
         return sortQuery;
     }
 
+    /**
+     * Generates a customized select statement based on which table is selected and
+     * if the user only wants to see one column at a time.
+     * @return Customized select query.
+     */
     private String getTblShownQuery(){
         String shownQuery = "select " + ((cbSelection.getSelectedIndex() == 0) ? "*" : cbSelection.getSelectedItem()) +
                 " from " + cbTableSelect.getSelectedItem();
         return shownQuery;
     }
 
+    /**
+     * Creates a new table model using the "sorted" query.
+     */
     private void sortTableModel(){
         setDatabaseTableModel(new DatabaseTableModel(getSortQuery()));
     }
 
-    public void fillDetailsTable(String tableName, int row, int col){
-        DatabaseTableModel temp = new DatabaseTableModel(tableName, tblShownInformation.getValueAt(row, col));
-        tblDetailsTable.setCellSelectionEnabled(false);
-        tblDetailsTable.setModel(temp);
-    }
-
-
+    /**
+     * Used to create the File and Help menus at the top of the form.
+     */
     private void createMenu() {
 
 
@@ -276,16 +290,6 @@ public class SAPAnalyzer extends JFrame{
         mnuFile.add(mnuLoad);
         menuBar.add(mnuFile);
         menuBar.add(mnuHelp);
-    }
-
-    private void addChildMenus(JMenuItem parent, Hashtable<String, ActionListener> namesToActionListeners) {
-        Enumeration enumer = namesToActionListeners.keys();
-        while (enumer.hasMoreElements()) {
-            String label = (String) enumer.nextElement();
-            JMenuItem temp = new JMenuItem(label);
-            temp.addActionListener(namesToActionListeners.get(label));
-            parent.add(temp);
-        }
     }
 }
 

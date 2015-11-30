@@ -70,11 +70,22 @@ public class EditPart extends JFrame {
 
     boolean editable = false;
 
+    /**
+     * Used to create an EditPart form that looks up a part from the database automatically on creation.
+     *
+     * @param partID Part ID (primary key) of part to look up.
+     */
     public EditPart(Object partID) {
         this(true);
         fldPartId.setText(partID.toString());
         fillFields();
     }
+
+    /**
+     * Constructor for EditPart form.
+     * @param viewing If true, user will be unable to edit many fields in the form.
+     *                If false, user will be able to edit these fields and use combo boxes.
+     */
     public EditPart(boolean viewing) {
 
         //<editor-fold desc="Constructor">
@@ -374,6 +385,9 @@ public class EditPart extends JFrame {
         JOptionPane.showMessageDialog(null, scrollPane, "Insert Preview", JOptionPane.CLOSED_OPTION);
     }
 
+    /**
+     * Creates the File and Help menus located at the top of the form.
+     */
     private void createMenu() {
 
 
