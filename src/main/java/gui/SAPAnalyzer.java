@@ -33,7 +33,6 @@ public class SAPAnalyzer extends JFrame{
     private JComboBox cbSortCategory;
     private JComboBox cbSortWay;
     private JButton btnSort;
-    private JTabbedPane tbSidePanel;
     private JPanel pnlDetail;
     private JComboBox cbTableSelect;
     private JTable tblDetailsTable;
@@ -57,9 +56,6 @@ public class SAPAnalyzer extends JFrame{
         tblShownInformation.setVisible(true);
         tblShownInformation.setModel(new DatabaseTableModel(getTblShownQuery()));
 
-        pnlDetail.setVisible(true);
-        tblDetailsTable.setVisible(true);
-        scrlTable.setVisible(true);
 
         cbTableSelect.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {

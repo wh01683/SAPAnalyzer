@@ -8,9 +8,9 @@
     <colspec value="fill:max(d;4px):noGrow"/>
     <colspec value="left:143dlu:noGrow"/>
     <colspec value="fill:1024px:noGrow"/>
-    <colspec value="fill:360px:noGrow"/>
+    <colspec value="fill:17px:noGrow"/>
     <constraints>
-      <xy x="20" y="33" width="1734" height="850"/>
+      <xy x="20" y="33" width="1371" height="850"/>
     </constraints>
     <properties/>
     <border type="bevel-raised">
@@ -166,38 +166,6 @@
         <border type="none"/>
         <children/>
       </toolbar>
-      <tabbedpane id="4379f" binding="tbSidePanel">
-        <constraints>
-          <grid row="2" column="3" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="200" height="200"/>
-          </grid>
-          <forms defaultalign-horz="false" defaultalign-vert="false"/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <grid id="16668" binding="pnlDetail" layout-manager="FormLayout">
-            <rowspec value="center:p:noGrow"/>
-            <colspec value="fill:354px:noGrow"/>
-            <constraints>
-              <tabbedpane title="Selection Details"/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="42897" class="javax.swing.JTable" binding="tblDetailsTable">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="50"/>
-                  </grid>
-                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
-                </constraints>
-                <properties/>
-              </component>
-            </children>
-          </grid>
-        </children>
-      </tabbedpane>
     </children>
   </grid>
 </form>

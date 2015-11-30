@@ -2,15 +2,18 @@ package gui.createforms;
 
 import db.DBIO;
 import db.DBInfo;
+import db.QueryStorage;
 import db.Utility;
 import gui.custom.DBRow;
+import gui.custom.DatabaseTableModel;
 import gui.custom.InsertTextField;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -24,7 +27,6 @@ public class CreateBOM extends JFrame {
     private JPanel pnlMain;
     private JPanel pnlEditBOM;
     private JComboBox cbChildPartNames;
-    private JTree treeBOMHierarchy;
     private JComboBox cbParentPartNames;
     private JButton btnAdd;
     private JButton undoButton;
@@ -36,13 +38,20 @@ public class CreateBOM extends JFrame {
     private InsertTextField fldHrEst;
     private JButton btnPreview;
     private JComboBox cbEmployeeNames;
+    private JButton btnAssignEmp;
+    private JTable tblBOMInfo;
+    private JPanel pnlBOMInfo;
     private Stack<DBRow> rowStack = new Stack<DBRow>();
-    private Stack<DefaultMutableTreeNode> nodeStack = new Stack<DefaultMutableTreeNode>();
     private Hashtable<Object, String> partPkToName;
     private Hashtable<String, Object> partNameToPk = new Hashtable<String, Object>(10);
     private Hashtable<String, Object> empNameToPk = new Hashtable<String, Object>(10);
     private Hashtable<Object, String> empPkToName;
 
+    /**
+     * Helper constructor to use alongside the popup menu in the SAP analyzer GUI.
+     *
+     * @param parentKey
+     */
     public CreateBOM(Object parentKey) {
         this();
         cbParentPartNames.setSelectedItem(partPkToName.get(parentKey));
@@ -69,9 +78,36 @@ public class CreateBOM extends JFrame {
         partNameToPk = Utility.flipPkHash(partPkToName);
 
         empPkToName = DBInfo.getEmpPkToName();
+
         empNameToPk = Utility.flipPkHash(empPkToName);
 
+        fillCbBoxes();
 
+        cbParentPartNames.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == e.SELECTED) {
+                    Object parentKey = partNameToPk.get(cbParentPartNames.getSelectedItem().toString());
+                    tblBOMInfo.setModel(new DatabaseTableModel(QueryStorage.getPartList(parentKey)));
+                    onPartSelect();
+                }
+            }
+        });
+
+        cbChildPartNames.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == e.SELECTED) {
+                    onPartSelect();
+                }
+            }
+        });
+
+        cbEmployeeNames.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == e.SELECTED) {
+                    fillEmployeeFields(empNameToPk.get(cbEmployeeNames.getSelectedItem()));
+                }
+            }
+        });
         btnAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 makeRowFromFields();
@@ -87,11 +123,34 @@ public class CreateBOM extends JFrame {
                 buildPreview();
             }
         });
-        fillCbBoxes();
+        btnAssignEmp.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new EmployeeAssignment(partNameToPk.get(cbParentPartNames.getSelectedItem().toString()),
+                        partNameToPk.get(cbChildPartNames.getSelectedItem().toString())).setVisible(true);
+            }
+        });
         this.pack();
 
     }
 
+    /**
+     * Handles information updates when a new part is selected in the combo box.
+     */
+    private void onPartSelect() {
+        Object parentKey = partNameToPk.get(cbParentPartNames.getSelectedItem().toString());
+        Object childKey = partNameToPk.get(cbChildPartNames.getSelectedItem().toString());
+        fillEmployeeCbBoxes(parentKey, childKey);
+
+        try {
+            ArrayList<Object> bomResults = DBIO.getMultiObResults(
+                    "select qty, step from bom where parentpartid = " + parentKey + " and childpartid = " + childKey).get(0);
+            fldStep.setText(bomResults.get(1).toString());
+            fldQty.setText(bomResults.get(0).toString());
+        } catch (IndexOutOfBoundsException i) {
+            System.out.printf("No BOM results for parent key = %s and child key = %s.\n",
+                    parentKey.toString(), childKey.toString());
+        }
+    }
     /**
      * Fills combo boxes in the form with information from hashtables in DBInfo.
      * Hashtables used to associate non-key entities with primary keys during insertion process
@@ -117,12 +176,12 @@ public class CreateBOM extends JFrame {
         if (empPkToName == null) {
             cbEmployeeNames.addItem("");
         } else {
-            Enumeration e = empPkToName.keys();
-            while (e.hasMoreElements()) {
-                String empName = empPkToName.get(e.nextElement());
-                cbEmployeeNames.addItem(empName);
 
-            }
+            Object parentKey = partNameToPk.get(cbParentPartNames.getSelectedItem().toString());
+            Object childKey = partNameToPk.get(cbChildPartNames.getSelectedItem().toString());
+
+            fillEmployeeCbBoxes(parentKey, childKey);
+
         }
     }
 
@@ -132,25 +191,13 @@ public class CreateBOM extends JFrame {
      */
     private void makeRowFromFields() {
 
-        StringBuilder nodeString = new StringBuilder();
-
-        Object empID = empNameToPk.get(cbEmployeeNames.getSelectedItem().toString());
-        Double assignedStaffWage = Double.parseDouble(
-                DBIO.getMultiObResults("select wage from staff where employeeid = " + empID.toString())
-                        .get(0).get(0).toString());
-        Object plantId = DBIO.getMultiObResults("select e.plantid from employees e join staff s on s.employeeid = e.employeeid where s.employeeid = "
-                + empID.toString()).get(0).get(0);
         Object childKey = partNameToPk.get(cbChildPartNames.getSelectedItem().toString());
         Object parentKey = partNameToPk.get(cbParentPartNames.getSelectedItem().toString());
         Integer step = fldStep.getInt();
         Integer qty = fldQty.getInt();
-        Double hrEst = fldHrEst.getDouble();
-        Double hrlyCost = assignedStaffWage * hrEst;
 
         DBRow bomRow = new DBRow("BOM", step, qty, parentKey, childKey);
-        DBRow plant_bomRow = new DBRow("PLANT_BOM", plantId, parentKey, childKey, hrlyCost, hrEst, empID);
         rowStack.push(bomRow);
-        rowStack.push(plant_bomRow);
     }
 
     /**
@@ -198,5 +245,46 @@ public class CreateBOM extends JFrame {
         scrollPane.setPreferredSize(new Dimension(500, 500));
         JOptionPane.showMessageDialog(null, scrollPane, "Insert Preview", JOptionPane.CLOSED_OPTION);
 
+    }
+
+    /**
+     * This method fills the employee combo box with all employees assigned to a given BOM.
+     *
+     * @param parentPartId ParentPartID of the BOM
+     * @param childPartId  ChildPartID of the BOM
+     */
+    private void fillEmployeeCbBoxes(Object parentPartId, Object childPartId) {
+
+        cbEmployeeNames.removeAllItems();
+        ArrayList<ArrayList<Object>> assignedEmployees = DBIO.getMultiObResults("select employeeid from plant_bom " +
+                "where parentpartid = " + parentPartId +
+                " and childpartid = " + childPartId);
+        ArrayList<Object> employeeIDs = new ArrayList<Object>(10);
+
+        for (ArrayList<Object> row : assignedEmployees) {
+            employeeIDs.add(row.get(0));
+        }
+
+        for (Object o : employeeIDs) {
+            cbEmployeeNames.addItem(empPkToName.get(o));
+        }
+    }
+
+    /**
+     * Helper method to fill all employee related information fields using a given employee ID primary key.
+     *
+     * @param employeeID EmployeeID primary key of the employee.
+     */
+    private void fillEmployeeFields(Object employeeID) {
+
+        Object parentKey = partNameToPk.get(cbParentPartNames.getSelectedItem().toString());
+        Object childKey = partNameToPk.get(cbChildPartNames.getSelectedItem().toString());
+
+        ArrayList<Object> empStats = DBIO.getMultiObResults(
+                "select * from plant_bom where parentpartid = " + parentKey +
+                        " and childpartid = " + childKey + " and employeeid = " + employeeID).get(0);
+
+        fldHrlyCost.setText(empStats.get(3).toString());
+        fldHrEst.setText(empStats.get(4).toString());
     }
 }
